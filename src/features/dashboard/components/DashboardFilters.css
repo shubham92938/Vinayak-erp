@@ -1,0 +1,112 @@
+.dash-filters {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+  background: var(--color-surface);
+  border: var(--border-default);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.dash-filters__group {
+  display: flex;
+  flex: 1;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-3);
+  min-width: 0;
+}
+
+.dash-filters__field {
+  flex-shrink: 0;
+}
+
+.dash-filters__field--period {
+  width: 164px;
+}
+
+.dash-filters__field--fiscal {
+  width: 154px;
+}
+
+.dash-filters__field--firm {
+  width: 218px;
+}
+
+.dash-filters__field--date {
+  width: 144px;
+}
+
+.dash-filters__custom {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--space-2);
+}
+
+.dash-filters__actions {
+  flex-shrink: 0;
+  padding-bottom: 1px;
+}
+
+.dash-filters__reset {
+  color: var(--color-text-secondary);
+}
+
+.dash-filters .ui-field__label {
+  font-size: var(--font-size-2xs);
+}
+
+@media (max-width: 900px) {
+  .dash-filters {
+    align-items: stretch;
+    flex-direction: column;
+    gap: var(--space-2-5);
+  }
+
+  .dash-filters__group {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: var(--space-2-5);
+  }
+
+  .dash-filters__field {
+    width: auto;
+  }
+
+  .dash-filters__custom {
+    grid-column: 1 / -1;
+  }
+
+  .dash-filters__custom .dash-filters__field--date {
+    flex: 1;
+    width: auto;
+  }
+
+  .dash-filters__actions {
+    align-self: flex-start;
+  }
+}
+
+@media (max-width: 640px) {
+  .dash-filters__group {
+    grid-template-columns: 1fr;
+  }
+
+  .dash-filters__actions {
+    align-self: stretch;
+  }
+
+  .dash-filters__actions .ui-button {
+    width: 100%;
+    justify-content: center;
+  }
+}
+
+@media (max-width: 420px) {
+  .dash-filters__custom {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}

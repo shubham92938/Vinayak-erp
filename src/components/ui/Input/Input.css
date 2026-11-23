@@ -1,0 +1,114 @@
+.ui-input {
+  --input-height: var(--input-height-md);
+  --input-font-size: var(--font-size-sm);
+
+  position: relative;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  height: var(--input-height);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  box-shadow: var(--shadow-xs);
+  transition:
+    border-color var(--transition-fast),
+    box-shadow var(--transition-fast),
+    background-color var(--transition-fast);
+}
+
+.ui-input:hover:not(.ui-input--disabled) {
+  border-color: var(--color-border-strong);
+}
+
+.ui-input:focus-within {
+  border-color: var(--color-blue);
+  box-shadow: var(--focus-ring);
+}
+
+.ui-input--error {
+  border-color: var(--color-danger);
+}
+
+.ui-input--error:focus-within {
+  border-color: var(--color-danger);
+  box-shadow: var(--focus-ring-danger);
+}
+
+.ui-input--disabled {
+  background: var(--color-surface-muted);
+  box-shadow: none;
+}
+
+.ui-input--disabled:hover {
+  border-color: var(--color-border);
+}
+
+.ui-input--sm {
+  --input-height: var(--input-height-sm);
+  --input-font-size: var(--font-size-xs);
+}
+
+.ui-input--md {
+  --input-height: var(--input-height-md);
+  --input-font-size: var(--font-size-sm);
+}
+
+.ui-input--lg {
+  --input-height: var(--input-height-lg);
+  --input-font-size: var(--font-size-base);
+}
+
+.ui-input__control {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  height: 100%;
+  padding: 0 var(--space-2-5);
+  color: var(--color-text-primary);
+  background: transparent;
+  border: 0;
+  border-radius: inherit;
+  outline: none;
+  font-size: var(--input-font-size);
+  line-height: 1;
+}
+
+.ui-input__control::placeholder {
+  color: var(--color-text-tertiary);
+  opacity: 1;
+}
+
+.ui-input__control:focus-visible {
+  outline: none;
+}
+
+.ui-input__control:disabled {
+  color: var(--color-text-tertiary);
+  cursor: not-allowed;
+}
+
+.ui-input__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  color: var(--color-text-tertiary);
+}
+
+.ui-input__icon svg {
+  width: 16px;
+  height: 16px;
+}
+
+.ui-input__icon--leading {
+  padding-left: var(--space-2-5);
+}
+
+.ui-input__icon--leading + .ui-input__control {
+  padding-left: var(--space-1-5);
+}
+
+.ui-input__icon--trailing {
+  padding-right: var(--space-2-5);
+}

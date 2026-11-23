@@ -1,0 +1,44 @@
+/* ==========================================================================
+   Vinayak ERP — Responsive foundation
+   Component-specific breakpoints live beside their component styles.
+   ========================================================================== */
+
+@media (max-width: 1024px) {
+  :root {
+    --page-gutter: var(--space-6);
+  }
+
+  .page-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--space-4);
+  }
+}
+
+@media (max-width: 768px) {
+  :root {
+    --page-gutter: var(--space-4);
+  }
+
+  h1 {
+    font-size: var(--font-size-2xl);
+  }
+
+  .form-grid {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .page-header__actions {
+    width: 100%;
+  }
+}
+
+@media (max-width: 640px) {
+  .page-title {
+    font-size: var(--font-size-xl);
+  }
+
+  .page-header__actions > .ui-button {
+    flex: 1;
+  }
+}

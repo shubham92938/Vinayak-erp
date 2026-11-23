@@ -1,0 +1,148 @@
+/* --------------------------------------------------------------------------
+   Price List — page and table styles
+   -------------------------------------------------------------------------- */
+
+.price-list-page {
+  width: 100%;
+  max-width: 1200px;
+  margin-inline: auto;
+}
+
+.price-list-header {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.price-list-header__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.price-list-header__text {
+  min-width: 0;
+}
+
+.price-list-header__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.price-list-header__title {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.price-list-header__description {
+  margin-top: var(--space-0-5);
+  font-size: var(--font-size-sm);
+  line-height: var(--line-height-relaxed);
+  color: var(--color-text-secondary);
+}
+
+.price-list-header__actions {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: var(--space-2);
+}
+
+.price-list-header__actions .ui-button {
+  white-space: nowrap;
+}
+
+.price-list-kpi {
+  display: flex;
+  align-items: baseline;
+  gap: var(--space-2);
+  margin-top: var(--space-3);
+}
+
+.price-list-kpi__label {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.price-list-kpi__value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.price-list-table {
+  margin-top: var(--space-4);
+}
+
+.price-list-name {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+}
+
+.price-list-name__name {
+  overflow: hidden;
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  color: var(--color-text-primary);
+}
+
+.price-list-name__code {
+  margin-top: 2px;
+  overflow: hidden;
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-tertiary);
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.price-list-money {
+  font-size: var(--font-size-sm);
+  white-space: nowrap;
+  color: var(--color-text-primary);
+}
+
+.price-list-date {
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-secondary);
+  white-space: nowrap;
+}
+
+.price-list-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+  align-items: flex-start;
+  width: 100%;
+}
+
+@media (max-width: 640px) {
+  .price-list-header__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+
+  .price-list-header__actions .ui-button {
+    flex: 1;
+  }
+}

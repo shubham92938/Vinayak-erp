@@ -1,0 +1,122 @@
+.firm-switcher__trigger .ui-button__label {
+  min-width: 0;
+}
+
+.firm-switcher__badge {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: var(--color-navy);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-sm);
+  font-size: 10px;
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.firm-switcher__label {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  gap: 2px;
+}
+
+.firm-switcher__name,
+.firm-switcher__entity {
+  max-width: 150px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.firm-switcher__name {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.firm-switcher__entity {
+  font-size: 10px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-tertiary);
+}
+
+.firm-switcher__menu {
+  min-width: 248px;
+}
+
+.firm-switcher__option {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  gap: var(--space-3);
+}
+
+.firm-switcher__option-text {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-width: 0;
+  gap: 1px;
+}
+
+.firm-switcher__option-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+}
+
+.firm-switcher__option-meta {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-tertiary);
+}
+
+.firm-switcher__check {
+  flex-shrink: 0;
+  color: var(--color-blue);
+}
+
+.firm-switcher__note {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-1-5);
+  margin: var(--space-1) var(--space-1) 0;
+  padding: var(--space-2);
+  color: var(--color-text-tertiary);
+  background: var(--color-surface-subtle);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-2xs);
+  line-height: var(--line-height-snug);
+}
+
+.firm-switcher__note svg {
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+@media (max-width: 1024px) {
+  .firm-switcher__entity {
+    display: none;
+  }
+}
+
+@media (max-width: 900px) {
+  .firm-switcher__name {
+    max-width: 108px;
+  }
+}
+
+@media (max-width: 600px) {
+  .firm-switcher__trigger .ui-button__label,
+  .firm-switcher__trigger .ui-button__icon:last-child {
+    display: none;
+  }
+
+  .firm-switcher__trigger.ui-button {
+    width: 34px;
+    padding: 0;
+  }
+}

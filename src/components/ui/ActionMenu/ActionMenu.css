@@ -1,0 +1,7 @@
+.ui-action-menu {
+  display: inline-flex;
+}
+
+.ui-action-menu .ui-dropdown__menu {
+  min-width: 176px;
+}

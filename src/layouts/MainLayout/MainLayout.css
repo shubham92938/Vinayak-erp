@@ -1,0 +1,98 @@
+/* ==========================================================================
+   Application shell
+   ========================================================================== */
+
+.app-shell {
+  min-height: 100vh;
+  background: var(--color-background);
+}
+
+.app-main {
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  min-height: 100vh;
+  margin-left: var(--sidebar-width);
+  transition: margin-left var(--duration-slow) var(--ease-standard);
+}
+
+.app-shell--collapsed .app-main {
+  margin-left: var(--sidebar-width-collapsed);
+}
+
+.app-content {
+  flex: 1;
+  width: 100%;
+  min-width: 0;
+  padding: var(--space-6) var(--page-gutter) var(--space-12);
+}
+
+.app-content:focus {
+  outline: none;
+}
+
+/* Backdrop */
+
+.app-backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: var(--z-drawer-backdrop);
+  padding: 0;
+  background: var(--color-overlay);
+  border: 0;
+  cursor: default;
+  animation: app-backdrop-in var(--duration-base) var(--ease-standard);
+}
+
+@keyframes app-backdrop-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+/* Skip link */
+
+.skip-link {
+  position: fixed;
+  top: var(--space-2);
+  left: var(--space-2);
+  z-index: calc(var(--z-toast) + 1);
+  padding: var(--space-2) var(--space-3);
+  color: var(--color-text-inverse);
+  background: var(--color-navy);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-medium);
+  text-decoration: none;
+  transform: translateY(-200%);
+  transition: transform var(--duration-fast) var(--ease-standard);
+}
+
+.skip-link:focus {
+  color: var(--color-text-inverse);
+  transform: translateY(0);
+}
+
+@media (max-width: 768px) {
+  .app-main,
+  .app-shell--collapsed .app-main {
+    margin-left: 0;
+  }
+
+  .app-content {
+    padding-top: var(--space-5);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-main {
+    transition: none;
+  }
+
+  .app-backdrop {
+    animation: none;
+  }
+}

@@ -1,0 +1,192 @@
+.ui-button {
+  --btn-height: var(--control-height-md);
+  --btn-padding: var(--space-3);
+  --btn-font-size: var(--font-size-sm);
+  --btn-icon-size: 15px;
+
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--space-2);
+  height: var(--btn-height);
+  padding: 0 var(--btn-padding);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  font-family: var(--font-sans);
+  font-size: var(--btn-font-size);
+  font-weight: var(--font-weight-medium);
+  line-height: 1;
+  letter-spacing: var(--letter-spacing-snug);
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  user-select: none;
+  transition:
+    background-color var(--transition-fast),
+    border-color var(--transition-fast),
+    color var(--transition-fast),
+    box-shadow var(--transition-fast);
+}
+
+.ui-button:focus-visible {
+  outline: none;
+  box-shadow: var(--focus-ring);
+}
+
+.ui-button:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.ui-button__label {
+  display: inline-block;
+}
+
+.ui-button__icon {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+}
+
+.ui-button__icon svg {
+  width: var(--btn-icon-size);
+  height: var(--btn-icon-size);
+}
+
+/* Sizes */
+
+.ui-button--sm {
+  --btn-height: var(--control-height-sm);
+  --btn-padding: var(--space-2-5);
+  --btn-font-size: var(--font-size-xs);
+  --btn-icon-size: 14px;
+  gap: var(--space-1-5);
+}
+
+.ui-button--md {
+  --btn-height: var(--control-height-md);
+  --btn-padding: var(--space-3);
+  --btn-font-size: var(--font-size-sm);
+  --btn-icon-size: 15px;
+}
+
+.ui-button--lg {
+  --btn-height: var(--control-height-lg);
+  --btn-padding: var(--space-4);
+  --btn-font-size: var(--font-size-base);
+  --btn-icon-size: 16px;
+}
+
+/* Variants */
+
+.ui-button--primary {
+  color: var(--color-text-inverse);
+  background: var(--color-blue);
+  border-color: var(--color-blue);
+  box-shadow: var(--shadow-xs);
+}
+
+.ui-button--primary:hover:not(:disabled) {
+  background: var(--color-blue-hover);
+  border-color: var(--color-blue-hover);
+}
+
+.ui-button--primary:active:not(:disabled) {
+  background: var(--color-blue-active);
+  border-color: var(--color-blue-active);
+}
+
+.ui-button--secondary {
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.ui-button--secondary:hover:not(:disabled) {
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border-strong);
+}
+
+.ui-button--secondary:active:not(:disabled) {
+  background: var(--color-surface-muted);
+}
+
+.ui-button--ghost {
+  color: var(--color-text-secondary);
+  background: transparent;
+  border-color: transparent;
+}
+
+.ui-button--ghost:hover:not(:disabled) {
+  color: var(--color-text-primary);
+  background: var(--color-surface-muted);
+}
+
+.ui-button--ghost:active:not(:disabled) {
+  background: var(--color-border);
+}
+
+.ui-button--danger {
+  color: var(--color-text-inverse);
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+  box-shadow: var(--shadow-xs);
+}
+
+.ui-button--danger:hover:not(:disabled) {
+  background: var(--color-danger-strong);
+  border-color: var(--color-danger-strong);
+}
+
+.ui-button--danger:active:not(:disabled) {
+  background: var(--color-danger-active);
+  border-color: var(--color-danger-active);
+}
+
+.ui-button--link {
+  height: auto;
+  padding: 0;
+  color: var(--color-blue);
+  background: transparent;
+  border-color: transparent;
+  border-radius: var(--radius-xs);
+  font-weight: var(--font-weight-medium);
+}
+
+.ui-button--link:hover:not(:disabled) {
+  color: var(--color-blue-hover);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.ui-button--link:focus-visible {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Modifiers */
+
+.ui-button--full-width {
+  width: 100%;
+}
+
+.ui-button--icon-only {
+  width: var(--btn-height);
+  padding: 0;
+}
+
+/* Loading */
+
+.ui-button__spinner {
+  animation: ui-button-spin 700ms linear infinite;
+}
+
+@keyframes ui-button-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}

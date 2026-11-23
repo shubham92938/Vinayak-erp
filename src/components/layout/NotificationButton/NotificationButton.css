@@ -1,0 +1,16 @@
+.notification-button {
+  position: relative;
+  display: inline-flex;
+}
+
+.notification-button__dot {
+  position: absolute;
+  top: 6px;
+  right: 7px;
+  width: 7px;
+  height: 7px;
+  background: var(--color-danger);
+  border: 2px solid var(--color-surface);
+  border-radius: var(--radius-full);
+  pointer-events: none;
+}

@@ -1,0 +1,95 @@
+.user-menu__trigger .ui-button__label {
+  min-width: 0;
+}
+
+.user-menu__avatar {
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--color-text-inverse);
+  background: var(--color-navy);
+  border-radius: var(--radius-full);
+  font-size: 10px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+}
+
+.user-menu__avatar--lg {
+  width: 34px;
+  height: 34px;
+  font-size: var(--font-size-2xs);
+}
+
+.user-menu__meta {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  min-width: 0;
+  gap: 2px;
+}
+
+.user-menu__name,
+.user-menu__role {
+  max-width: 120px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.user-menu__name {
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.user-menu__role {
+  font-size: 10px;
+  font-weight: var(--font-weight-regular);
+  color: var(--color-text-tertiary);
+}
+
+.user-menu__menu {
+  min-width: 236px;
+}
+
+.user-menu__summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2-5);
+  padding: var(--space-2) var(--space-2) var(--space-2-5);
+}
+
+.user-menu__summary-text {
+  min-width: 0;
+}
+
+.user-menu__summary-name {
+  font-size: var(--font-size-sm);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.user-menu__summary-email {
+  margin-top: 1px;
+  overflow: hidden;
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-tertiary);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 900px) {
+  .user-menu__meta {
+    display: none;
+  }
+
+  .user-menu__trigger .ui-button__icon:last-child {
+    display: none;
+  }
+
+  .user-menu__trigger.ui-button {
+    gap: 0;
+    padding: 0 var(--space-1);
+  }
+}
