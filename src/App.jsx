@@ -32,6 +32,7 @@ import ProductsPage from './features/products/pages/ProductsPage'
 import ProfitLossPage from './features/profit-loss/pages/ProfitLossPage'
 import PurchaseOrderDetailsPage from './features/purchase-orders/pages/PurchaseOrderDetailsPage'
 import PurchaseOrdersPage from './features/purchase-orders/pages/PurchaseOrdersPage'
+import RecordedPurchaseForm from './features/purchase-orders/pages/RecordedPurchaseForm'
 import PurchaseDetailsPage from './features/purchases/pages/PurchaseDetailsPage'
 import PurchasesPage from './features/purchases/pages/PurchasesPage'
 import QuotationDetailsPage from './features/quotations/pages/QuotationDetailsPage'
@@ -39,6 +40,7 @@ import QuotationsPage from './features/quotations/pages/QuotationsPage'
 import ReportsPage from './features/reports/pages/ReportsPage'
 import SaleDetailsPage from './features/sales/pages/SaleDetailsPage'
 import SalesPage from './features/sales/pages/SalesPage'
+import RecordedSalesOrderForm from './features/sales/components/RecordedSalesOrderForm'
 import SalesOrderDetailsPage from './features/sales-orders/pages/SalesOrderDetailsPage'
 import SalesOrdersPage from './features/sales-orders/pages/SalesOrdersPage'
 import SettingsPage from './features/settings/pages/SettingsPage'
@@ -72,12 +74,15 @@ const PAGE_ROUTES = [
   { path: 'inventory/transfers', module: 'Inventory', element: <StockTransferPage /> },
   { path: 'inventory/stock-transfer', module: 'Inventory', element: <StockTransferPage /> },
   { path: 'sales', module: 'Sales', element: <SalesPage /> },
+  { path: 'sales/new', module: 'Sales', element: <RecordedSalesOrderForm mode="sale" /> },
   { path: 'sales/:saleId', module: 'Sales', element: <SaleDetailsPage /> },
   { path: 'sales-orders', module: 'Sales Orders', element: <SalesOrdersPage /> },
+  { path: 'sales-orders/new', module: 'Sales Orders', element: <RecordedSalesOrderForm mode="order" /> },
   { path: 'sales-orders/:orderId', module: 'Sales Orders', element: <SalesOrderDetailsPage /> },
   { path: 'purchases', module: 'Purchases', element: <PurchasesPage /> },
   { path: 'purchases/:purchaseId', module: 'Purchases', element: <PurchaseDetailsPage /> },
   { path: 'purchase-orders', module: 'Purchase Orders', element: <PurchaseOrdersPage /> },
+  { path: 'purchase-orders/new', module: 'Purchase Orders', element: <RecordedPurchaseForm /> },
   { path: 'purchase-orders/:orderId', module: 'Purchase Orders', element: <PurchaseOrderDetailsPage /> },
   { path: 'quotations', module: 'Quotations', element: <QuotationsPage /> },
   { path: 'quotations/:quotationId', module: 'Quotations', element: <QuotationDetailsPage /> },

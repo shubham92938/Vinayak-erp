@@ -73,7 +73,17 @@ function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID
 }
 
-mockSalesOrders.forEach((order) => { order.firmId = inferFirmId(order) })
+mockSalesOrders.forEach((order) => {
+  order.firmId = inferFirmId(order)
+  if (!order.fulfilledItems) {
+    let remaining = Number(order.fulfilledQty ?? 0)
+    order.fulfilledItems = order.items.map((item) => {
+      const qty = Math.min(Number(item.qty ?? 0), remaining)
+      remaining -= qty
+      return { productId: item.productId, qty }
+    }).filter((item) => item.qty > 0)
+  }
+})
 
 function inActiveFirm(record) {
   const activeFirmId = getActiveFirmId()
@@ -99,25 +109,32 @@ export function getSalesOrderById(id) {
 }
 
 export function createSalesOrder(data) {
+  const items = data.items.map((item) => ({ ...item }))
+  const subtotal = items.reduce((sum, item) => sum + Number(item.qty ?? 0) * Number(item.price ?? 0), 0)
+  const taxTotal = items.reduce((sum, item) => sum + (Number(item.qty ?? 0) * Number(item.price ?? 0) * Number(item.taxPct ?? 18)) / 100, 0)
+  const advance = Math.max(0, Number(data.advance ?? 0))
   const order = {
     id: nextId('SO'),
     number: nextNumber('SO'),
     customerId: data.customerId,
     customerName: data.customerName,
-    orderDate: new Date().toISOString(),
+    orderDate: data.orderDate ?? data.date ?? new Date().toISOString(),
     expectedDelivery: data.expectedDelivery ?? '',
-    items: data.items,
+    items,
     discount: 0,
-    subtotal: data.items.reduce((sum, item) => sum + item.qty * item.price, 0),
-    taxTotal: 0,
+    subtotal,
+    taxTotal,
+    total: subtotal + taxTotal,
+    advance,
+    paymentMode: data.paymentMode ?? '',
+    saleType: data.orderType ?? 'Retail',
     status: 'Draft',
     fulfilledQty: 0,
+    fulfilledItems: [],
     firmId: getActiveFirmId() ?? data.firmId ?? DEFAULT_FIRM_ID,
   }
-  order.taxTotal = order.subtotal * 0.18
-  order.total = order.subtotal + order.taxTotal
   mockSalesOrders.push(order)
-  return { ...order }
+  return { ...order, items: order.items.map((item) => ({ ...item })) }
 }
 
 export function updateSalesOrder(id, updates) {
@@ -137,18 +154,30 @@ export function fulfillSalesOrder(id, qty) {
   const order = getSalesOrderById(id)
   if (!order) return null
 
-  // Update inventory when fulfilled
+  const requestedQty = Math.max(0, Number(qty ?? 0))
+  const fulfilledItems = Array.isArray(order.fulfilledItems) ? order.fulfilledItems.map((item) => ({ ...item })) : []
+  let remaining = requestedQty
+
+  // Consume the requested fulfillment across lines and decrement stock only by
+  // the new quantity. Repeated receipt/fulfillment actions are idempotent.
   for (const item of order.items) {
-    const product = getProducts().find((entry) => entry.id === item.productId)
-    if (product) {
-      updateProductQuantity(product.id, Math.max(0, (product.quantity ?? 0) - item.qty))
+    const previous = fulfilledItems.find((entry) => entry.productId === item.productId)?.qty ?? 0
+    const delta = Math.min(Math.max(0, Number(item.qty ?? 0) - previous), remaining)
+    if (delta > 0) {
+      const product = getProducts().find((entry) => entry.id === item.productId)
+      if (product) updateProductQuantity(product.id, Math.max(0, (product.quantity ?? 0) - delta))
+      const existing = fulfilledItems.find((entry) => entry.productId === item.productId)
+      if (existing) existing.qty += delta
+      else fulfilledItems.push({ productId: item.productId, qty: delta })
+      remaining -= delta
     }
   }
 
-  order.fulfilledQty = Math.min(order.items.reduce((sum, item) => sum + item.qty, 0), order.fulfilledQty + qty)
-  const totalQty = order.items.reduce((sum, item) => sum + item.qty, 0)
+  const totalQty = order.items.reduce((sum, item) => sum + Number(item.qty ?? 0), 0)
+  order.fulfilledItems = fulfilledItems
+  order.fulfilledQty = Math.min(totalQty, fulfilledItems.reduce((sum, item) => sum + Number(item.qty ?? 0), 0))
   order.status = order.fulfilledQty >= totalQty ? 'Completed' : 'Partially Fulfilled'
-  return { ...order }
+  return { ...order, items: order.items.map((item) => ({ ...item })), fulfilledItems: fulfilledItems.map((item) => ({ ...item })) }
 }
 
 export function cancelSalesOrder(id) {

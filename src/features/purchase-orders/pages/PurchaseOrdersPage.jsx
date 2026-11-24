@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
@@ -14,6 +15,7 @@ export default function PurchaseOrdersPage() {
   const toast = useToast()
   const navigate = useNavigate()
   const { currentUser } = useAuth()
+  const canCreateOrders = hasModulePermission(currentUser, 'Purchase Orders', 'create')
   const canApproveOrders = hasModulePermission(currentUser, 'Purchase Orders', 'approve')
   const canReceiveOrders = hasModulePermission(currentUser, 'Purchase Orders', 'edit')
   const canExportOrders = hasModulePermission(currentUser, 'Purchase Orders', 'export')
@@ -49,6 +51,7 @@ export default function PurchaseOrdersPage() {
             <p className="purchase-orders-header__description">Track vendor orders through approval and receipt.</p>
           </div>
           <div className="purchase-orders-header__actions">
+            {canCreateOrders && <Button size="sm" leadingIcon={<Plus size={14} />} onClick={() => navigate('new')}>Create Purchase Order</Button>}
             <Button variant="secondary" onClick={() => downloadCsvOrders(orders)} disabled={!canExportOrders}>Export CSV</Button>
           </div>
         </div>

@@ -53,23 +53,27 @@ export function getPurchaseOrderById(id) {
 }
 
 export function createPurchaseOrder(data) {
+  const items = data.items.map((item) => ({ ...item }))
+  const subtotal = items.reduce((sum, item) => sum + Number(item.qty ?? 0) * Number(item.price ?? 0), 0)
+  const taxTotal = Math.round((items.reduce((sum, item) => sum + (Number(item.qty ?? 0) * Number(item.price ?? 0) * Number(item.taxPct ?? 18)) / 100, 0) + Number.EPSILON) * 100) / 100
   const order = {
     id: nextId('POO'),
     number: nextNumber('PO'),
     vendorName: data.vendorName,
-    orderDate: new Date().toISOString(),
+    orderDate: data.orderDate ?? new Date().toISOString(),
     expectedDelivery: data.expectedDelivery ?? '',
-    items: data.items,
+    items,
     discount: 0,
-    subtotal: data.items.reduce((sum, item) => sum + item.qty * item.price, 0),
+    subtotal,
+    taxTotal,
+    total: subtotal + taxTotal,
     status: 'Draft',
     receivedQty: 0,
+    receivedItems: [],
     firmId: getActiveFirmId() ?? data.firmId ?? DEFAULT_FIRM_ID,
   }
-  order.taxTotal = Math.round((order.subtotal * 0.18 + Number.EPSILON) * 100) / 100
-  order.total = order.subtotal + order.taxTotal
   mockPurchaseOrders.push(order)
-  return { ...order }
+  return { ...order, items: order.items.map((item) => ({ ...item })) }
 }
 
 export function updatePurchaseOrder(id, updates) {
@@ -86,18 +90,31 @@ export function confirmPurchaseOrder(id) {
 }
 
 export function orderStock(id, items) {
-  // Goods received: update inventory + record receipt on the order.
+  // Goods received: only the newly received quantity changes inventory. The
+  // previous implementation added the entire order on every receipt click.
   const order = getPurchaseOrderById(id)
   if (!order) return null
+  const receivedItems = Array.isArray(order.receivedItems) ? order.receivedItems : []
+  const nextReceivedItems = receivedItems.map((item) => ({ ...item }))
+
   for (const item of items) {
-    const product = getProducts().find((entry) => entry.id === item.productId)
-    if (product) {
-      updateProductQuantity(product.id, (product.quantity ?? 0) + item.qty)
+    const previous = nextReceivedItems.find((entry) => entry.productId === item.productId)?.qty ?? 0
+    const requested = Math.max(0, Number(item.qty ?? 0))
+    const delta = Math.max(0, requested - previous)
+    if (delta > 0) {
+      const product = getProducts().find((entry) => entry.id === item.productId)
+      if (product) updateProductQuantity(product.id, (product.quantity ?? 0) + delta)
     }
+    const existing = nextReceivedItems.find((entry) => entry.productId === item.productId)
+    if (existing) existing.qty = Math.max(existing.qty, requested)
+    else nextReceivedItems.push({ productId: item.productId, qty: requested })
   }
-  order.receivedQty = items.reduce((sum, item) => sum + item.qty, 0)
-  order.status = 'Received'
-  return { ...order }
+
+  const totalOrdered = order.items.reduce((sum, item) => sum + Number(item.qty ?? 0), 0)
+  order.receivedItems = nextReceivedItems
+  order.receivedQty = Math.min(totalOrdered, nextReceivedItems.reduce((sum, item) => sum + Number(item.qty ?? 0), 0))
+  order.status = order.receivedQty >= totalOrdered ? 'Received' : 'Partially Received'
+  return { ...order, items: order.items.map((item) => ({ ...item })), receivedItems: nextReceivedItems.map((item) => ({ ...item })) }
 }
 
 export function cancelPurchaseOrder(id) {

@@ -3,7 +3,7 @@ import { useParams } from 'react-router-dom'
 import { useAuth } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
 import { ArrowLeft, Edit, Power } from 'lucide-react'
-import { Badge, Button, Card, CardBody, Modal, useToast } from '../../../components/ui'
+import { Badge, Button, Card, CardBody, useToast } from '../../../components/ui'
 import { getCategoriesWithProductCounts } from '../../categories/services/categoryService'
 import { getFirmLabel } from '../../users/utils/userUtils'
 import { formatPrice, formatDate } from '../utils/productUtils'
@@ -55,9 +55,13 @@ export default function ProductDetailsPage() {
   const handleSaveProduct = (productData) => {
     if (product?.id && canEditProduct) {
       const updated = saveProduct(product.id, productData)
-      if (updated) toast.success('Product updated')
+      if (updated) {
+        toast.success('Product updated')
+        setIsEditing(false)
+      }
+      return updated
     }
-    setIsEditing(false)
+    return null
   }
 
   const handleToggleStatus = () => {
@@ -191,12 +195,7 @@ export default function ProductDetailsPage() {
         </Card>
       )}
 
-      <Modal
-        open={isEditing}
-        onClose={() => setIsEditing(false)}
-        title={`Edit ${product.name}`}
-        description="Update product details and pricing."
-      >
+      {isEditing && (
         <ProductForm
           mode="edit"
           product={product}
@@ -204,7 +203,7 @@ export default function ProductDetailsPage() {
           onClose={() => setIsEditing(false)}
           onSubmit={handleSaveProduct}
         />
-      </Modal>
+      )}
     </div>
   )
 }

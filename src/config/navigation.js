@@ -1,187 +1,75 @@
 import {
-  ArrowDownLeft,
-  ArrowLeftRight,
-  ArrowUpRight,
-  BadgeDollarSign,
   BarChart3,
-  Bell,
-  Boxes,
   Building2,
   ClipboardList,
   FileSpreadsheet,
   FileText,
-  Landmark,
-  LayoutDashboard,
   Package,
-  Scale,
-  Search,
-  Settings,
+  ReceiptIndianRupee,
   ShieldCheck,
   ShoppingBag,
   ShoppingCart,
   Tags,
-  TrendingUp,
-  Truck,
   UserRound,
-  Wallet,
 } from 'lucide-react'
 
+// This is the navigation visible in the recorded Vinayak Group website. The
+// deeper modules remain routable for existing permission tests, but are not
+// advertised as first-class navigation until the remaining recordings arrive.
 export const NAV_SECTIONS = [
   {
     id: 'overview',
     label: 'Overview',
     items: [
-      {
-        id: 'dashboard',
-        label: 'Dashboard',
-        to: '/dashboard',
-        icon: LayoutDashboard,
-      },
+      { id: 'home', label: 'Home', to: '/dashboard', icon: Building2 },
+      { id: 'dashboard', label: 'Dashboard', to: '/dashboard', icon: Building2 },
+      { id: 'firms', label: 'Firms', to: '/firms', icon: Building2 },
     ],
   },
   {
-    id: 'master-data',
-    label: 'Master Data',
+    id: 'users',
+    label: 'Users',
+    items: [{ id: 'users-permissions', label: 'Users', to: '/users', icon: ShieldCheck }],
+  },
+  {
+    id: 'products',
+    label: 'Products',
     items: [
-      { id: 'firms', label: 'My Firm', to: '/firms', icon: Building2 },
-      {
-        id: 'users-permissions',
-        label: 'Users & Permissions',
-        to: '/users',
-        icon: ShieldCheck,
-      },
       { id: 'products', label: 'Products', to: '/products', icon: Package },
+      { id: 'price-list', label: 'Price List', to: '/price-lists', icon: ReceiptIndianRupee },
       { id: 'categories', label: 'Categories', to: '/categories', icon: Tags },
-      {
-        id: 'price-list',
-        label: 'Price List',
-        to: '/price-lists',
-        icon: BadgeDollarSign,
-      },
-      {
-        id: 'customers',
-        label: 'Customers',
-        to: '/customers',
-        icon: UserRound,
-      },
-      { id: 'suppliers', label: 'Suppliers', to: '/suppliers', icon: Truck },
     ],
   },
   {
-    id: 'operations',
-    label: 'Operations',
+    id: 'sales-management',
+    label: 'Sales Management',
     items: [
       { id: 'sales', label: 'Sales', to: '/sales', icon: ShoppingCart },
-      {
-        id: 'sales-orders',
-        label: 'Sales Orders',
-        to: '/sales-orders',
-        icon: ClipboardList,
-      },
-      {
-        id: 'purchases',
-        label: 'Purchases',
-        to: '/purchases',
-        icon: ShoppingBag,
-      },
-      {
-        id: 'purchase-orders',
-        label: 'Purchase Orders',
-        to: '/purchase-orders',
-        icon: FileText,
-      },
-      {
-        id: 'quotations',
-        label: 'Quotations',
-        to: '/quotations',
-        icon: FileSpreadsheet,
-      },
-      {
-        id: 'inventory',
-        label: 'Inventory',
-        icon: Boxes,
-        children: [
-          {
-            id: 'stock-in',
-            label: 'Stock In',
-            to: '/inventory/stock-in',
-          },
-          {
-            id: 'stock-out',
-            label: 'Stock Out',
-            to: '/inventory/stock-out',
-          },
-          {
-            id: 'stock-adjustment',
-            label: 'Stock Adjustment',
-            to: '/inventory/stock-adjustment',
-          },
-          {
-            id: 'stock-transfer',
-            label: 'Stock Transfer',
-            to: '/inventory/stock-transfer',
-          },
-        ],
-      },
+      { id: 'sales-orders', label: 'Sales Orders', to: '/sales-orders', icon: ClipboardList },
     ],
   },
   {
-    id: 'finance',
-    label: 'Finance',
+    id: 'purchase-management',
+    label: 'Purchase Management',
     items: [
-      {
-        id: 'transactions',
-        label: 'Transactions',
-        to: '/transactions',
-        icon: ArrowLeftRight,
-      },
-      { id: 'balance', label: 'Balance', to: '/balance', icon: Scale },
-      { id: 'expenses', label: 'Expenses', to: '/expenses', icon: Wallet },
-      {
-        id: 'payment-in',
-        label: 'Payment In',
-        to: '/payments-in',
-        icon: ArrowDownLeft,
-      },
-      {
-        id: 'payment-out',
-        label: 'Payment Out',
-        to: '/payments-out',
-        icon: ArrowUpRight,
-      },
-      {
-        id: 'fund-transfers',
-        label: 'Fund Transfers',
-        to: '/fund-transfers',
-        icon: Landmark,
-      },
-      {
-        id: 'profit-loss',
-        label: 'Profit & Loss',
-        to: '/profit-loss',
-        icon: TrendingUp,
-      },
+      { id: 'purchases', label: 'Purchases', to: '/purchases', icon: ShoppingBag },
+      { id: 'purchase-orders', label: 'Purchase Orders', to: '/purchase-orders', icon: FileText },
     ],
   },
   {
-    id: 'analytics',
-    label: 'Analytics',
-    items: [
-      { id: 'reports', label: 'Reports', to: '/reports', icon: BarChart3 },
-    ],
+    id: 'quotations',
+    label: 'Quotations',
+    items: [{ id: 'quotations', label: 'Quotations', to: '/quotations', icon: FileSpreadsheet }],
   },
   {
-    id: 'system',
-    label: 'System',
-    items: [
-      {
-        id: 'notifications',
-        label: 'Notifications',
-        to: '/notifications',
-        icon: Bell,
-      },
-      { id: 'settings', label: 'Settings', to: '/settings', icon: Settings },
-    ],
+    id: 'transactions',
+    label: 'Transaction',
+    items: [{ id: 'transactions', label: 'Transactions', to: '/transactions', icon: ReceiptIndianRupee }],
+  },
+  {
+    id: 'reports',
+    label: 'Reports',
+    items: [{ id: 'reports', label: 'Reports', to: '/reports', icon: BarChart3 }],
   },
 ]
 
@@ -193,23 +81,6 @@ export const UTILITY_ROUTES = [
     to: '/profile',
     section: 'Account',
     icon: UserRound,
-  },
-  {
-    id: 'account-settings',
-    label: 'Account Settings',
-    title: 'Account Settings',
-    to: '/settings/account',
-    section: 'System',
-    parent: 'Settings',
-    icon: Settings,
-  },
-  {
-    id: 'search',
-    label: 'Search',
-    title: 'Search',
-    to: '/search',
-    section: 'Workspace',
-    icon: Search,
   },
 ]
 
@@ -226,13 +97,7 @@ export const NAV_ROUTES = NAV_SECTIONS.flatMap((section) =>
       }))
     }
 
-    return [
-      {
-        ...item,
-        section: section.label,
-        sectionId: section.id,
-      },
-    ]
+    return [{ ...item, section: section.label, sectionId: section.id }]
   }),
 )
 
@@ -246,7 +111,6 @@ export function getWorkspaceRoutePath(firmId, path) {
 
 function normalizePath(pathname) {
   if (!pathname) return '/'
-
   const normalized = pathname.replace(/\/+$/, '')
   return normalized || '/'
 }
@@ -258,26 +122,14 @@ export function getRouteMeta(pathname) {
 
   const profileMatch = path.match(/^\/firms\/[^/]+\/profile$/)
   if (profileMatch) {
-    return {
-      id: 'firm-profile',
-      label: 'My Firm',
-      title: 'My Firm',
-      section: 'Master Data',
-      to: path,
-    }
+    return { id: 'firm-profile', label: 'My Firm', title: 'My Firm', section: 'Master Data', to: path }
   }
 
   const workspaceMatch = path.match(/^\/firms\/[^/]+\/workspace(?:\/(.*))?$/)
   if (workspaceMatch) {
     const childPath = workspaceMatch[1] ? `/${workspaceMatch[1]}` : '/dashboard'
     const route = ALL_ROUTES.find((entry) => entry.to === childPath)
-    return route ?? {
-      id: 'workspace',
-      label: 'Workspace',
-      title: 'Workspace',
-      section: 'Workspace',
-      to: path,
-    }
+    return route ?? { id: 'workspace', label: 'Workspace', title: 'Workspace', section: 'Workspace', to: path }
   }
 
   return null
@@ -285,25 +137,14 @@ export function getRouteMeta(pathname) {
 
 export function getBreadcrumbs(pathname) {
   const meta = getRouteMeta(pathname)
-
-  if (!meta) {
-    return [
-      { label: 'Home', to: '/home', kind: 'home' },
-      { label: 'Page not found', current: true, kind: 'current' },
-    ]
-  }
+  if (!meta) return [
+    { label: 'Home', to: '/home', kind: 'home' },
+    { label: 'Page not found', current: true, kind: 'current' },
+  ]
 
   const crumbs = [{ label: 'Home', to: '/home', kind: 'home' }]
-
-  if (meta.section) {
-    crumbs.push({ label: meta.section, kind: 'section' })
-  }
-
-  if (meta.parent) {
-    crumbs.push({ label: meta.parent, kind: 'parent' })
-  }
-
+  if (meta.section) crumbs.push({ label: meta.section, kind: 'section' })
+  if (meta.parent) crumbs.push({ label: meta.parent, kind: 'parent' })
   crumbs.push({ label: meta.title ?? meta.label, current: true, kind: 'current' })
-
   return crumbs
 }

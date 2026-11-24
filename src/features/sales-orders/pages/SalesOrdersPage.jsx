@@ -1,58 +1,37 @@
-import { useState } from 'react'
+import { Plus, RefreshCw } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { useAuth } from '../../../context/hooks'
+import { Button } from '../../../components/ui'
+import { useAuth, useFirmContext } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
-import { Button, useToast } from '../../../components/ui'
-import { downloadCsv } from '../../../utils/csv'
-import { getSalesOrders, confirmSalesOrder, cancelSalesOrder } from '../services/salesOrderService'
+import { getSalesOrders } from '../services/salesOrderService'
 import SalesOrderTable, { salesOrderCsvRows, SALES_ORDER_CSV_COLUMNS } from '../components/SalesOrderTable'
+import { downloadCsv } from '../../../utils/csv'
 import '../styles/salesOrders.css'
 
+const EMPTY_FILTERS = { search: '', paymentMode: 'all', saleType: 'all', buyerType: 'all', fromDate: '', toDate: '' }
+
 export default function SalesOrdersPage() {
-  const toast = useToast()
   const navigate = useNavigate()
   const { currentUser } = useAuth()
-  const canConfirmOrders = hasModulePermission(currentUser, 'Sales Orders', 'approve')
-  const canEditOrders = hasModulePermission(currentUser, 'Sales Orders', 'edit')
-  const canExportOrders = hasModulePermission(currentUser, 'Sales Orders', 'export')
-  const [filters, setFilters] = useState({ search: '', customerId: 'all', status: 'all' })
-
-  const orders = getSalesOrders(filters)
-
-  const kpis = {
-    totalOrders: orders.length,
-    pending: orders.filter((order) => order.status === 'Pending').length,
-    total: orders.reduce((sum, order) => sum + order.total, 0),
-    fulfilled: orders.filter((order) => order.status === 'Completed').length,
-  }
+  const { currentFirmId } = useFirmContext()
+  const canCreate = hasModulePermission(currentUser, 'Sales Orders', 'create')
+  const canExport = hasModulePermission(currentUser, 'Sales Orders', 'export')
+  const [filters, setFilters] = useState(EMPTY_FILTERS)
+  const orders = useMemo(() => getSalesOrders({ search: filters.search }), [filters.search])
 
   const exportCsv = () => {
-    downloadCsv({
-      filename: 'vinayak-sales-orders.csv',
-      columns: SALES_ORDER_CSV_COLUMNS,
-      rows: salesOrderCsvRows(orders),
-    })
+    if (!canExport) return
+    downloadCsv({ filename: 'vinayak-sales-orders.csv', columns: SALES_ORDER_CSV_COLUMNS, rows: salesOrderCsvRows(orders) })
   }
 
   return (
     <div className="sales-orders-page">
-      <header className="sales-orders-header">
-        <div className="sales-orders-header__top">
-          <div className="sales-orders-header__text">
-            <p className="sales-orders-header__eyebrow"><span aria-hidden="true">#</span> Sales Orders</p>
-            <h1 className="sales-orders-header__title">Sales Orders</h1>
-            <p className="sales-orders-header__description">
-              Track orders from Draft through to Completed fulfillment.
-            </p>
-          </div>
-          <div className="sales-orders-header__actions">
-            <Button variant="secondary" onClick={exportCsv}>Export CSV</Button>
-          </div>
-        </div>
-        <div className="sales-orders-kpi-grid">
-          <KpiCard label="Total Orders" value={kpis.totalOrders} />
-          <KpiCard label="Pending Orders" value={kpis.pending} />
-          <KpiCard label="Completed Orders" value={kpis.fulfilled} />
+      <header className="recorded-page-header">
+        <h1>Sales Orders</h1>
+        <div className="recorded-page-header__actions">
+          {canCreate && <Button size="sm" leadingIcon={<Plus size={14} />} onClick={() => navigate(`${currentFirmId ? `/firms/${currentFirmId}/workspace` : ''}/sales-orders/new`)} aria-label="Create sales order">Create</Button>}
+          <button type="button" className="recorded-icon-button" onClick={() => setFilters((current) => ({ ...current }))} title="Refresh sales orders" aria-label="Refresh sales orders"><RefreshCw size={14} /></button>
         </div>
       </header>
 
@@ -60,32 +39,10 @@ export default function SalesOrdersPage() {
         orders={orders}
         filters={filters}
         onFiltersChange={setFilters}
-        onClearFilters={() => setFilters({ search: '', customerId: 'all', status: 'all' })}
-        onRowView={(id) => navigate(`/sales-orders/${id}`)}
-        onRowConfirm={(id) => {
-          if (!canConfirmOrders) return
-          confirmSalesOrder(id)
-          toast.success('Order confirmed')
-        }}
-        onRowCancel={(id) => {
-          if (!canEditOrders) return
-          cancelSalesOrder(id)
-          toast.success('Order cancelled')
-        }}
+        onRowView={(id) => navigate(`${currentFirmId ? `/firms/${currentFirmId}/workspace` : ''}/sales-orders/${id}`)}
         onDownloadCsv={exportCsv}
-        canConfirm={canConfirmOrders}
-        canCancel={canEditOrders}
-        canExport={canExportOrders}
+        canExport={canExport}
       />
-    </div>
-  )
-}
-
-function KpiCard({ label, value }) {
-  return (
-    <div className="sales-orders-kpi-card">
-      <div className="sales-orders-kpi-card__label">{label}</div>
-      <div className="sales-orders-kpi-card__value">{value}</div>
     </div>
   )
 }

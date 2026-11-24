@@ -35,14 +35,19 @@ function FirmCard({ firm, onOpen }) {
       <h2 className="firm-card__name">{firm.name}</h2>
       <dl className="firm-card__details">
         <div>
+          <dt>Associated</dt>
+          <dd>{firm.contactPerson || '—'}</dd>
+        </div>
+        <div>
           <dt>Business Type</dt>
           <dd>{firm.businessType || firm.entity || '—'}</dd>
         </div>
         <div>
           <dt>City</dt>
-          <dd><MapPin size={13} aria-hidden="true" />{firm.city || firm.location || '—'}</dd>
+          <dd><MapPin size={11} aria-hidden="true" />{firm.city || firm.location || '—'}</dd>
         </div>
       </dl>
+      <span className="firm-card__more">...view more (6)</span>
       <span className="firm-card__open">Open workspace <span aria-hidden="true">→</span></span>
     </article>
   )

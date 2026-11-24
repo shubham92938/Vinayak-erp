@@ -56,8 +56,10 @@ export function getPurchaseById(id) {
 
 export function createPurchase(data) {
   const { items, discount = 0 } = data
-  const subtotal = items.reduce((sum, item) => sum + item.qty * item.price, 0)
-  const taxTotal = Math.round((subtotal * 0.18 + Number.EPSILON) * 100) / 100
+  const subtotal = items.reduce((sum, item) => sum + Number(item.qty ?? 0) * Number(item.price ?? 0), 0)
+  const taxTotal = Math.round((items.reduce((sum, item) => sum + (Number(item.qty ?? 0) * Number(item.price ?? 0) * Number(item.taxPct ?? 18)) / 100, 0) + Number.EPSILON) * 100) / 100
+  const advance = Math.max(0, Number(data.advance ?? 0))
+  const total = Math.round((subtotal - Number(discount) + taxTotal + Number.EPSILON) * 100) / 100
   const purchase = {
     id: nextId('PO'),
     number: nextNumber('PO'),
@@ -65,21 +67,21 @@ export function createPurchase(data) {
     vendorInvoiceNumber: data.vendorInvoiceNumber ?? '',
     vendorContact: data.vendorContact ?? '',
     purchaseDate: data.purchaseDate ?? new Date().toISOString(),
-    items,
+    items: items.map((item) => ({ ...item })),
     discount,
     subtotal,
     taxTotal,
-    total: Math.round((subtotal + taxTotal + Number.EPSILON) * 100) / 100,
-    advance: data.advance ?? 0,
-    paid: 0,
-    due: 0,
-    status: 'Draft',
+    total,
+    advance,
+    paid: advance,
+    due: Math.max(0, total - advance),
+    status: advance >= total ? 'Paid' : advance > 0 ? 'Partially Paid' : 'Draft',
+    paymentMode: data.paymentMode ?? '',
     notes: data.notes ?? '',
     firmId: getActiveFirmId() ?? data.firmId ?? DEFAULT_FIRM_ID,
   }
-  purchase.due = purchase.total
   mockPurchases.push(purchase)
-  return { ...purchase }
+  return clonePurchase(purchase)
 }
 
 export function updatePurchase(id, updates) {

@@ -98,7 +98,12 @@ export function createSale(saleData) {
     if (item.qty <= 0) throw new Error(`Quantity must be greater than 0: ${product.name}`)
   }
 
-  const { subtotal, taxTotal, total } = computeTotals(items, discount, taxPct)
+  const hasLineTaxes = items.some((item) => item.taxPct !== undefined && item.taxPct !== null)
+  const subtotal = items.reduce((sum, item) => sum + Number(item.qty ?? 0) * Number(item.price ?? 0), 0)
+  const taxTotal = hasLineTaxes
+    ? items.reduce((sum, item) => sum + (Number(item.qty ?? 0) * Number(item.price ?? 0) * Number(item.taxPct ?? 0)) / 100, 0)
+    : (calcTotal(subtotal, discount, taxPct) - subtotal + Number(discount ?? 0))
+  const total = subtotal - Number(discount ?? 0) + taxTotal
   const advance = saleData.advance ?? 0
   const due = Math.max(0, total - advance)
   const sale = {
