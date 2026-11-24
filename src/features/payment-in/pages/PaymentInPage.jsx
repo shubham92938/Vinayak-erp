@@ -1,11 +1,13 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { Button, Card, CardBody, Select, useToast } from '../../../components/ui'
 import { FormActions, FormField, FormGrid, FormInput, FormSection } from '../../../components/forms'
 import { DataTable } from '../../../components/data-table'
-import { mockPaymentsIn, formatMoney, formatDate, recordPaymentInFinance, mockAccounts } from '../../../core/financeStore'
+import { getPaymentsIn, formatMoney, formatDate, recordPaymentInFinance } from '../../../core/financeStore'
 import { getSales } from '../../../core/salesStore'
-import { getCustomers } from '../../../core/store'
+import { getAccounts, getCustomers } from '../../../core/store'
 import '../styles/paymentIn.css'
 
 const MODES = [
@@ -17,17 +19,19 @@ const MODES = [
 export default function PaymentInPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canRecordPayment = hasModulePermission(currentUser, 'Payment In', 'create')
 
   return (
     <div className="payment-in-page">
       <PaymentInList navigate={navigate} />
-      <PaymentInForm toast={toast} navigate={navigate} />
+      <PaymentInForm toast={toast} canRecordPayment={canRecordPayment} />
     </div>
   )
 }
 
 function PaymentInList({ navigate }) {
-  const payments = mockPaymentsIn
+  const payments = getPaymentsIn()
 
   const columns = [
     { id: 'date', header: 'Date', accessor: 'date', width: '110px', cell: (row) => <span className="payment-in-date">{formatDate(row.date)}</span> },
@@ -75,8 +79,8 @@ function PaymentInList({ navigate }) {
   )
 }
 
-function PaymentInForm({ toast, navigate }) {
-  const [form, setForm] = useState({ customerId: '', invoiceId: '', date: new Date().toISOString().slice(0, 16), amount: 0, mode: 'Cash', accountId: mockAccounts[0].id, notes: '' })
+function PaymentInForm({ toast, canRecordPayment }) {
+  const [form, setForm] = useState({ customerId: '', invoiceId: '', date: new Date().toISOString().slice(0, 16), amount: 0, mode: 'Cash', accountId: getAccounts()[0]?.id ?? '', notes: '' })
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
@@ -94,6 +98,7 @@ function PaymentInForm({ toast, navigate }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    if (!canRecordPayment) return
     setIsSubmitting(true)
 
     if (!validate()) {
@@ -162,14 +167,14 @@ function PaymentInForm({ toast, navigate }) {
                 <Select value={form.mode} onChange={(event) => setForm((current) => ({ ...current, mode: event.target.value }))} options={MODES} />
               </FormField>
               <FormField label="Account" required>
-                <Select value={form.accountId} onChange={(event) => setForm((current) => ({ ...current, accountId: event.target.value }))} options={mockAccounts.map((account) => ({ value: account.id, label: account.name }))} />
+                <Select value={form.accountId} onChange={(event) => setForm((current) => ({ ...current, accountId: event.target.value }))} options={getAccounts().map((account) => ({ value: account.id, label: account.name }))} />
               </FormField>
             </FormGrid>
             <FormField label="Notes" optional>
               <FormInput value={form.notes} onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))} placeholder="Cash deposit, NEFT reference..." />
             </FormField>
             <FormActions>
-              <Button type="submit" variant="primary" disabled={isSubmitting}>Record Payment</Button>
+              <Button type="submit" variant="primary" disabled={isSubmitting || !canRecordPayment}>Record Payment</Button>
             </FormActions>
           </FormSection>
         </form>

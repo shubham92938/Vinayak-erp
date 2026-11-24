@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { CheckCircle2, CircleAlert, ShieldCheck } from 'lucide-react'
 import { Button, ConfirmDialog, Modal, useToast } from '../../../components/ui'
 import { downloadCsv } from '../../../utils/csv'
@@ -26,6 +28,11 @@ function KpiCard({ label, value, icon: Icon }) {
 export default function CategoriesPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canCreateCategories = hasModulePermission(currentUser, 'Categories', 'create')
+  const canEditCategories = hasModulePermission(currentUser, 'Categories', 'edit')
+  const canDeleteCategories = hasModulePermission(currentUser, 'Categories', 'delete')
+  const canExportCategories = hasModulePermission(currentUser, 'Categories', 'export')
   const { categories, filters, setFilters, saveCategory, createCategory, deleteCategory, toggleCategoryStatus } = useCategories()
 
   const [formState, setFormState] = useState(null)
@@ -54,6 +61,7 @@ export default function CategoriesPage() {
   }
 
   const handleDelete = (categoryId) => {
+    if (!canDeleteCategories) return { deleted: false }
     const result = deleteCategory(categoryId)
     if (result.deleted) {
       toast.success('Category deleted')
@@ -62,22 +70,21 @@ export default function CategoriesPage() {
   }
 
   const handleSaveCategory = (categoryData) => {
-    if (formState?.mode === 'add') {
-      createCategory(categoryData)
-      toast.success('Category created')
-    } else if (categoryData.id) {
-      saveCategory(categoryData.id, categoryData)
-      toast.success('Category updated')
-    } else {
-      createCategory(categoryData)
-      toast.success('Category created')
+    if (formState?.mode === 'add' || !categoryData.id) {
+      if (!canCreateCategories) return
+      const created = createCategory(categoryData)
+      if (created) toast.success('Category created')
+    } else if (canEditCategories) {
+      const updated = saveCategory(categoryData.id, categoryData)
+      if (updated) toast.success('Category updated')
     }
     setFormState(null)
   }
 
   const handleToggleStatus = (categoryId) => {
-    toggleCategoryStatus(categoryId)
-    toast.success('Category status updated')
+    if (!canEditCategories) return
+    const updated = toggleCategoryStatus(categoryId)
+    if (updated) toast.success('Category status updated')
   }
 
   return (
@@ -92,8 +99,8 @@ export default function CategoriesPage() {
             </p>
           </div>
           <div className="categories-header__actions">
-            <Button variant="secondary" onClick={exportCsv}>Export CSV</Button>
-            <Button size="sm" onClick={() => setFormState({ mode: 'add' })}>Add Category</Button>
+            <Button variant="secondary" onClick={exportCsv} disabled={!canExportCategories}>Export CSV</Button>
+            {canCreateCategories && <Button size="sm" onClick={() => setFormState({ mode: 'add' })}>Add Category</Button>}
           </div>
         </div>
 
@@ -113,8 +120,11 @@ export default function CategoriesPage() {
         onRowEdit={(id) => setFormState({ mode: 'edit', id })}
         onRowActivate={(id) => handleToggleStatus(id)}
         onRowDeactivate={(id) => handleToggleStatus(id)}
-        onRowDelete={(id) => setConfirmState({ category: categories.find((c) => c.id === id) })}
+        onRowDelete={(id) => canDeleteCategories && setConfirmState({ category: categories.find((c) => c.id === id) })}
         downloadCategories={exportCsv}
+        canEdit={canEditCategories}
+        canDelete={canDeleteCategories}
+        canExport={canExportCategories}
       />
 
       {formState && (

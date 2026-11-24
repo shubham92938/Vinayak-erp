@@ -1,5 +1,6 @@
+import { getActiveFirmId } from '../../../core/firmContextStore'
 import { CATEGORY_DEMO_DATA } from '../data/categoryDemoData'
-import { getProducts } from '../../products/services/productService'
+import { getAllProducts, getProducts } from '../../products/services/productService'
 import { getFirmLabel } from '../../users/utils/userUtils'
 
 export const CATEGORY_STATUSES = [
@@ -33,15 +34,23 @@ export function filterCategories(categories, filters = {}) {
 
 let categories = CATEGORY_DEMO_DATA.map((category) => ({ ...category }))
 
-export const getCategories = () => categories.map((category) => ({ ...category }))
+export const getAllCategories = () => categories.map((category) => ({ ...category }))
+
+export const getCategories = () => {
+  const activeFirmId = getActiveFirmId()
+  return getAllCategories().filter((category) => !activeFirmId || category.firmId === activeFirmId)
+}
 
 export const getCategoryById = (categoryId) => {
-  const category = categories.find((entry) => entry.id === categoryId)
+  const activeFirmId = getActiveFirmId()
+  const category = categories.find((entry) =>
+    entry.id === categoryId && (!activeFirmId || entry.firmId === activeFirmId),
+  )
   return category ? { ...category } : null
 }
 
-export const getCategoriesWithProductCounts = () => {
-  const products = getProducts()
+export const getAllCategoriesWithProductCounts = () => {
+  const products = getAllProducts()
 
   return categories.map((category) => {
     const productCount = products.filter(
@@ -49,6 +58,20 @@ export const getCategoriesWithProductCounts = () => {
     ).length
     return { ...category, productCount }
   })
+}
+
+export const getCategoriesWithProductCounts = () => {
+  const products = getProducts()
+  const activeFirmId = getActiveFirmId()
+
+  return categories
+    .filter((category) => !activeFirmId || category.firmId === activeFirmId)
+    .map((category) => {
+      const productCount = products.filter(
+        (product) => product.categoryId === category.id,
+      ).length
+      return { ...category, productCount }
+    })
 }
 
 function categoryCodeExists(categoryId, firmId, code, excludeId = undefined) {
@@ -123,7 +146,11 @@ export function updateCategory(categoryId, categoryData) {
   const index = categories.findIndex((entry) => entry.id === categoryId)
   if (index === -1) return null
 
-  const updated = { ...categories[index], ...categoryData }
+  const updated = {
+    ...categories[index],
+    ...categoryData,
+    firmId: categories[index].firmId,
+  }
   categories[index] = updated
   return { ...updated }
 }

@@ -1,8 +1,10 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
-import { Badge, Button, Card, CardBody, Modal } from '../../../components/ui'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
+import { Badge, Button, Card, CardBody } from '../../../components/ui'
 import { getQuotationById, getQuotationTotals, formatMoney, formatDate } from '../services/quotationService'
-import { convertQuotationToSaleOrder, markQuotationAccepted, updateQuotation } from '../../../core/financeStore'
+import { convertQuotationToSaleOrder, markQuotationAccepted } from '../../../core/financeStore'
 import { getProducts } from '../../products/services/productService'
 import '../styles/quotations.css'
 
@@ -11,8 +13,10 @@ const TABS = ['Overview', 'Items']
 export default function QuotationDetailsPage() {
   const navigate = useNavigate()
   const { quotationId } = useParams()
+  const { currentUser } = useAuth()
+  const canEditQuotation = hasModulePermission(currentUser, 'Quotations', 'edit')
+  const canConvert = hasModulePermission(currentUser, 'Sales Orders', 'create')
   const [tab, setTab] = useState('Overview')
-  const [isEditOpen, setIsEditOpen] = useState(false)
 
   const quote = getQuotationById(quotationId)
   if (!quote) {
@@ -27,6 +31,7 @@ export default function QuotationDetailsPage() {
   const totals = getQuotationTotals(quote)
 
   const handleConvert = () => {
+    if (!canConvert) return
     const order = convertQuotationToSaleOrder(quote.id)
     navigate(`/sales-orders/${order.id}`)
   }
@@ -49,8 +54,8 @@ export default function QuotationDetailsPage() {
           <div className="quotations-details-actions">
             <Button variant="secondary" onClick={() => navigate('/quotations')}>Back to Quotations</Button>
             <Button variant="secondary" onClick={handlePrint}>Print</Button>
-            <Button variant="secondary" onClick={() => markQuotationAccepted(quote.id)} disabled={quote.status !== 'Sent'}>Mark Accepted</Button>
-            <Button onClick={handleConvert} disabled={quote.status !== 'Accepted'}>Convert to Sales Order</Button>
+            <Button variant="secondary" onClick={() => canEditQuotation && markQuotationAccepted(quote.id)} disabled={quote.status !== 'Sent' || !canEditQuotation}>Mark Accepted</Button>
+            <Button onClick={handleConvert} disabled={quote.status !== 'Accepted' || !canConvert}>Convert to Sales Order</Button>
           </div>
         </div>
         <div className="quotations-tabs">

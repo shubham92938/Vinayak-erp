@@ -12,9 +12,10 @@ export default function DashboardFilters({
   minDate,
   maxDate,
   canReset,
+  canViewAllFirms = false,
 }) {
   const firmOptions = [
-    { value: 'all', label: 'All firms' },
+    ...(canViewAllFirms ? [{ value: 'all', label: 'All firms' }] : []),
     ...firms.map((firm) => ({
       value: firm.id,
       label: `${firm.name} · ${firm.location}`,

@@ -1,10 +1,11 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { Button, Card, CardBody } from '../../../components/ui'
 import { getSalesOrderById, fulfillSalesOrder, cancelSalesOrder, confirmSalesOrder } from '../services/salesOrderService'
 import { formatMoney, formatDate, getSaleOrderTotals } from '../components/salesOrderUtils'
 import { getProducts } from '../../products/services/productService'
-import { getCustomers } from '../../../core/store'
 import '../styles/salesOrders.css'
 
 const TABS = ['Overview', 'Fulfillment']
@@ -12,6 +13,9 @@ const TABS = ['Overview', 'Fulfillment']
 export default function SalesOrderDetailsPage() {
   const navigate = useNavigate()
   const { orderId } = useParams()
+  const { currentUser } = useAuth()
+  const canApprove = hasModulePermission(currentUser, 'Sales Orders', 'approve')
+  const canEdit = hasModulePermission(currentUser, 'Sales Orders', 'edit')
   const [tab, setTab] = useState('Overview')
   const [fulfillQty, setFulfillQty] = useState('')
   const [fulfilledDetails, setFulfilledDetails] = useState(false)
@@ -29,6 +33,7 @@ export default function SalesOrderDetailsPage() {
   const totals = getSaleOrderTotals(order)
 
   const handleFulfill = () => {
+    if (!canEdit) return
     fulfillSalesOrder(order.id, Number(fulfillQty) || 0)
     setFulfilledDetails(true)
   }
@@ -46,8 +51,8 @@ export default function SalesOrderDetailsPage() {
           </div>
           <div className="sales-orders-details-actions">
             <Button variant="secondary" onClick={() => navigate('/sales-orders')}>Back to Orders</Button>
-            <Button variant="secondary" onClick={() => confirmSalesOrder(order.id)} disabled={order.status === 'Confirmed'}>Confirm Order</Button>
-            <Button variant="secondary" onClick={() => cancelSalesOrder(order.id)} disabled={['Completed', 'Cancelled'].includes(order.status)}>Cancel Order</Button>
+            <Button variant="secondary" onClick={() => canApprove && confirmSalesOrder(order.id)} disabled={order.status === 'Confirmed' || !canApprove}>Confirm Order</Button>
+            <Button variant="secondary" onClick={() => canEdit && cancelSalesOrder(order.id)} disabled={['Completed', 'Cancelled'].includes(order.status) || !canEdit}>Cancel Order</Button>
           </div>
         </div>
         <div className="sales-orders-tabs">
@@ -90,7 +95,7 @@ export default function SalesOrderDetailsPage() {
                 onChange={(event) => setFulfillQty(event.target.value)}
                 aria-label="Fulfilled quantity"
               />
-              <Button onClick={handleFulfill} disabled={!fulfillQty}>Update Fulfilled Qty</Button>
+              <Button onClick={handleFulfill} disabled={!fulfillQty || !canEdit}>Update Fulfilled Qty</Button>
               {fulfilledDetails && <span className="sales-orders-fulfilled-badge">Fulfillment recorded</span>}
             </div>
             <FulfillTable order={order} />

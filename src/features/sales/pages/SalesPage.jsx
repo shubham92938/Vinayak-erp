@@ -1,15 +1,20 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { Button, ConfirmDialog, useToast } from '../../../components/ui'
 import { downloadCsv } from '../../../utils/csv'
-import { getSales, getSalesFiltered } from '../../../core/salesStore'
+import { cancelSale, getSales, getSalesFiltered } from '../../../core/salesStore'
 import SaleTable, { SALES_CSV_COLUMNS, saleCsvRows } from '../components/SalesTable'
-import { formatDate, formatMoney } from '../components/saleUtils'
+import { formatMoney } from '../components/saleUtils'
 import '../styles/sales.css'
 
 export default function SalesPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canCancelSales = hasModulePermission(currentUser, 'Sales', 'edit')
+  const canExportSales = hasModulePermission(currentUser, 'Sales', 'export')
   const [filters, setFilters] = useState({ search: '', customerId: 'all', status: 'all', type: 'all', fromDate: '', toDate: '' })
   const [confirmState, setConfirmState] = useState(null)
 
@@ -22,13 +27,9 @@ export default function SalesPage() {
   }
 
   const confirmCancel = () => {
-    const { mockSales } = require('../../../core/salesStore')
-    if (!confirmState?.sale) return
-    const index = mockSales.findIndex((entry) => entry.id === confirmState.sale.id)
-    if (index !== -1) {
-      mockSales[index] = { ...mockSales[index], status: 'Cancelled', due: 0, paid: 0 }
-    }
-    toast.success('Sale cancelled')
+    if (!canCancelSales || !confirmState?.sale) return
+    const cancelled = cancelSale(confirmState.sale.id)
+    if (cancelled) toast.success('Sale cancelled')
     setConfirmState(null)
   }
 
@@ -71,8 +72,10 @@ export default function SalesPage() {
         onFiltersChange={setFilters}
         onClearFilters={() => setFilters({ search: '', customerId: 'all', status: 'all', type: 'all', fromDate: '', toDate: '' })}
         onRowView={(id) => navigate(`/sales/${id}`)}
-        onRowCancel={handleCancelSale}
+        onRowCancel={canCancelSales ? handleCancelSale : () => {}}
         onDownloadCsv={exportCsv}
+        canCancel={canCancelSales}
+        canExport={canExportSales}
       />
 
       <ConfirmDialog
@@ -100,7 +103,7 @@ function getSalesKpis() {
   }
 }
 
-function KpiCard({ label, value, icon }) {
+function KpiCard({ label, value }) {
   return (
     <div className="sales-kpi-card">
       <div className="sales-kpi-card__top">

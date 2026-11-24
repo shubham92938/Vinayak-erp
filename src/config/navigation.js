@@ -43,7 +43,7 @@ export const NAV_SECTIONS = [
     id: 'master-data',
     label: 'Master Data',
     items: [
-      { id: 'firms', label: 'Firms', to: '/firms', icon: Building2 },
+      { id: 'firms', label: 'My Firm', to: '/firms', icon: Building2 },
       {
         id: 'users-permissions',
         label: 'Users & Permissions',
@@ -238,6 +238,12 @@ export const NAV_ROUTES = NAV_SECTIONS.flatMap((section) =>
 
 export const ALL_ROUTES = [...NAV_ROUTES, ...UTILITY_ROUTES]
 
+export function getWorkspaceRoutePath(firmId, path) {
+  if (!firmId || !path) return path
+  if (path === '/firms') return `/firms/${firmId}/profile`
+  return `/firms/${firmId}/workspace${path}`
+}
+
 function normalizePath(pathname) {
   if (!pathname) return '/'
 
@@ -247,7 +253,34 @@ function normalizePath(pathname) {
 
 export function getRouteMeta(pathname) {
   const path = normalizePath(pathname)
-  return ALL_ROUTES.find((route) => route.to === path) ?? null
+  const direct = ALL_ROUTES.find((route) => route.to === path)
+  if (direct) return direct
+
+  const profileMatch = path.match(/^\/firms\/[^/]+\/profile$/)
+  if (profileMatch) {
+    return {
+      id: 'firm-profile',
+      label: 'My Firm',
+      title: 'My Firm',
+      section: 'Master Data',
+      to: path,
+    }
+  }
+
+  const workspaceMatch = path.match(/^\/firms\/[^/]+\/workspace(?:\/(.*))?$/)
+  if (workspaceMatch) {
+    const childPath = workspaceMatch[1] ? `/${workspaceMatch[1]}` : '/dashboard'
+    const route = ALL_ROUTES.find((entry) => entry.to === childPath)
+    return route ?? {
+      id: 'workspace',
+      label: 'Workspace',
+      title: 'Workspace',
+      section: 'Workspace',
+      to: path,
+    }
+  }
+
+  return null
 }
 
 export function getBreadcrumbs(pathname) {
@@ -255,12 +288,12 @@ export function getBreadcrumbs(pathname) {
 
   if (!meta) {
     return [
-      { label: 'Home', to: '/dashboard', kind: 'home' },
+      { label: 'Home', to: '/home', kind: 'home' },
       { label: 'Page not found', current: true, kind: 'current' },
     ]
   }
 
-  const crumbs = [{ label: 'Home', to: '/dashboard', kind: 'home' }]
+  const crumbs = [{ label: 'Home', to: '/home', kind: 'home' }]
 
   if (meta.section) {
     crumbs.push({ label: meta.section, kind: 'section' })

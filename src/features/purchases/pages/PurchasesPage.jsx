@@ -1,11 +1,12 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { ActionMenu, Badge, Button, ConfirmDialog, Select, useToast } from '../../../components/ui'
 import { DataTable } from '../../../components/data-table'
 import { downloadCsv } from '../../../utils/csv'
-import { getPurchases, formatMoney } from '../../../core/purchaseStore'
+import { getPurchases, formatMoney, deletePurchase, confirmPurchase } from '../../../core/purchaseStore'
 import { PURCHASE_STATUSES } from '../services/purchaseService'
-import { getCustomers } from '../../../core/store'
 import { formatDate } from '../utils/purchaseUtils'
 import '../styles/purchases.css'
 
@@ -23,6 +24,10 @@ const COLUMNS = [
 export default function PurchasesPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canApprovePurchases = hasModulePermission(currentUser, 'Purchases', 'approve')
+  const canDeletePurchases = hasModulePermission(currentUser, 'Purchases', 'delete')
+  const canExportPurchases = hasModulePermission(currentUser, 'Purchases', 'export')
   const [filters, setFilters] = useState({ search: '', vendorName: 'all', status: 'all' })
   const [confirmState, setConfirmState] = useState(null)
 
@@ -34,11 +39,13 @@ export default function PurchasesPage() {
   const onRowView = (purchaseId) => navigate(`/purchases/${purchaseId}`)
 
   const handleDelete = (purchaseId) => {
+    if (!canDeletePurchases) return
     deletePurchase(purchaseId)
     toast.success('Purchase deleted')
   }
 
   const handleConfirm = (purchaseId) => {
+    if (!canApprovePurchases) return
     confirmPurchase(purchaseId)
     toast.success('Purchase confirmed')
   }
@@ -53,7 +60,7 @@ export default function PurchasesPage() {
             <p className="purchases-header__description">Manage vendor purchases, invoices and payments.</p>
           </div>
           <div className="purchases-header__actions">
-            <Button variant="secondary" onClick={() => downloadCsv({ filename: 'vinayak-purchases.csv', columns: COLUMNS, rows: purchases })}>Export CSV</Button>
+            <Button variant="secondary" onClick={() => downloadCsv({ filename: 'vinayak-purchases.csv', columns: COLUMNS, rows: purchases })} disabled={!canExportPurchases}>Export CSV</Button>
           </div>
         </div>
         <div className="purchases-kpi-grid">
@@ -66,7 +73,7 @@ export default function PurchasesPage() {
 
       <DataTable
         data={purchases}
-        columns={useTableColumns(onRowView, setConfirmState)}
+        columns={useTableColumns(onRowView, setConfirmState, canApprovePurchases, canDeletePurchases)}
         getRowId={(purchase) => purchase.id}
         search={filters.search}
         onSearchChange={(search) => setFilters((current) => ({ ...current, search }))}
@@ -141,7 +148,7 @@ function getPurchaseKpis(purchases) {
   }
 }
 
-function useTableColumns(onRowView, setConfirmState) {
+function useTableColumns(onRowView, setConfirmState, canApprovePurchases, canDeletePurchases) {
   return [
     {
       id: 'number',
@@ -213,9 +220,10 @@ function useTableColumns(onRowView, setConfirmState) {
             { label: 'View purchase', onSelect: () => onRowView(row.id) },
             {
               label: 'Confirm purchase',
+              disabled: !canApprovePurchases,
               onSelect: () => setConfirmState({ type: 'confirm', purchase: row }),
             },
-            { label: 'Delete purchase', danger: true, onSelect: () => setConfirmState({ type: 'delete', purchase: row }) },
+            { label: 'Delete purchase', danger: true, disabled: !canDeletePurchases, onSelect: () => setConfirmState({ type: 'delete', purchase: row }) },
           ]}
         />
       ),

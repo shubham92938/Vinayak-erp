@@ -1,8 +1,11 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useState } from 'react'
-import { Button, Card, CardBody, Select, useToast } from '../../../components/ui'
+import { Button, Select } from '../../../components/ui'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { DataTable } from '../../../components/data-table'
 import { downloadCsv } from '../../../utils/csv'
-import { mockTransactions, formatMoney, formatDate } from '../../../core/store'
+import { getTransactions, formatMoney, formatDate } from '../../../core/store'
 
 import { DateRangeFilter } from '../../../components/filters'
 
@@ -37,10 +40,10 @@ const ACCOUNT_LABELS = {
 }
 
 export default function TransactionsPage() {
+  const { currentUser } = useAuth()
+  const canExportTransactions = hasModulePermission(currentUser, 'Transactions', 'export')
   const [filters, setFilters] = useState({ search: '', type: 'all', fromDate: '', toDate: '' })
-  const toast = useToast()
-
-  const transactions = mockTransactions.filter((txn) => {
+  const transactions = getTransactions().filter((txn) => {
     if (filters.type !== 'all' && txn.type !== filters.type) return false
     const start = String(filters.fromDate ?? '').slice(0, 10)
     const end = String(filters.toDate ?? '').slice(0, 10)
@@ -84,7 +87,7 @@ export default function TransactionsPage() {
             <p className="transactions-header__description">Account movement history with balances. Demo data.</p>
           </div>
           <div className="transactions-header__actions">
-            <Button variant="secondary" onClick={exportCsv}>Export CSV</Button>
+            <Button variant="secondary" onClick={exportCsv} disabled={!canExportTransactions}>Export CSV</Button>
           </div>
         </div>
         <div className="transactions-kpi-grid">

@@ -3,12 +3,15 @@
  */
 import { mockSales, getSales, getSalesFiltered, getSaleById, getPayments } from '../../../core/salesStore'
 import { getProducts } from '../../products/services/productService'
+import { DEFAULT_FIRM_ID } from '../../../config/firms'
+import { getActiveFirmId } from '../../../core/firmContextStore'
 
 export { getSales, getSalesFiltered, getSaleById, getPayments }
 export { mockSales }
 
 export function getProductsForSale() {
-  return getProducts().map((product) => ({
+  const activeFirmId = getActiveFirmId()
+  return getProducts().filter((product) => !activeFirmId || product.firmId === activeFirmId).map((product) => ({
     id: product.id,
     name: product.name,
     code: product.code,
@@ -38,6 +41,7 @@ export function createChallan({ customerId, customerName, items, discount, date,
     due: total,
     status: 'Delivered',
     notes: notes ?? '',
+    firmId: getActiveFirmId() ?? DEFAULT_FIRM_ID,
   }
   mockSales.push(challan)
   return { ...challan }

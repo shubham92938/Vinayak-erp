@@ -1,6 +1,6 @@
 import { formatMoney } from '../utils/customerUtils'
-import { mockSales, mockPayments } from '../../../core/salesStore'
-import { mockTransactions } from '../../../core/store'
+import { getPayments, getSales } from '../../../core/salesStore'
+import { getTransactions } from '../../../core/store'
 
 const SALE_EVENT_TYPES = {
   'Invoice': 'new-sale',
@@ -19,7 +19,7 @@ function formatDateTime(value) {
 export default function CustomerActivity({ customerId }) {
   const events = []
 
-  mockSales
+  getSales()
     .filter((sale) => sale.customerId === customerId)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 10)
@@ -33,7 +33,7 @@ export default function CustomerActivity({ customerId }) {
       })
     })
 
-  mockPayments
+  getPayments()
     .filter((payment) => payment.customerId === customerId)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 5)
@@ -47,7 +47,7 @@ export default function CustomerActivity({ customerId }) {
       })
     })
 
-  mockTransactions
+  getTransactions()
     .filter((txn) => txn.customerId === customerId && txn.type === 'sale' && txn.balance > 0)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
     .slice(0, 3)

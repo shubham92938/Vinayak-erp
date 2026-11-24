@@ -1,16 +1,18 @@
 import { useState } from 'react'
 import { Button, Modal, useToast } from '../../../components/ui'
+import { useAuth } from '../../../context/hooks'
 import { FormActions, FormField, FormGrid, FormInput, FormSection, FormSelect } from '../../../components/forms'
 import { getManageableFirms, isSuperAdmin } from '../utils/userUtils'
 import { USER_ROLES, USER_STATUSES } from '../data/userDemoData'
-import { getDefaultPermissions } from '../data/rolePermissions'
+import { getDefaultAccessPolicy } from '../data/rolePermissions'
 import { getUsers } from '../services/userService'
 
 const EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
-const PHONE_PATTERN = /^\+?1?\s?\(?[0-9]{3}\)?[-\s]?[0-9]{3}[-\s]?[0-9]{4}$/
+const PHONE_PATTERN = /^\+?[0-9][0-9\s()-]{7,19}$/
 
 export default function UserForm({ mode, user, onClose, onSubmit }) {
   const toast = useToast()
+  const { currentUser } = useAuth()
   const isCreating = mode === 'add'
   const isEditing = mode === 'edit' && Boolean(user)
 
@@ -30,11 +32,17 @@ export default function UserForm({ mode, user, onClose, onSubmit }) {
     value: firm.id,
     label: `${firm.name} · ${firm.location}`,
   }))
-  const roleOptions = USER_ROLES.map((role) => ({ value: role.id, label: role.label }))
+  const roleOptions = USER_ROLES
+    .filter((role) => currentUser?.role === 'super_admin' || role.id !== 'super_admin')
+    .map((role) => ({ value: role.id, label: role.label }))
   const statusOptions = USER_STATUSES
 
   const updateField = (field) => (event) =>
-    setForm((current) => ({ ...current, [field]: event.target.value }))
+    setForm((current) => {
+      const next = { ...current, [field]: event.target.value }
+      if (field === 'role' && event.target.value === 'super_admin') next.firmId = ''
+      return next
+    })
 
   const validate = () => {
     const nextErrors = {}
@@ -90,7 +98,9 @@ export default function UserForm({ mode, user, onClose, onSubmit }) {
         firmId: form.firmId || null,
         role: form.role,
         status: form.status,
-        permissions: getDefaultPermissions(form.role),
+        permissions: user?.permissions ?? getDefaultAccessPolicy(form.role).modules,
+        firmPermissions: user?.firmPermissions ?? getDefaultAccessPolicy(form.role).firmPermissions,
+        dataPermissions: user?.dataPermissions ?? getDefaultAccessPolicy(form.role).dataPermissions,
         createdAt: user?.createdAt ?? new Date().toISOString(),
         lastLogin: user?.lastLogin ?? null,
       }

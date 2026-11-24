@@ -1,6 +1,8 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button, ConfirmDialog, useToast } from '../../../components/ui'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { downloadCsv } from '../../../utils/csv'
 import { getCustomers } from '../../../core/store'
 import { getCustomersCsvRows } from '../services/customerService'
@@ -13,7 +15,12 @@ import '../styles/customers.css'
 export default function CustomersPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
   const { customers, filters, setFilters, saveCustomer, deleteCustomer: deleteCustomerHook, refresh } = useCustomers()
+  const canCreateCustomers = hasModulePermission(currentUser, 'Customers', 'create')
+  const canEditCustomers = hasModulePermission(currentUser, 'Customers', 'edit')
+  const canDeleteCustomers = hasModulePermission(currentUser, 'Customers', 'delete')
+  const canExportCustomers = hasModulePermission(currentUser, 'Customers', 'export')
   const [showAdd, setShowAdd] = useState(false)
   const [confirmState, setConfirmState] = useState(null)
 
@@ -26,19 +33,22 @@ export default function CustomersPage() {
   const clearFilters = () => setFilters({ query: '', customerType: 'all', status: 'all', fromDate: '', toDate: '' })
 
   const handleDelete = (customerId) => {
-    deleteCustomerHook(customerId)
-    toast.success('Customer deleted')
+    if (!canDeleteCustomers) return
+    const deleted = deleteCustomerHook(customerId)
+    if (deleted) toast.success('Customer deleted')
   }
 
   const handleActivate = (customerId) => {
-    saveCustomer(customerId, { status: 'Active' })
-    toast.success('Customer activated')
+    if (!canEditCustomers) return
+    const updated = saveCustomer(customerId, { status: 'Active' })
+    if (updated) toast.success('Customer activated')
     refresh()
   }
 
   const handleDeactivate = (customerId) => {
-    saveCustomer(customerId, { status: 'Inactive' })
-    toast.success('Customer deactivated')
+    if (!canEditCustomers) return
+    const updated = saveCustomer(customerId, { status: 'Inactive' })
+    if (updated) toast.success('Customer deactivated')
     refresh()
   }
 
@@ -46,7 +56,7 @@ export default function CustomersPage() {
     downloadCsv({
       filename: 'vinayak-customers.csv',
       columns: getCustomerFields().map((field) => ({ key: field.key, label: field.label })),
-      rows: getCustomersCsvRows(getCustomers()),
+      rows: getCustomersCsvRows(customers),
     })
   }
 
@@ -73,8 +83,8 @@ export default function CustomersPage() {
             </p>
           </div>
           <div className="customers-header__actions">
-            <Button variant="secondary" onClick={exportCsv}>Export CSV</Button>
-            <Button size="sm" onClick={() => setShowAdd(true)}>Add Customer</Button>
+            <Button variant="secondary" onClick={exportCsv} disabled={!canExportCustomers}>Export CSV</Button>
+            {canCreateCustomers && <Button size="sm" onClick={() => setShowAdd(true)}>Add Customer</Button>}
           </div>
         </div>
 
@@ -92,10 +102,13 @@ export default function CustomersPage() {
         onFiltersChange={setFilters}
         onClearFilters={clearFilters}
         onRowView={(id) => navigate(`/customers/${id}`)}
-        onRowEdit={(id) => navigate(`/customers/${id}`)}
-        onRowDelete={(id) => setConfirmState({ type: 'delete', customer: getCustomers().find((c) => c.id === id) })}
-        onRowActivate={(id) => handleActivate(id)}
-        onRowDeactivate={(id) => handleDeactivate(id)}
+        onRowEdit={canEditCustomers ? (id) => navigate(`/customers/${id}`) : () => {}}
+        onRowDelete={canDeleteCustomers ? (id) => setConfirmState({ type: 'delete', customer: getCustomers().find((c) => c.id === id) }) : () => {}}
+        onRowActivate={canEditCustomers ? (id) => handleActivate(id) : () => {}}
+        onRowDeactivate={canEditCustomers ? (id) => handleDeactivate(id) : () => {}}
+        canEdit={canEditCustomers}
+        canDelete={canDeleteCustomers}
+        canExport={canExportCustomers}
       />
 
       {showAdd && (

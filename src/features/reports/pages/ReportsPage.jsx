@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { Button, Card, CardBody } from '../../../components/ui'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { DataTable } from '../../../components/data-table'
 import { downloadCsv } from '../../../utils/csv'
 import { formatMoney } from '../../../core/store'
@@ -53,6 +55,9 @@ export default function ReportsPage() {
 }
 
 function TableCard({ title, columns, rows, csvName, alignMap = {} }) {
+  const { currentUser } = useAuth()
+  const canExport = hasModulePermission(currentUser, 'Reports', 'export')
+
   if (rows.length === 0) {
     return (
       <Card className="reports-card">
@@ -74,7 +79,7 @@ function TableCard({ title, columns, rows, csvName, alignMap = {} }) {
       <CardBody>
         <div className="reports-card-header">
           <h3 className="reports-title">{title}</h3>
-          <Button variant="secondary" size="sm" onClick={() => exportCsv(`vinayak-${csvName}.csv`, columns, rows)}>Export CSV</Button>
+          <Button variant="secondary" size="sm" onClick={() => exportCsv(`vinayak-${csvName}.csv`, columns, rows)} disabled={!canExport}>Export CSV</Button>
         </div>
         <DataTable data={rows} columns={dataColumns} getRowId={(row, index) => row.key ?? index} minWidth={700} />
       </CardBody>

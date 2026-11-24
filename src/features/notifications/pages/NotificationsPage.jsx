@@ -1,7 +1,9 @@
 import { useState } from 'react'
-import { Button, Card, CardBody, useToast } from '../../../components/ui'
+import { Button } from '../../../components/ui'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { DataTable } from '../../../components/data-table'
-import { mockNotifications, markNotificationRead, markAllNotificationsRead, deleteNotification } from '../../../core/store'
+import { getNotifications, markNotificationRead, markAllNotificationsRead, deleteNotification } from '../../../core/store'
 import { downloadCsv } from '../../../utils/csv'
 import '../styles/notifications.css'
 
@@ -16,10 +18,13 @@ const COLUMNS = [
 const TYPE_FILTERS = ['All', 'Low Stock', 'New Sale', 'Purchase Order', 'Payment Due', 'System', 'Expense Recorded', 'Payment Received']
 
 export default function NotificationsPage() {
+  const { currentUser } = useAuth()
+  const canEditNotifications = hasModulePermission(currentUser, 'Notifications', 'edit')
+  const canDeleteNotifications = hasModulePermission(currentUser, 'Notifications', 'delete')
+  const canExportNotifications = hasModulePermission(currentUser, 'Notifications', 'export')
   const [filters, setFilters] = useState({ search: '', type: 'All', status: 'All' })
-  const toast = useToast()
 
-  const notifications = mockNotifications
+  const notifications = getNotifications()
     .filter((notification) => {
       if (filters.type !== 'All') {
         const want = filters.type.toLowerCase()
@@ -34,7 +39,7 @@ export default function NotificationsPage() {
     })
     .sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime())
 
-  const unread = mockNotifications.filter((notification) => !notification.read).length
+  const unread = getNotifications().filter((notification) => !notification.read).length
 
   const exportCsv = () => {
     downloadCsv({
@@ -63,8 +68,8 @@ export default function NotificationsPage() {
       sortable: false,
       cell: (row) => (
         <div className="notifications-actions">
-          <Button size="sm" variant="ghost" onClick={() => markNotificationRead(row.id)}>Mark Read</Button>
-          <Button size="sm" variant="ghost" onClick={() => deleteNotification(row.id)}>Delete</Button>
+          <Button size="sm" variant="ghost" onClick={() => markNotificationRead(row.id)} disabled={!canEditNotifications}>Mark Read</Button>
+          <Button size="sm" variant="ghost" onClick={() => deleteNotification(row.id)} disabled={!canDeleteNotifications}>Delete</Button>
         </div>
       ),
     },
@@ -80,12 +85,12 @@ export default function NotificationsPage() {
             <p className="notifications-header__description">Recent system activity. {unread} unread.</p>
           </div>
           <div className="notifications-header__actions">
-            <Button size="sm" variant="secondary" onClick={() => markAllNotificationsRead()}>Mark All Read</Button>
-            <Button size="sm" variant="secondary" onClick={exportCsv}>Export CSV</Button>
+            <Button size="sm" variant="secondary" onClick={() => markAllNotificationsRead()} disabled={!canEditNotifications}>Mark All Read</Button>
+            <Button size="sm" variant="secondary" onClick={exportCsv} disabled={!canExportNotifications}>Export CSV</Button>
           </div>
         </div>
         <div className="notifications-kpi-grid">
-          <KpiCard label="Total Notifications" value={mockNotifications.length} />
+          <KpiCard label="Total Notifications" value={getNotifications().length} />
           <KpiCard label="Unread" value={unread} />
         </div>
       </header>

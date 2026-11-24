@@ -1,9 +1,11 @@
 import { useState } from 'react'
 import { Button, Modal, useToast } from '../../../components/ui'
 import { FormActions, FormField, FormGrid, FormInput, FormSelect } from '../../../components/forms'
-import { saveCustomer } from '../../../core/store'
+import { createCustomer, saveCustomer } from '../../../core/store'
 import { getCustomers } from '../../../core/store'
 import { getFirmLabel } from '../utils/customerUtils'
+import { useAuth, useFirmContext } from '../../../context/hooks'
+import { canAccessRecord, enforceCreateFirmId } from '../../../core/accessControl'
 import { CUSTOMER_TYPES } from '../utils/customerUtils'
 import '../styles/customers.css'
 
@@ -34,6 +36,8 @@ const initialForm = (customer) => ({
 
 export default function CustomerForm({ customer, onClose, onSave }) {
   const toast = useToast()
+  const { currentUser } = useAuth()
+  const { currentFirmId } = useFirmContext()
   const isEditing = Boolean(customer && customer.id)
   const [form, setForm] = useState(() => initialForm(customer))
   const [errors, setErrors] = useState({})
@@ -103,11 +107,21 @@ export default function CustomerForm({ customer, onClose, onSave }) {
       openingBalance: Number(form.openingBalance || 0),
       paymentTerms: form.paymentTerms,
       status: form.status,
-      firmId: customer?.firmId ?? undefined,
+      firmId: customer?.firmId ?? currentFirmId ?? currentUser?.firmId ?? undefined,
     }
 
     try {
-      const saved = saveCustomer(customer?.id ?? `CUST-${String(getCustomers().length + 1).padStart(3, '0')}`, customerData)
+      const firmId = isEditing
+        ? customer?.firmId
+        : enforceCreateFirmId(currentUser, customerData.firmId, 'Customers')
+      if (!firmId || !canAccessRecord(currentUser, { firmId }, 'Customers', isEditing ? 'edit' : 'create')) {
+        throw new Error('You do not have permission to save this customer')
+      }
+
+      const saved = isEditing
+        ? saveCustomer(customer.id, { ...customerData, firmId })
+        : createCustomer({ ...customerData, firmId })
+      if (!saved) throw new Error('Could not save customer')
       onSave(saved)
       onClose()
       toast.success(isEditing ? 'Customer updated' : 'Customer created')

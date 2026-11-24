@@ -6,6 +6,8 @@
  * Feature modules read from and mutate this store through their services.
  */
 import { DEFAULT_FIRM_ID } from '../config/firms'
+import { getActiveFirmId } from './firmContextStore'
+import { getProducts } from '../features/products/services/productService'
 import { nextId, roundMoney } from './numbers'
 import { formatMoney as formatMoneyBase, formatDate as formatDateBase } from './numbers'
 
@@ -23,7 +25,21 @@ export const mockAccounts = [
   { id: 'acc-bank-1', name: 'Vinayak Associates Current Account', type: 'Bank', balance: 850000 },
   { id: 'acc-bank-2', name: 'Vinayak Associates Savings Account', type: 'Bank', balance: 210000 },
   { id: 'acc-bank-3', name: 'Vinayak Traders Account', type: 'Bank', balance: 45000 },
+  { id: 'acc-bank-4', name: 'Vinayak Logistics Account', type: 'Bank', balance: 175000 },
 ]
+
+mockAccounts.forEach((account) => {
+  account.firmId = account.id === 'acc-bank-3'
+    ? 'vinayak-traders'
+    : account.id === 'acc-bank-4'
+      ? 'vinayak-logistics'
+      : DEFAULT_FIRM_ID
+})
+
+export function getAccounts() {
+  const activeFirmId = getActiveFirmId()
+  return activeFirmId ? mockAccounts.filter((account) => account.firmId === activeFirmId) : mockAccounts
+}
 
 export const mockFinancialSettings = {
   currency: 'INR',
@@ -58,6 +74,12 @@ export const mockTransactions = [
   { id: 'txn-08', type: 'sale', date: '2026-11-04T15:55:00', amount: 44828, balance: 42828, description: 'Sale: INV-20261057 (Bank, outstanding)', accountId: 'acc-bank-2', customerId: 'CUST-009', productId: 'prod-01' },
 ]
 
+mockTransactions.forEach((transaction) => {
+  if (!transaction.firmId) {
+    transaction.firmId = getProducts().find((product) => product.id === transaction.productId)?.firmId ?? DEFAULT_FIRM_ID
+  }
+})
+
 export const mockExpenses = [
   { id: 'exp-01', date: '2026-11-02T08:45:00', type: 'Rent', category: 'Operating Expenses', description: 'Office Rent (November)', amount: 4800, mode: 'Cash', status: 'Paid', firmId: 'vinayak-associates' },
   { id: 'exp-02', date: '2026-10-29T07:30:00', type: 'Travel', category: 'Sales & Marketing', description: 'Client visit - Pune', amount: 9200, mode: 'UPI', status: 'Paid', firmId: 'vinayak-associates' },
@@ -76,27 +98,45 @@ export const mockNotifications = [
   { id: 'notif-07', type: 'payment-received', title: 'Payment received: ₹3205.00', body: 'INV-20261057 - Globe Cart Papers & Stationery', read: true, createdAt: '2026-11-04T16:00:00' },
 ]
 
+mockNotifications.forEach((notification) => { notification.firmId = notification.firmId ?? DEFAULT_FIRM_ID })
+
+export function getTransactions() {
+  const activeFirmId = getActiveFirmId()
+  return activeFirmId
+    ? mockTransactions.filter((transaction) => (transaction.firmId ?? DEFAULT_FIRM_ID) === activeFirmId)
+    : mockTransactions
+}
+
+export function getNotifications() {
+  const activeFirmId = getActiveFirmId()
+  return activeFirmId
+    ? mockNotifications.filter((notification) => notification.firmId === activeFirmId)
+    : mockNotifications
+}
+
 export function getUnreadNotificationCount() {
-  return mockNotifications.filter((item) => !item.read).length
+  return getNotifications().filter((item) => !item.read).length
 }
 
 export function markNotificationRead(notificationId) {
-  const item = mockNotifications.find((entry) => entry.id === notificationId)
+  const item = getNotifications().find((entry) => entry.id === notificationId)
   if (item) item.read = true
 }
 
 export function markAllNotificationsRead() {
-  mockNotifications.forEach((item) => (item.read = true))
+  getNotifications().forEach((item) => (item.read = true))
 }
 
 export function deleteNotification(notificationId) {
-  const index = mockNotifications.findIndex((entry) => entry.id === notificationId)
+  const item = getNotifications().find((entry) => entry.id === notificationId)
+  if (!item) return
+  const index = mockNotifications.findIndex((entry) => entry.id === item.id)
   if (index !== -1) mockNotifications.splice(index, 1)
 }
 
 export function filterNotifications(search, status) {
   const query = String(search ?? '').trim().toLowerCase()
-  return mockNotifications.filter((item) => {
+  return getNotifications().filter((item) => {
     if (status && status !== 'all' && item.read !== (status === 'read')) return false
     if (query && !`${item.title} ${item.body}`.toLowerCase().includes(query)) return false
     return true
@@ -116,12 +156,20 @@ export const mockStockMovements = [
   { id: 'stm-10', type: 'stock-in', productId: 'prod-28', qty: 2, unit: 'pcs', reference: 'PO-20261055', previousStock: 1, newStock: 3, reason: 'Stock in from supplier', date: '2026-10-31T14:45:00', demo: false },
 ]
 
+mockStockMovements.forEach((movement) => {
+  movement.firmId = movement.firmId ?? getProducts().find((product) => product.id === movement.productId)?.firmId ?? DEFAULT_FIRM_ID
+})
+
 export function getStockMovements(productId) {
-  return mockStockMovements.filter((entry) => (productId ? entry.productId === productId : true))
+  const activeFirmId = getActiveFirmId()
+  return mockStockMovements.filter((entry) =>
+    (productId ? entry.productId === productId : true) &&
+    (!activeFirmId || entry.firmId === activeFirmId),
+  )
 }
 
 export function recordStockMovement(entry) {
-  const record = { demo: false, ...entry, id: nextId('STM') }
+  const record = { demo: false, ...entry, firmId: entry.firmId ?? getActiveFirmId() ?? DEFAULT_FIRM_ID, id: nextId('STM') }
   mockStockMovements.push(record)
   return record
 }
@@ -150,7 +198,12 @@ export function getCustomers(filters = {}) {
     if (search && !`${customer.name} ${customer.code} ${customer.city} ${customer.email}`.toLowerCase().includes(search)) return false
     if (type && type !== 'all' && customer.customerType !== type) return false
     if (status && status !== 'all' && customer.status !== status) return false
-    if (firmId && firmId !== 'all' && customer.firmId !== firmId) return false
+    const activeFirmId = getActiveFirmId()
+    // The selected workspace is authoritative in the mock layer. A caller may
+    // narrow to that firm, but cannot use a form/query firmId to escape it.
+    const requestedFirmId = firmId && firmId !== 'all' ? firmId : null
+    const scopedFirmId = activeFirmId ?? requestedFirmId
+    if (scopedFirmId && customer.firmId !== scopedFirmId) return false
     return true
   })
 }
@@ -162,11 +215,17 @@ mockCustomers.forEach((customer, index) => {
 })
 
 export function getCustomerById(customerId) {
-  return mockCustomers.find((customer) => customer.id === customerId) ?? null
+  const activeFirmId = getActiveFirmId()
+  return mockCustomers.find((customer) =>
+    customer.id === customerId && (!activeFirmId || customer.firmId === activeFirmId),
+  ) ?? null
 }
 
 export function createCustomer(customerData) {
-  const customer = { id: `CUST-${String(mockCustomers.length + 1).padStart(3, '0')}`, status: 'Active', firmId: DEFAULT_FIRM_ID, customerType: 'Regular Customer', ...customerData }
+  const activeFirmId = getActiveFirmId()
+  const requestedFirmId = customerData.firmId ?? activeFirmId ?? DEFAULT_FIRM_ID
+  const firmId = activeFirmId ?? requestedFirmId
+  const customer = { id: `CUST-${String(mockCustomers.length + 1).padStart(3, '0')}`, status: 'Active', customerType: 'Regular Customer', ...customerData, firmId }
   customer.customerType = customer.customerType === 'Dealer' ? 'Dealer' : 'Regular Customer'
   customer.type = customer.customerType === 'Dealer' ? 'Dealer' : 'Regular Customer'
   mockCustomers.push(customer)
@@ -174,15 +233,15 @@ export function createCustomer(customerData) {
 }
 
 export function saveCustomer(customerId, customerData) {
-  const index = mockCustomers.findIndex((customer) => customer.id === customerId)
+  const index = mockCustomers.findIndex((customer) => customer.id === customerId && (!getActiveFirmId() || customer.firmId === getActiveFirmId()))
   if (index === -1) return null
-  const customer = { ...mockCustomers[index], ...customerData }
+  const customer = { ...mockCustomers[index], ...customerData, firmId: mockCustomers[index].firmId }
   mockCustomers[index] = customer
   return customer
 }
 
 export function deleteCustomer(customerId) {
-  const index = mockCustomers.findIndex((customer) => customer.id === customerId)
+  const index = mockCustomers.findIndex((customer) => customer.id === customerId && (!getActiveFirmId() || customer.firmId === getActiveFirmId()))
   if (index === -1) return false
   mockCustomers.splice(index, 1)
   return true

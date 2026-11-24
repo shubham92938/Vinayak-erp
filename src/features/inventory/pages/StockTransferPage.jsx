@@ -1,19 +1,26 @@
 import { Button, Card, CardBody, Select, useToast } from '../../../components/ui'
 import { FormField, FormGrid, FormInput, FormSection } from '../../../components/forms'
 import { useState } from 'react'
-import { SAMPLE_FIRMS } from '../../../config/firms'
-import { createTransfer, getStockTable } from '../services/inventoryService'
+import { useAuth, useFirmContext } from '../../../context/hooks'
+import { canAccessRecord } from '../../../core/accessControl'
+import { getAllProducts } from '../../products/services/productService'
+import { createTransfer } from '../services/inventoryService'
 import { useNavigate } from 'react-router-dom'
 import '../styles/inventory.css'
 
 export default function StockTransferPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const { accessibleFirms } = useFirmContext()
   const [form, setForm] = useState({ sourceFirmId: '', destinationFirmId: '', productId: '', qty: 0, notes: '' })
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const products = getStockTable()
+  const firms = accessibleFirms
+  const products = getAllProducts().filter((product) =>
+    canAccessRecord(currentUser, product, 'Inventory', 'edit'),
+  )
 
   const validate = () => {
     const nextErrors = {}
@@ -41,6 +48,7 @@ export default function StockTransferPage() {
         productId: form.productId,
         qty: Number(form.qty),
         notes: form.notes.trim(),
+        user: currentUser,
       })
       setForm((current) => ({ ...current, qty: 0, notes: '' }))
       setIsSubmitting(false)
@@ -75,7 +83,7 @@ export default function StockTransferPage() {
                   <Select
                     value={form.sourceFirmId}
                     onChange={(event) => setForm((current) => ({ ...current, sourceFirmId: event.target.value }))}
-                    options={SAMPLE_FIRMS.map((firm) => ({ value: firm.id, label: firm.name }))}
+                    options={firms.filter((firm) => canAccessRecord(currentUser, { firmId: firm.id }, 'Inventory', 'edit')).map((firm) => ({ value: firm.id, label: firm.name }))}
                     placeholder="Select source firm"
                   />
                 </FormField>
@@ -83,7 +91,7 @@ export default function StockTransferPage() {
                   <Select
                     value={form.destinationFirmId}
                     onChange={(event) => setForm((current) => ({ ...current, destinationFirmId: event.target.value }))}
-                    options={SAMPLE_FIRMS.map((firm) => ({ value: firm.id, label: firm.name }))}
+                    options={firms.filter((firm) => canAccessRecord(currentUser, { firmId: firm.id }, 'Inventory', 'create')).map((firm) => ({ value: firm.id, label: firm.name }))}
                     placeholder="Select destination firm"
                   />
                 </FormField>

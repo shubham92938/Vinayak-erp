@@ -1,5 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { CheckCircle2, CircleAlert, ShieldCheck } from 'lucide-react'
 import { Button, ConfirmDialog, useToast } from '../../../components/ui'
 import { downloadCsv } from '../../../utils/csv'
@@ -26,6 +28,11 @@ function KpiCard({ label, value, icon: Icon }) {
 export default function ProductsPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canCreateProducts = hasModulePermission(currentUser, 'Products', 'create')
+  const canEditProducts = hasModulePermission(currentUser, 'Products', 'edit')
+  const canDeleteProducts = hasModulePermission(currentUser, 'Products', 'delete')
+  const canExportProducts = hasModulePermission(currentUser, 'Products', 'export')
   const categories = useMemo(() => getCategoriesWithProductCounts(), [])
   const categoriesById = useMemo(
     () => Object.fromEntries(categories.map((category) => [category.id, category])),
@@ -54,25 +61,28 @@ export default function ProductsPage() {
     setFilters({ search: '', firmId: 'all', categoryId: 'all', status: 'all', stockStatus: 'all', fromDate: '', toDate: '' })
 
   const handleDuplicate = (productId) => {
+    if (!canCreateProducts) return
     const product = duplicateProduct(productId)
     toast.success(product ? `Product duplicated as ${product.code}` : 'Duplicate failed')
   }
 
   const handleDelete = (productId) => {
+    if (!canDeleteProducts) return
     deleteProduct(productId)
     toast.success('Product deleted')
   }
 
   const handleToggleStatus = (productId) => {
-    toggleProductStatus(productId)
-    toast.success('Product status updated')
+    if (!canEditProducts) return
+    const updated = toggleProductStatus(productId)
+    if (updated) toast.success('Product status updated')
   }
 
   const handleBulkActivate = (selected) => setConfirmBulkState({ type: 'activate', rows: selected })
   const handleBulkDeactivate = (selected) => setConfirmBulkState({ type: 'deactivate', rows: selected })
 
   const confirmBulkAction = () => {
-    if (!confirmBulkState) return
+    if (!canEditProducts || !confirmBulkState) return
     for (const product of confirmBulkState.rows) {
       if ((confirmBulkState.type === 'activate' && product.status !== 'active') ||
           (confirmBulkState.type === 'deactivate' && product.status !== 'inactive')) {
@@ -116,8 +126,8 @@ export default function ProductsPage() {
             </p>
           </div>
           <div className="products-header__actions">
-            <Button variant="secondary" onClick={exportCsv}>Export CSV</Button>
-            <Button size="sm" onClick={() => setFormState({ mode: 'add' })}>Add Product</Button>
+            <Button variant="secondary" onClick={exportCsv} disabled={!canExportProducts}>Export CSV</Button>
+            {canCreateProducts && <Button size="sm" onClick={() => setFormState({ mode: 'add' })}>Add Product</Button>}
           </div>
         </div>
 
@@ -142,9 +152,13 @@ export default function ProductsPage() {
         onRowActivate={(id) => handleToggleStatus(id)}
         onRowDeactivate={(id) => handleToggleStatus(id)}
         onRowDelete={(id) => setConfirmState({ type: 'delete', product: products.find((p) => p.id === id) })}
-        onBulkActivate={handleBulkActivate}
-        onBulkDeactivate={handleBulkDeactivate}
+        onBulkActivate={canEditProducts ? handleBulkActivate : () => {}}
+        onBulkDeactivate={canEditProducts ? handleBulkDeactivate : () => {}}
         downloadProducts={exportCsv}
+        canCreate={canCreateProducts}
+        canEdit={canEditProducts}
+        canDelete={canDeleteProducts}
+        canExport={canExportProducts}
       />
 
       {formState && (

@@ -3,6 +3,8 @@
  * Order statuses: Draft, Pending Approval, Approved, Ordered, Partially Received, Received, Cancelled.
  */
 import { getProducts, updateProductQuantity } from '../features/products/services/productService'
+import { DEFAULT_FIRM_ID } from '../config/firms'
+import { getActiveFirmId } from './firmContextStore'
 import { nextNumber } from './numbers'
 
 export const mockPurchaseOrders = [
@@ -10,6 +12,17 @@ export const mockPurchaseOrders = [
   { id: 'POO-20261102', number: 'PO-20261102', vendorName: 'Nemotron Traders', orderDate: '2026-11-01T08:00:00', expectedDelivery: '2026-11-10', items: [{ productId: 'prod-07', name: 'Nike Dri-FIT T-Shirt', qty: 100, unit: 'pcs', price: 810, taxPct: 18, discount: 0 }], discount: 0, subtotal: 81000, taxTotal: 14580, total: 95580, status: 'Approved' },
   { id: 'POO-20261103', number: 'PO-20261103', vendorName: 'Vinayak Associates Hardware', orderDate: '2026-11-05T14:30:00', expectedDelivery: '2026-11-20', items: [{ productId: 'prod-25', name: 'Moisture Meter', qty: 10, unit: 'pcs', price: 6990, taxPct: 18, discount: 0 }], discount: 0, subtotal: 69900, taxTotal: 12582, total: 82482, status: 'Partially Received' },
 ]
+
+function inferFirmId(record) {
+  return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID
+}
+
+mockPurchaseOrders.forEach((order) => { order.firmId = inferFirmId(order) })
+
+function inActiveFirm(record) {
+  const activeFirmId = getActiveFirmId()
+  return !activeFirmId || record.firmId === activeFirmId
+}
 
 export const PURCHASE_ORDER_STATUSES = [
   { value: 'all', label: 'All statuses' },
@@ -27,6 +40,7 @@ export function getPurchaseOrders(filters = {}) {
   const query = String(search ?? '').trim().toLowerCase()
   return mockPurchaseOrders
     .filter((order) => {
+      if (!inActiveFirm(order)) return false
       if (query && !`${order.number} ${order.vendorName}`.toLowerCase().includes(query)) return false
       if (status && status !== 'all' && order.status !== status) return false
       return true
@@ -35,7 +49,7 @@ export function getPurchaseOrders(filters = {}) {
 }
 
 export function getPurchaseOrderById(id) {
-  return mockPurchaseOrders.find((order) => order.id === id) ?? null
+  return mockPurchaseOrders.find((order) => order.id === id && inActiveFirm(order)) ?? null
 }
 
 export function createPurchaseOrder(data) {
@@ -50,6 +64,7 @@ export function createPurchaseOrder(data) {
     subtotal: data.items.reduce((sum, item) => sum + item.qty * item.price, 0),
     status: 'Draft',
     receivedQty: 0,
+    firmId: getActiveFirmId() ?? data.firmId ?? DEFAULT_FIRM_ID,
   }
   order.taxTotal = Math.round((order.subtotal * 0.18 + Number.EPSILON) * 100) / 100
   order.total = order.subtotal + order.taxTotal
@@ -60,13 +75,14 @@ export function createPurchaseOrder(data) {
 export function updatePurchaseOrder(id, updates) {
   const order = getPurchaseOrderById(id)
   if (!order) return null
-  return { ...order, ...updates }
+  const index = mockPurchaseOrders.findIndex((entry) => entry.id === id && inActiveFirm(entry))
+  const updated = { ...mockPurchaseOrders[index], ...updates, firmId: mockPurchaseOrders[index].firmId }
+  mockPurchaseOrders[index] = updated
+  return { ...updated }
 }
 
 export function confirmPurchaseOrder(id) {
-  const order = getPurchaseOrderById(id)
-  if (!order) return null
-  return { ...order, status: 'Approved' }
+  return updatePurchaseOrder(id, { status: 'Approved' })
 }
 
 export function orderStock(id, items) {
@@ -85,9 +101,7 @@ export function orderStock(id, items) {
 }
 
 export function cancelPurchaseOrder(id) {
-  const order = getPurchaseOrderById(id)
-  if (!order) return null
-  return { ...order, status: 'Cancelled' }
+  return updatePurchaseOrder(id, { status: 'Cancelled' })
 }
 
 export function nextId(prefix) {

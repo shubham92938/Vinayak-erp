@@ -1,6 +1,11 @@
-import { SAMPLE_FIRMS } from '../../../config/firms'
+import { getFirmId } from '../../../config/firms'
+import { getFirms } from '../../../core/firmStore'
 import { USER_ACTIVITY_DEMO_DATA } from '../data/userActivityDemoData'
-import { DEFAULT_USER_ID, getUserById } from '../services/userService'
+import {
+  DEFAULT_USER_ID,
+  getCurrentAuthenticatedUser,
+  getUserById,
+} from '../services/userService'
 
 export function isSuperAdmin(user) {
   return user?.role === 'super_admin'
@@ -11,27 +16,28 @@ export function isFirmAdmin(user) {
 }
 
 export function getCurrentUser() {
-  return getUserById(DEFAULT_USER_ID)
+  return getCurrentAuthenticatedUser() ?? null
 }
 
 export function getManageableFirms(user = getCurrentUser()) {
+  const firms = getFirms()
   return isSuperAdmin(user)
-    ? SAMPLE_FIRMS
+    ? firms
     : user?.firmId
-      ? [SAMPLE_FIRMS.find((firm) => firm.id === user.firmId)]
+      ? firms.filter((firm) => getFirmId(firm) === user.firmId)
       : []
 }
 
 export function getFirmLabel(firmId) {
   if (!firmId) return '—'
-  return SAMPLE_FIRMS.find((firm) => firm.id === firmId)?.name ?? firmId
+  return getFirms().find((firm) => getFirmId(firm) === firmId)?.name ?? firmId
 }
 
 export function getInitials(name) {
   const parts = String(name || '').trim().split(/\s+/).filter(Boolean)
   if (parts.length === 0) return 'U'
   if (parts.length === 1) return parts[0].slice(0, 1)
-  return `${parts[0].slice(0, 1)}${parts[parts.length - 1].slice(0, 1)}`
+  return `${parts[0].slice(0, 1)}${parts.at(-1).slice(0, 1)}`
 }
 
 export function formatUserDate(value, locale = 'en-IN') {
@@ -83,3 +89,5 @@ export const USER_CSV_COLUMNS = [
   { key: 'lastLogin', label: 'Last Login' },
   { key: 'createdAt', label: 'Created Date' },
 ]
+
+export { DEFAULT_USER_ID, getUserById }

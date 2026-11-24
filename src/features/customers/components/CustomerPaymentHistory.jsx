@@ -1,8 +1,8 @@
 import { formatDate, formatMoney } from '../utils/customerUtils'
-import { mockPaymentsIn } from '../../../core/financeStore'
+import { getPaymentsIn } from '../../../core/financeStore'
 
 export default function CustomerPaymentHistory({ customerId }) {
-  const payments = mockPaymentsIn
+  const payments = getPaymentsIn()
     .filter((payment) => payment.customerId === customerId)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 

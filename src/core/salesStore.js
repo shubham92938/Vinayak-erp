@@ -3,8 +3,11 @@
  * Interconnects with the central store (products, customers, transactions).
  */
 import { getProducts, updateProductQuantity as updateProductQty } from '../features/products/services/productService'
+import { DEFAULT_FIRM_ID } from '../config/firms'
+import { getActiveFirmId } from './firmContextStore'
 import {
   mockTransactions,
+  mockAccounts,
   updateCustomerBalance,
   calcTotal,
   nextNumber,
@@ -23,8 +26,22 @@ export const mockChallans = [
 ]
 
 export const mockPayments = [
-  { id: 'PAY-01', invoiceId: 'SAL-04', customerId: 'CUST-009', date: '2026-11-04T16:00:00', amount: 2000, mode: 'Bank Transfer', accountId: 'acc-bank-2', status: 'Paid', notes: 'Advance on INV-20261057' },
+  { id: 'PAYI-01', invoiceId: 'SAL-04', customerId: 'CUST-009', date: '2026-11-04T16:00:00', amount: 2000, mode: 'Bank Transfer', accountId: 'acc-bank-2', status: 'Paid', notes: 'Advance on INV-20261057' },
+  { id: 'PAYI-02', invoiceId: 'SAL-02', customerId: 'CUST-005', date: '2026-11-04T18:05:00', amount: 617000, mode: 'Cash', accountId: 'acc-bank-3', status: 'Paid', notes: 'Partial payment on INV-20261052' },
 ]
+
+function inferFirmId(record) {
+  return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID
+}
+
+mockSales.forEach((sale) => { sale.firmId = inferFirmId(sale) })
+mockChallans.forEach((challan) => { challan.firmId = inferFirmId(challan) })
+mockPayments.forEach((payment) => { payment.firmId = mockSales.find((sale) => sale.id === payment.invoiceId)?.firmId ?? DEFAULT_FIRM_ID })
+
+function inActiveFirm(record) {
+  const activeFirmId = getActiveFirmId()
+  return !activeFirmId || record.firmId === activeFirmId
+}
 
 export const SALES_STATUSES = [
   { value: 'all', label: 'All statuses' },
@@ -35,7 +52,7 @@ export const SALES_STATUSES = [
 ]
 
 export function getSales() {
-  return [...mockSales, ...mockChallans]
+  return [...mockSales, ...mockChallans].filter(inActiveFirm)
 }
 
 export function getSalesFiltered(filters = {}) {
@@ -57,7 +74,7 @@ export function getSalesFiltered(filters = {}) {
 }
 
 export function getSaleById(saleId) {
-  return [...mockSales, ...mockChallans].find((sale) => sale.id === saleId) ?? null
+  return [...mockSales, ...mockChallans].find((sale) => sale.id === saleId && inActiveFirm(sale)) ?? null
 }
 
 export function computeTotals(items, discount, taxPct) {
@@ -101,6 +118,7 @@ export function createSale(saleData) {
     due,
     status: status ?? (due === 0 ? 'Paid' : 'Outstanding'),
     notes: saleData.notes ?? '',
+    firmId: getActiveFirmId() ?? saleData.firmId ?? DEFAULT_FIRM_ID,
   }
 
   mockSales.push(sale)
@@ -119,56 +137,81 @@ export function createSale(saleData) {
 export function updateSale(saleId, saleData) {
   const sale = getSaleById(saleId)
   if (!sale) return null
-  return { ...sale, ...saleData }
+  const collection = sale.type === 'Challan' ? mockChallans : mockSales
+  const index = collection.findIndex((entry) => entry.id === saleId && inActiveFirm(entry))
+  if (index === -1) return null
+  const updated = { ...collection[index], ...saleData, firmId: collection[index].firmId }
+  collection[index] = updated
+  return { ...updated }
+}
+
+export function cancelSale(saleId) {
+  return updateSale(saleId, { status: 'Cancelled', due: 0, paid: 0 })
 }
 
 export function deleteSale(saleId) {
-  const index = mockSales.findIndex((sale) => sale.id === saleId)
+  const index = mockSales.findIndex((sale) => sale.id === saleId && inActiveFirm(sale))
   if (index === -1) return false
   mockSales.splice(index, 1)
   return true
 }
 
-export function recordPaymentIn(saleId, amount, mode, accountId, notes = '') {
+export function recordPaymentIn(saleId, amount, mode, accountId, notes = '', options = {}) {
   const sale = getSaleById(saleId)
-  if (!sale) throw new Error('Sale not found')
+  if (!sale) throw new Error('Sale not found in the selected firm')
+
+  const numericAmount = Number(amount)
+  if (!Number.isFinite(numericAmount) || numericAmount <= 0) {
+    throw new Error('Payment amount must be greater than zero')
+  }
+  if (numericAmount > (sale.due ?? 0)) {
+    throw new Error('Payment exceeds the invoice balance')
+  }
+
+  const accountRecord = accountId
+    ? mockAccounts.find((entry) =>
+      entry.id === accountId &&
+      entry.firmId === sale.firmId &&
+      inActiveFirm(entry),
+    )
+    : null
+  if (!accountRecord) throw new Error('Account not found in the selected firm')
 
   const payment = {
     id: nextId('PAY'),
     invoiceId: sale.id,
     customerId: sale.customerId,
-    date: new Date().toISOString(),
-    amount,
+    date: options.date ?? new Date().toISOString(),
+    amount: numericAmount,
     mode,
-    accountId,
+    accountId: accountRecord.id,
     status: 'Paid',
     notes,
+    firmId: sale.firmId,
   }
   mockPayments.push(payment)
 
-  sale.paid = Math.round((sale.paid + amount) * 100) / 100
-  sale.due = Math.max(0, Math.round((sale.due - amount) * 100) / 100)
+  sale.paid = Math.round((sale.paid + numericAmount) * 100) / 100
+  sale.due = Math.max(0, Math.round((sale.due - numericAmount) * 100) / 100)
   sale.status = sale.due === 0 ? 'Paid' : 'Partially Paid'
 
-  if (accountId) {
-    const accountRecord = mockTransactions.find((entry) => entry.id === accountId)
-    if (accountRecord) accountRecord.balance = Math.round((accountRecord.balance + amount) * 100) / 100
-  }
+  accountRecord.balance = Math.round((accountRecord.balance + numericAmount) * 100) / 100
 
-  if (sale.customerId && accountId) {
-    updateCustomerBalance(sale.customerId, -amount)
+  if (sale.customerId) {
+    updateCustomerBalance(sale.customerId, -numericAmount)
   }
 
   mockTransactions.push({
     id: nextId('txn'),
-    type: 'sale',
+    type: 'payment-in',
     date: payment.date,
-    amount,
+    amount: numericAmount,
     balance: sale.due,
     description: `Payment received: ${sale.number}`,
-    accountId,
+    accountId: accountRecord.id,
     customerId: sale.customerId,
     productId: sale.items[0]?.productId,
+    firmId: sale.firmId,
   })
 
   return { ...payment, sale: { id: sale.id, paid: sale.paid, due: sale.due, status: sale.status } }
@@ -176,10 +219,13 @@ export function recordPaymentIn(saleId, amount, mode, accountId, notes = '') {
 
 export function getPayments(filters = {}) {
   const { saleId, customerId, mode } = filters
-  return mockPayments.filter((payment) => {
-    if (saleId && payment.invoiceId !== saleId) return false
-    if (customerId && customerId !== 'all' && payment.customerId !== customerId) return false
-    if (mode && payment.mode !== mode) return false
-    return true
-  })
+  return mockPayments
+    .filter((payment) => {
+      if (!inActiveFirm(payment)) return false
+      if (saleId && payment.invoiceId !== saleId) return false
+      if (customerId && customerId !== 'all' && payment.customerId !== customerId) return false
+      if (mode && payment.mode !== mode) return false
+      return true
+    })
+    .map((payment) => ({ ...payment }))
 }

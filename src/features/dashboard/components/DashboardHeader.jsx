@@ -30,6 +30,7 @@ export default function DashboardHeader({
   exportCount,
   demoLabel,
   demoNotice,
+  canViewAllFirms,
 }) {
   return (
     <header className="dash-header">
@@ -79,6 +80,7 @@ export default function DashboardHeader({
         canReset={canReset}
         financialYearOptions={financialYearOptions}
         firms={firms}
+        canViewAllFirms={canViewAllFirms}
         minDate={minDate}
         maxDate={maxDate}
       />

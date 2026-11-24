@@ -1,9 +1,8 @@
-import { formatMoney } from '../utils/customerUtils'
-import { mockSales } from '../../../core/salesStore'
-import { formatDate } from '../utils/customerUtils'
+import { formatMoney, formatDate } from '../utils/customerUtils'
+import { getSales } from '../../../core/salesStore'
 
 export default function CustomerSalesHistory({ customerId, title = 'Sales History', emptyLabel = 'No sales recorded for this customer yet.' }) {
-  const sales = mockSales
+  const sales = getSales()
     .filter((sale) => sale.customerId === customerId)
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 

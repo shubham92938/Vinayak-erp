@@ -7,7 +7,7 @@
  * shape and no dashboard component needs to change.
  */
 
-import { SAMPLE_FIRMS } from '../../../config/firms'
+import { getFirms } from '../../../core/firmStore'
 import {
   DEMO_DATA_LABEL,
   DEMO_DATA_NOTICE,
@@ -32,10 +32,11 @@ function waitForDemoData() {
   })
 }
 
-function filterTransactions(transactions, startDate, endDate, firmId) {
+function filterTransactions(transactions, startDate, endDate, firmId, allowedFirmIds = null) {
   return transactions.filter((transaction) => {
     if (!isWithin(transaction.date, startDate, endDate)) return false
     if (firmId !== 'all' && transaction.firmId !== firmId) return false
+    if (firmId === 'all' && allowedFirmIds && !allowedFirmIds.includes(transaction.firmId)) return false
     return true
   })
 }
@@ -54,7 +55,7 @@ function inventoryStatus(product) {
   return 'healthy'
 }
 
-function computeKpis(transactions, previousTransactions, { endDate, previousEndDate, firmId }) {
+function computeKpis(transactions, previousTransactions, { endDate, previousEndDate, firmId, allowedFirmIds }) {
   const sales = onlyOfType(transactions, 'sale')
   const previousSales = onlyOfType(previousTransactions, 'sale')
   const purchases = onlyOfType(transactions, 'purchase')
@@ -79,10 +80,12 @@ function computeKpis(transactions, previousTransactions, { endDate, previousEndD
 
   const productsInScope = DEMO_PRODUCTS.filter((product) => {
     if (firmId !== 'all' && product.firmId !== firmId) return false
+    if (firmId === 'all' && allowedFirmIds && !allowedFirmIds.includes(product.firmId)) return false
     return product.addedAt <= endDate
   })
   const previousProducts = DEMO_PRODUCTS.filter((product) => {
     if (firmId !== 'all' && product.firmId !== firmId) return false
+    if (firmId === 'all' && allowedFirmIds && !allowedFirmIds.includes(product.firmId)) return false
     return product.addedAt <= previousEndDate
   })
   const lowStockProducts = productsInScope.filter((product) =>
@@ -275,12 +278,13 @@ function buildTopProducts(transactions) {
     .slice(0, 6)
 }
 
-function buildFirmPerformance(startDate, endDate, selectedFirmId) {
+function buildFirmPerformance(startDate, endDate, selectedFirmId, firms, allowedFirmIds) {
   const transactions = filterTransactions(
     DEMO_TRANSACTIONS,
     startDate,
     endDate,
     'all',
+    allowedFirmIds,
   )
   const previousRange = getPreviousRange(startDate, endDate)
   const previousTransactions = filterTransactions(
@@ -288,9 +292,14 @@ function buildFirmPerformance(startDate, endDate, selectedFirmId) {
     previousRange.start,
     previousRange.end,
     'all',
+    allowedFirmIds,
   )
 
-  return SAMPLE_FIRMS.map((firm) => {
+  const firmsInScope = selectedFirmId === 'all'
+    ? firms
+    : firms.filter((firm) => firm.id === selectedFirmId)
+
+  return firmsInScope.map((firm) => {
     const firmSales = transactions.filter(
       (transaction) =>
         transaction.type === 'sale' && transaction.firmId === firm.id,
@@ -312,12 +321,13 @@ function buildFirmPerformance(startDate, endDate, selectedFirmId) {
   })
 }
 
-function buildInventory(firmId, endDate) {
+function buildInventory(firmId, endDate, firms, allowedFirmIds) {
   const items = DEMO_PRODUCTS.filter((product) => {
     if (firmId !== 'all' && product.firmId !== firmId) return false
+    if (firmId === 'all' && allowedFirmIds && !allowedFirmIds.includes(product.firmId)) return false
     return product.addedAt <= endDate
   }).map((product) => {
-    const firm = SAMPLE_FIRMS.find((item) => item.id === product.firmId)
+    const firm = firms.find((item) => item.id === product.firmId)
     const status = inventoryStatus(product)
 
     return {
@@ -367,23 +377,25 @@ function buildTopCustomers(transactions) {
     .slice(0, 5)
 }
 
-function buildPendingOrders(startDate, endDate, firmId) {
+function buildPendingOrders(startDate, endDate, firmId, allowedFirmIds) {
   return DEMO_ORDERS.filter((order) => {
     if (!isWithin(order.date, startDate, endDate)) return false
     if (firmId !== 'all' && order.firmId !== firmId) return false
+    if (firmId === 'all' && allowedFirmIds && !allowedFirmIds.includes(order.firmId)) return false
     return order.status !== 'completed'
   })
     .sort((left, right) => right.date.localeCompare(left.date))
     .slice(0, 6)
 }
 
-function buildUpcomingPayments(startDate, endDate, firmId) {
+function buildUpcomingPayments(startDate, endDate, firmId, allowedFirmIds) {
   const unpaidInvoices = DEMO_TRANSACTIONS.filter((transaction) => {
     if (transaction.type !== 'sale' && transaction.type !== 'purchase') {
       return false
     }
 
     if (firmId !== 'all' && transaction.firmId !== firmId) return false
+    if (firmId === 'all' && allowedFirmIds && !allowedFirmIds.includes(transaction.firmId)) return false
     if (transaction.balanceDue <= 0) return false
     if (!transaction.dueDate) return false
 
@@ -436,21 +448,29 @@ export async function fetchDashboardData({
   endDate,
   firmId = 'all',
   financialYear,
+  firms = getFirms(),
 }) {
   await waitForDemoData()
 
+  const allowedFirmIds = firms.map((firm) => firm.id)
+  if (firmId !== 'all' && !allowedFirmIds.includes(firmId)) {
+    throw new Error('You do not have access to the selected firm')
+  }
+  const effectiveFirmId = firmId
   const previousRange = getPreviousRange(startDate, endDate)
   const transactions = filterTransactions(
     DEMO_TRANSACTIONS,
     startDate,
     endDate,
-    firmId,
+    effectiveFirmId,
+    allowedFirmIds,
   )
   const previousTransactions = filterTransactions(
     DEMO_TRANSACTIONS,
     previousRange.start,
     previousRange.end,
-    firmId,
+    effectiveFirmId,
+    allowedFirmIds,
   )
 
   return {
@@ -462,7 +482,7 @@ export async function fetchDashboardData({
     scope: {
       startDate,
       endDate,
-      firmId,
+      firmId: effectiveFirmId,
       financialYear,
       rangeLabel: formatRangeLabel(startDate, endDate),
       previousRangeLabel: formatRangeLabel(
@@ -474,7 +494,8 @@ export async function fetchDashboardData({
     kpis: computeKpis(transactions, previousTransactions, {
       endDate,
       previousEndDate: previousRange.end,
-      firmId,
+      firmId: effectiveFirmId,
+      allowedFirmIds,
     }),
     salesOverview: buildSalesOverview(
       transactions,
@@ -489,11 +510,11 @@ export async function fetchDashboardData({
       endDate,
     ),
     topProducts: buildTopProducts(transactions),
-    firmPerformance: buildFirmPerformance(startDate, endDate, firmId),
-    inventory: buildInventory(firmId, endDate),
+    firmPerformance: buildFirmPerformance(startDate, endDate, effectiveFirmId, firms, allowedFirmIds),
+    inventory: buildInventory(effectiveFirmId, endDate, firms, allowedFirmIds),
     topCustomers: buildTopCustomers(transactions),
-    pendingOrders: buildPendingOrders(startDate, endDate, firmId),
-    upcomingPayments: buildUpcomingPayments(startDate, endDate, firmId),
+    pendingOrders: buildPendingOrders(startDate, endDate, effectiveFirmId, allowedFirmIds),
+    upcomingPayments: buildUpcomingPayments(startDate, endDate, effectiveFirmId, allowedFirmIds),
     transactions: buildTransactionRows(transactions),
   }
 }

@@ -1,5 +1,5 @@
 import { SAMPLE_FIRMS } from '../../../config/firms'
-import { getDefaultPermissions } from './rolePermissions'
+import { getDefaultAccessPolicy } from './rolePermissions'
 
 export const USER_ROLES = [
   { id: 'super_admin', label: 'Super Admin' },
@@ -20,6 +20,7 @@ export const USER_STATUSES = [
 function seedUser(overrides) {
   return {
     status: 'active',
+    password: 'demo123',
     createdAt: '2026-08-01T09:15:00',
     lastLogin: '2026-11-18T14:20:00',
     ...overrides,
@@ -149,7 +150,10 @@ export const USER_DEMO_DATA = [
 ]
 
 for (const user of USER_DEMO_DATA) {
-  if (!user.permissions) user.permissions = getDefaultPermissions(user.role)
+  const access = getDefaultAccessPolicy(user.role)
+  if (!user.permissions) user.permissions = access.modules
+  if (!user.firmPermissions) user.firmPermissions = access.firmPermissions
+  if (!user.dataPermissions) user.dataPermissions = access.dataPermissions
 }
 
 export const DEFAULT_USER_ID = 'user-01'

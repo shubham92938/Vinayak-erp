@@ -3,11 +3,12 @@ import { DataTable } from '../../../components/data-table'
 import { Select } from '../../../components/ui'
 import { FirmFilter } from '../../../components/filters'
 import { getFirmLabel } from '../../users/utils/userUtils'
-import { SAMPLE_FIRMS } from '../../../config/firms'
-// import { formatMoney } from '../../products/utils/productUtils'
+import { useFirmContext } from '../../../context/hooks'
+import { formatMoney } from '../../../core/store'
 import { getStockTable } from '../services/inventoryService'
 
 export default function StockOverviewTable({ filters, onFiltersChange }) {
+  const { accessibleFirms } = useFirmContext()
   const products = getStockTable()
   const categories = useMemo(
     () => [...new Set(products.map((product) => product.categoryName))],
@@ -69,7 +70,7 @@ export default function StockOverviewTable({ filters, onFiltersChange }) {
             aria-label="Filter by stock status"
           />
           {filters.showFirmFilter && (
-            <FirmFilter value={filters.firmId} onChange={(firmId) => onFiltersChange({ firmId })} firms={SAMPLE_FIRMS} />
+            <FirmFilter value={filters.firmId} onChange={(firmId) => onFiltersChange({ firmId })} firms={accessibleFirms} />
           )}
         </div>
       }

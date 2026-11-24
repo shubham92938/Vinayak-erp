@@ -1,0 +1,210 @@
+.login-page {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  overflow: hidden;
+  padding: 24px;
+  background: linear-gradient(135deg, #f8fbff 0%, #eef5ff 100%);
+}
+
+.login-page__decor {
+  position: absolute;
+  width: 440px;
+  height: 440px;
+  pointer-events: none;
+  background: rgba(191, 219, 254, 0.32);
+  border-radius: 50%;
+  filter: blur(1px);
+}
+
+.login-page__decor--one {
+  top: -230px;
+  left: -130px;
+}
+
+.login-page__decor--two {
+  right: -170px;
+  bottom: -250px;
+  background: rgba(219, 234, 254, 0.55);
+}
+
+.login-card {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 456px);
+  padding: 34px;
+  background: rgba(255, 255, 255, 0.96);
+  border: 1px solid rgba(203, 213, 225, 0.8);
+  border-radius: 12px;
+  box-shadow: var(--shadow-lg);
+}
+
+.login-card__brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 9px;
+  color: var(--color-navy);
+  font-size: 17px;
+  font-weight: var(--font-weight-semibold);
+}
+
+.login-card__brand strong {
+  color: var(--color-blue);
+}
+
+.login-card__brand-mark {
+  display: grid;
+  place-items: center;
+  width: 32px;
+  height: 32px;
+  color: #fff;
+  background: var(--color-navy);
+  border-radius: var(--radius-md);
+}
+
+.login-card__heading {
+  margin: 32px 0 22px;
+}
+
+.login-card__eyebrow {
+  margin: 0 0 8px;
+  color: var(--color-blue);
+  font-size: 11px;
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+}
+
+.login-card__heading h1 {
+  margin: 0;
+  font-size: 26px;
+}
+
+.login-card__heading p:last-child {
+  margin: 8px 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-sm);
+}
+
+.login-form {
+  display: grid;
+  gap: 16px;
+}
+
+.login-form__password {
+  position: relative;
+}
+
+.login-form__password-toggle {
+  position: absolute;
+  right: 8px;
+  bottom: 8px;
+  display: grid;
+  place-items: center;
+  width: 28px;
+  height: 28px;
+  color: var(--color-text-tertiary);
+  background: transparent;
+  border-radius: var(--radius-sm);
+}
+
+.login-form__password-toggle:hover {
+  color: var(--color-text-primary);
+  background: var(--color-surface-muted);
+}
+
+.login-form__error {
+  margin: -7px 0 0;
+  color: var(--color-danger);
+  font-size: var(--font-size-xs);
+}
+
+.login-demo {
+  padding-top: 20px;
+  margin-top: 22px;
+  border-top: var(--border-default);
+}
+
+.login-demo__heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+  color: var(--color-text-primary);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.login-demo__heading small {
+  color: var(--color-text-tertiary);
+  font-weight: var(--font-weight-regular);
+}
+
+.login-demo__accounts {
+  display: grid;
+  gap: 7px;
+}
+
+.login-demo__account {
+  display: grid;
+  grid-template-columns: 92px 1fr;
+  gap: 2px 8px;
+  padding: 9px 10px;
+  text-align: left;
+  background: var(--color-surface-subtle);
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+}
+
+.login-demo__account:hover {
+  background: var(--color-blue-soft);
+  border-color: var(--color-blue-border);
+}
+
+.login-demo__account-title {
+  grid-row: span 2;
+  align-self: center;
+  color: var(--color-blue);
+  font-size: var(--font-size-xs);
+  font-weight: var(--font-weight-semibold);
+}
+
+.login-demo__account-email,
+.login-demo__account-description {
+  overflow: hidden;
+  color: var(--color-text-secondary);
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.login-demo__account-email {
+  color: var(--color-text-primary);
+  font-weight: var(--font-weight-medium);
+}
+
+.login-card__note {
+  margin: 18px 0 0;
+  color: var(--color-text-tertiary);
+  font-size: 10px;
+  line-height: 1.5;
+  text-align: center;
+}
+
+@media (max-width: 520px) {
+  .login-page {
+    padding: 12px;
+  }
+
+  .login-card {
+    padding: 25px 20px;
+  }
+
+  .login-demo__heading {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 3px;
+  }
+}

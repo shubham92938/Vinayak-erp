@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
-import { Outlet, useLocation } from 'react-router-dom'
+import { Link, Outlet, useLocation } from 'react-router-dom'
+import { ArrowLeft, Building2 } from 'lucide-react'
 import Sidebar from '../../components/layout/Sidebar/Sidebar'
 import Topbar from '../../components/layout/Topbar/Topbar'
 import useMediaQuery from '../../hooks/useMediaQuery'
+import { useFirmContext } from '../../context/hooks'
 import './MainLayout.css'
 
 export default function MainLayout() {
@@ -11,6 +13,7 @@ export default function MainLayout() {
   const mainRef = useRef(null)
   const isMobile = useMediaQuery('(max-width: 768px)')
   const location = useLocation()
+  const { currentFirm } = useFirmContext()
   const previousPathname = useRef(location.pathname)
 
   const drawerKey = `${location.key}-${isMobile}`
@@ -110,6 +113,19 @@ export default function MainLayout() {
           className="app-content"
           tabIndex={-1}
         >
+          {currentFirm && (
+            <div className="workspace-context-bar">
+              <Link to="/home" className="workspace-context-bar__back">
+                <ArrowLeft size={14} aria-hidden="true" />
+                <span>Back to My Firms</span>
+              </Link>
+              <span className="workspace-context-bar__current">
+                <Building2 size={14} aria-hidden="true" />
+                <span>Working in <strong>{currentFirm.name}</strong></span>
+              </span>
+              <Link to={`/firms/${currentFirm.id}/profile`} className="workspace-context-bar__profile">My Firm</Link>
+            </div>
+          )}
           <Outlet />
         </main>
       </div>

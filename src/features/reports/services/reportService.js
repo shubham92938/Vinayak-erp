@@ -2,9 +2,8 @@
  * Report aggregation helpers — reads from the central stores.
  */
 import { getSales } from '../../../core/salesStore'
-import { getPurchases } from '../../../core/financeStore'
-import { mockStockMovements, getStockMovements } from '../../../core/store'
-import { mockTransactions, mockAccounts, getCustomers, formatMoney } from '../../../core/store'
+import { getPurchases } from '../../../core/purchaseStore'
+import { getStockMovements, getTransactions, getAccounts, getCustomers } from '../../../core/store'
 import { getProducts } from '../../products/services/productService'
 
 export function getSalesReport(filters = {}) {
@@ -63,11 +62,11 @@ export function getTopVendorsBySpend() {
 
 export function getInventoryReport() {
   const products = getProducts()
-  const movements = mockStockMovements
+  const movements = getStockMovements()
   return products.map((product) => {
     const rows = movements.filter((movement) => movement.productId === product.id)
-    const movedIn = rows.filter((movement) => movement.type === 'in').reduce((sum, row) => sum + Number(row.qty ?? 0), 0)
-    const movedOut = rows.filter((movement) => movement.type === 'out').reduce((sum, row) => sum + Number(row.qty ?? 0), 0)
+    const movedIn = rows.filter((movement) => movement.type === 'stock-in').reduce((sum, row) => sum + Number(row.qty ?? 0), 0)
+    const movedOut = rows.filter((movement) => movement.type === 'stock-out').reduce((sum, row) => sum + Number(row.qty ?? 0), 0)
     const adjusted = rows.filter((movement) => movement.type === 'adjustment').reduce((sum, row) => sum + Number(row.qty ?? 0), 0)
     return {
       productId: product.id,
@@ -76,14 +75,14 @@ export function getInventoryReport() {
       movedOut,
       adjusted,
       netChange: movedIn - movedOut + adjusted,
-      currentStock: product.stock ?? 0,
+      currentStock: product.quantity ?? 0,
     }
   })
 }
 
 export function getFinancialReport() {
   const byAccount = {}
-  mockTransactions.forEach((txn) => {
+  getTransactions().forEach((txn) => {
     const account = txn.accountId ?? 'Other'
     const entry = byAccount[account] ?? { accountId: account, totalCredit: 0, totalDebit: 0, net: 0 }
     const amount = Number(txn.amount ?? 0)
@@ -98,12 +97,12 @@ export function getFinancialReport() {
   })
   return Object.values(byAccount).map((entry) => ({
     ...entry,
-    accountName: mockAccounts.find((account) => account.id === entry.accountId)?.name ?? entry.accountId,
+    accountName: getAccounts().find((account) => account.id === entry.accountId)?.name ?? entry.accountId,
   }))
 }
 
 export function getFinancialSummary() {
-  return mockTransactions.reduce(
+  return getTransactions().reduce(
     (acc, txn) => {
       const amount = Number(txn.amount ?? 0)
       if (amount >= 0) acc.credit += amount

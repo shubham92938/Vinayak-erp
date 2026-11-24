@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import { useMemo } from 'react'
 import { ActionMenu, Badge, Button, Select } from '../../../components/ui'
 import { DataTable } from '../../../components/data-table'
@@ -48,6 +49,9 @@ export default function SalesOrderTable({
   onRowConfirm,
   onRowCancel,
   onDownloadCsv,
+  canConfirm = true,
+  canCancel = true,
+  canExport = true,
 }) {
   const columns = useMemo(
     () => [
@@ -117,14 +121,14 @@ export default function SalesOrderTable({
             triggerLabel={`Actions for ${order.number}`}
             items={[
               { label: 'View details', onSelect: () => onRowView(order.id) },
-              { label: 'Confirm order', onSelect: () => onRowConfirm(order.id) },
-              { label: 'Cancel order', danger: true, onSelect: () => onRowCancel(order.id) },
+              { label: 'Confirm order', disabled: !canConfirm, onSelect: () => onRowConfirm(order.id) },
+              { label: 'Cancel order', danger: true, disabled: !canCancel, onSelect: () => onRowCancel(order.id) },
             ]}
           />
         ),
       },
     ],
-    [onRowView, onRowConfirm, onRowCancel],
+    [onRowView, onRowConfirm, onRowCancel, canConfirm, canCancel],
   )
 
   return (
@@ -139,7 +143,7 @@ export default function SalesOrderTable({
       minWidth={920}
       selectable
       initialPageSize={10}
-      actions={<Button variant="secondary" size="sm" onClick={() => onDownloadCsv(orders)}>Export CSV</Button>}
+      actions={<Button variant="secondary" size="sm" onClick={() => onDownloadCsv(orders)} disabled={!canExport}>Export CSV</Button>}
       filters={
         <div className="sales-order-filters">
           <Select

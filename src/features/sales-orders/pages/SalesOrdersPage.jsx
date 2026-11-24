@@ -1,14 +1,20 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { Button, useToast } from '../../../components/ui'
 import { downloadCsv } from '../../../utils/csv'
-import { getSalesOrders } from '../services/salesOrderService'
+import { getSalesOrders, confirmSalesOrder, cancelSalesOrder } from '../services/salesOrderService'
 import SalesOrderTable, { salesOrderCsvRows, SALES_ORDER_CSV_COLUMNS } from '../components/SalesOrderTable'
 import '../styles/salesOrders.css'
 
 export default function SalesOrdersPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canConfirmOrders = hasModulePermission(currentUser, 'Sales Orders', 'approve')
+  const canEditOrders = hasModulePermission(currentUser, 'Sales Orders', 'edit')
+  const canExportOrders = hasModulePermission(currentUser, 'Sales Orders', 'export')
   const [filters, setFilters] = useState({ search: '', customerId: 'all', status: 'all' })
 
   const orders = getSalesOrders(filters)
@@ -57,16 +63,19 @@ export default function SalesOrdersPage() {
         onClearFilters={() => setFilters({ search: '', customerId: 'all', status: 'all' })}
         onRowView={(id) => navigate(`/sales-orders/${id}`)}
         onRowConfirm={(id) => {
-          const { confirmSalesOrder } = require('../services/salesOrderService')
+          if (!canConfirmOrders) return
           confirmSalesOrder(id)
           toast.success('Order confirmed')
         }}
         onRowCancel={(id) => {
-          const { cancelSalesOrder } = require('../services/salesOrderService')
+          if (!canEditOrders) return
           cancelSalesOrder(id)
           toast.success('Order cancelled')
         }}
         onDownloadCsv={exportCsv}
+        canConfirm={canConfirmOrders}
+        canCancel={canEditOrders}
+        canExport={canExportOrders}
       />
     </div>
   )

@@ -1,16 +1,15 @@
 import { useMemo, useState } from 'react'
 import { Button, Modal, Select, useToast } from '../../../components/ui'
-import { FormActions, FormField, FormGrid, FormInput, FormSection, FormSelect, FormTextarea } from '../../../components/forms'
-import { createSale, getProductsForSale, getSaleTotals } from '../services/saleService'
+import { FormActions, FormField, FormGrid, FormInput, FormSection, FormTextarea } from '../../../components/forms'
+import { createChallan, createSale, getProductsForSale, getSaleTotals } from '../services/saleService'
 import InvoicePreview from './InvoicePreview'
-import { formatMoney, formatDate } from './saleUtils'
+import { formatMoney } from './saleUtils'
 import { getCustomers } from '../../../core/store'
 import '../styles/sales.css'
 
 export default function SaleForm({ mode, sale, onClose, onSubmit }) {
   const toast = useToast()
   const isChallan = mode === 'challan'
-  const isCreating = mode === 'add' || isChallan
 
   const customers = useMemo(() => getCustomers(), [])
   const productOptions = useMemo(() => getProductsForSale().map((product) => ({ value: product.id, label: `${product.name} — ${product.unit}` })), [])
@@ -19,13 +18,17 @@ export default function SaleForm({ mode, sale, onClose, onSubmit }) {
     customerId: sale?.customerId ?? customers[0]?.id ?? '',
     date: sale?.date ?? new Date().toISOString().slice(0, 16),
     items: sale?.items ?? [
-      { productId: productOptions[0]?.value ?? '', qty: 1, price: productOptions[0] ? (productOptions[0] && getProductsForSale().find((p) => p.id === productOptions[0].value)?.sellingPrice ?? 0) : 0, taxPct: 18, discount: 0 },
+      { productId: productOptions[0]?.value ?? '', qty: 1, price: productOptions[0] ? (getProductsForSale().find((p) => p.id === productOptions[0].value)?.sellingPrice ?? 0) : 0, taxPct: 18, discount: 0 },
     ],
     notes: sale?.notes ?? '',
     advance: sale?.advance ?? 0,
   }))
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
+
+  const updateField = (field) => (event) => {
+    setForm((current) => ({ ...current, [field]: event.target.value }))
+  }
 
   const updateItem = (index, field) => (event) => {
     setForm((current) => ({
@@ -39,13 +42,6 @@ export default function SaleForm({ mode, sale, onClose, onSubmit }) {
         }
         return next
       }),
-    }))
-  }
-
-  const updateItemValue = (index, field, value) => {
-    setForm((current) => ({
-      ...current,
-      items: current.items.map((item, itemIndex) => (itemIndex === index ? { ...item, [field]: value } : item)),
     }))
   }
 
@@ -65,9 +61,6 @@ export default function SaleForm({ mode, sale, onClose, onSubmit }) {
       items: current.items.filter((item, itemIndex) => itemIndex !== index),
     }))
   }
-
-  const getProductBySelectedId = (productId) =>
-    getProductsForSale().find((product) => product.id === productId) ?? null
 
   const totals = useMemo(() => {
     const computed = getSaleTotals(form)
@@ -103,21 +96,14 @@ export default function SaleForm({ mode, sale, onClose, onSubmit }) {
     try {
       const customer = customers.find((entry) => entry.id === form.customerId)
       if (isChallan) {
-        const { mockSales } = await import('../../../core/salesStore')
-        const challlan = {
-          id: `CHL-${Date.now().toString(36)}`,
-          number: `CHAL-${String(mockSales.length + 1).padStart(6, '0')}`,
-          type: 'Challan',
+        createChallan({
           customerId: form.customerId,
           customerName: customer?.name,
           date: form.date,
           items: form.items.map((item) => ({ ...item })),
           discount: 0,
-          status: 'Delivered',
           notes: form.notes,
-          ...totals,
-        }
-        mockSales.push(challlan)
+        })
         toast.success('Challan created')
       } else {
         createSale({
@@ -187,7 +173,6 @@ export default function SaleForm({ mode, sale, onClose, onSubmit }) {
               <span>Product</span><span>Qty</span><span>Price</span><span className="sales-align-right">Tax</span><span className="sales-align-right">Amount</span><span />
             </div>
             {form.items.map((item, index) => {
-              const product = getProductBySelectedId(item.productId)
               const lineTotal = Number(item.qty ?? 0) * Number(item.price ?? 0)
               return (
                 <div key={index} className="sales-item">
@@ -218,8 +203,4 @@ export default function SaleForm({ mode, sale, onClose, onSubmit }) {
       </form>
     </Modal>
   )
-}
-
-function updateField(field) {
-  return (event) => setForm((current) => ({ ...current, [field]: event.target.value }))
 }

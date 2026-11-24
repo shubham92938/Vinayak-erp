@@ -1,5 +1,5 @@
 import { Card, CardBody } from '../../../components/ui'
-import { mockAccounts, formatMoney } from '../../../core/store'
+import { getAccounts, formatMoney } from '../../../core/store'
 import { Badge } from '../../../components/ui'
 import '../styles/balance.css'
 
@@ -9,7 +9,7 @@ const ACCOUNT_VARIANTS = {
 }
 
 export default function BalancePage() {
-  const accounts = mockAccounts.slice().sort((a, b) => a.balance - b.balance)
+  const accounts = getAccounts().slice().sort((a, b) => a.balance - b.balance)
   const totalBalance = accounts.reduce((sum, account) => sum + account.balance, 0)
 
   return (

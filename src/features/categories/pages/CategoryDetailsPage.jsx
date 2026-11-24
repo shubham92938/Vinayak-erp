@@ -1,4 +1,7 @@
 import { useMemo, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { ArrowLeft, Edit } from 'lucide-react'
 import { Button, Card, CardBody, Modal, useToast } from '../../../components/ui'
 import { getProducts } from '../../products/services/productService'
@@ -8,8 +11,12 @@ import { useCategories } from '../hooks/useCategories'
 import { formatCategoryDate } from '../services/categoryUtils'
 import '../styles/categories.css'
 
-export default function CategoryDetailsPage({ categoryId }) {
+export default function CategoryDetailsPage({ categoryId: providedCategoryId }) {
+  const { categoryId: routeCategoryId } = useParams()
+  const categoryId = providedCategoryId ?? routeCategoryId
   const toast = useToast()
+  const { currentUser } = useAuth()
+  const canEditCategory = hasModulePermission(currentUser, 'Categories', 'edit')
   const { getCategoryById, saveCategory, toggleCategoryStatus } = useCategories()
   const category = getCategoryById(categoryId)
 
@@ -24,14 +31,15 @@ export default function CategoryDetailsPage({ categoryId }) {
   const [isEditing, setIsEditing] = useState(false)
 
   const handleToggleStatus = () => {
-    toggleCategoryStatus(category.id)
-    toast.success('Category status updated')
+    if (!canEditCategory) return
+    const updated = toggleCategoryStatus(category.id)
+    if (updated) toast.success('Category status updated')
   }
 
   const handleSave = (categoryData) => {
-    if (categoryData.id) {
-      saveCategory(categoryData.id, categoryData)
-      toast.success('Category updated')
+    if (categoryData.id && canEditCategory) {
+      const updated = saveCategory(categoryData.id, categoryData)
+      if (updated) toast.success('Category updated')
     }
     setIsEditing(false)
   }
@@ -65,10 +73,10 @@ export default function CategoryDetailsPage({ categoryId }) {
             <Button variant="secondary" onClick={() => window.history.back()} leadingIcon={<ArrowLeft size={14} />}>
               Back to Categories
             </Button>
-            <Button variant="secondary" onClick={handleToggleStatus} leadingIcon={<Edit size={14} />}>
+            <Button variant="secondary" onClick={handleToggleStatus} leadingIcon={<Edit size={14} />} disabled={!canEditCategory}>
               {category.status === 'active' ? 'Inactivate' : 'Activate'}
             </Button>
-            <Button onClick={() => setIsEditing(true)} leadingIcon={<Edit size={14} />}>
+            <Button onClick={() => setIsEditing(true)} leadingIcon={<Edit size={14} />} disabled={!canEditCategory}>
               Edit Category
             </Button>
           </div>

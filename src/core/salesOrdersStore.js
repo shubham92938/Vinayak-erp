@@ -2,6 +2,8 @@
  * Sales orders store (Part 5). Interconnects with products.
  */
 import { getProducts, updateProductQuantity } from '../features/products/services/productService'
+import { DEFAULT_FIRM_ID } from '../config/firms'
+import { getActiveFirmId } from './firmContextStore'
 import { nextNumber } from './numbers'
 
 export const mockSalesOrders = [
@@ -67,12 +69,24 @@ export const mockSalesOrders = [
   },
 ]
 
+function inferFirmId(record) {
+  return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID
+}
+
+mockSalesOrders.forEach((order) => { order.firmId = inferFirmId(order) })
+
+function inActiveFirm(record) {
+  const activeFirmId = getActiveFirmId()
+  return !activeFirmId || record.firmId === activeFirmId
+}
+
 export function getSalesOrders(filters = {}) {
   const { search, status } = filters
   const query = String(search ?? '').trim().toLowerCase()
 
   return mockSalesOrders
     .filter((order) => {
+      if (!inActiveFirm(order)) return false
       if (query && !`${order.number} ${order.customerName}`.toLowerCase().includes(query)) return false
       if (status && status !== 'all' && order.status !== status) return false
       return true
@@ -81,7 +95,7 @@ export function getSalesOrders(filters = {}) {
 }
 
 export function getSalesOrderById(id) {
-  return mockSalesOrders.find((order) => order.id === id) ?? null
+  return mockSalesOrders.find((order) => order.id === id && inActiveFirm(order)) ?? null
 }
 
 export function createSalesOrder(data) {
@@ -98,6 +112,7 @@ export function createSalesOrder(data) {
     taxTotal: 0,
     status: 'Draft',
     fulfilledQty: 0,
+    firmId: getActiveFirmId() ?? data.firmId ?? DEFAULT_FIRM_ID,
   }
   order.taxTotal = order.subtotal * 0.18
   order.total = order.subtotal + order.taxTotal
@@ -108,13 +123,14 @@ export function createSalesOrder(data) {
 export function updateSalesOrder(id, updates) {
   const order = getSalesOrderById(id)
   if (!order) return null
-  return { ...order, ...updates }
+  const index = mockSalesOrders.findIndex((entry) => entry.id === id && inActiveFirm(entry))
+  const updated = { ...mockSalesOrders[index], ...updates, firmId: mockSalesOrders[index].firmId }
+  mockSalesOrders[index] = updated
+  return { ...updated }
 }
 
 export function confirmSalesOrder(id) {
-  const order = getSalesOrderById(id)
-  if (!order) return null
-  return { ...order, status: 'Confirmed' }
+  return updateSalesOrder(id, { status: 'Confirmed' })
 }
 
 export function fulfillSalesOrder(id, qty) {
@@ -136,9 +152,7 @@ export function fulfillSalesOrder(id, qty) {
 }
 
 export function cancelSalesOrder(id) {
-  const order = getSalesOrderById(id)
-  if (!order) return null
-  return { ...order, status: 'Cancelled' }
+  return updateSalesOrder(id, { status: 'Cancelled' })
 }
 
 export const SALES_ORDER_STATUSES = [

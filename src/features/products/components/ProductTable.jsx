@@ -55,6 +55,10 @@ export default function ProductTable({
   onBulkActivate,
   onBulkDeactivate,
   downloadProducts,
+  canCreate = true,
+  canEdit = true,
+  canDelete = true,
+  canExport = true,
 }) {
   const categoriesById = useMemo(
     () => Object.fromEntries(categories.map((category) => [category.id, category])),
@@ -150,16 +154,17 @@ export default function ProductTable({
             triggerLabel={`Actions for ${product.name}`}
             items={[
               { label: 'View product', onSelect: () => onRowView(product.id) },
-              { label: 'Edit product', onSelect: () => onRowEdit(product.id) },
-              { label: 'Duplicate product', onSelect: () => onRowDuplicate(product.id) },
+              { label: 'Edit product', disabled: !canEdit, onSelect: () => onRowEdit(product.id) },
+              { label: 'Duplicate product', disabled: !canCreate, onSelect: () => onRowDuplicate(product.id) },
               {
                 label: product.status === 'active' ? 'Deactivate product' : 'Activate product',
+                disabled: !canEdit,
                 onSelect: () =>
                   product.status === 'active'
                     ? onRowDeactivate(product.id)
                     : onRowActivate(product.id),
               },
-              { label: 'Delete product', danger: true, onSelect: () => onRowDelete(product.id) },
+              { label: 'Delete product', danger: true, disabled: !canDelete, onSelect: () => onRowDelete(product.id) },
             ]}
           />
         ),
@@ -173,6 +178,9 @@ export default function ProductTable({
       onRowActivate,
       onRowDeactivate,
       onRowDelete,
+      canCreate,
+      canEdit,
+      canDelete,
     ],
   )
 
@@ -206,17 +214,17 @@ export default function ProductTable({
         filterKey={`${filters.firmId}-${filters.categoryId}-${filters.status}-${filters.stockStatus}-${filters.fromDate}-${filters.toDate}`}
         selectable
         initialPageSize={10}
-        actions={<Button variant="secondary" size="sm" onClick={() => downloadProducts(products)}>Export CSV</Button>}
+        actions={<Button variant="secondary" size="sm" onClick={() => downloadProducts(products)} disabled={!canExport}>Export CSV</Button>}
         bulkActions={(selectedRows) => {
           const anyActive = selectedRows.some((product) => product.status === 'active')
           const anyInactive = selectedRows.some((product) => product.status === 'inactive')
           return (
             <>
               {anyInactive && (
-                <Button variant="secondary" size="sm" onClick={() => onBulkActivate(selectedRows)}>Activate Selected</Button>
+                <Button variant="secondary" size="sm" onClick={() => onBulkActivate(selectedRows)} disabled={!canEdit}>Activate Selected</Button>
               )}
               {anyActive && (
-                <Button variant="secondary" size="sm" onClick={() => onBulkDeactivate(selectedRows)}>Deactivate Selected</Button>
+                <Button variant="secondary" size="sm" onClick={() => onBulkDeactivate(selectedRows)} disabled={!canEdit}>Deactivate Selected</Button>
               )}
             </>
           )

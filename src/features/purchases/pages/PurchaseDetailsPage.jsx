@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Badge, Button, Card, CardBody } from '../../../components/ui'
 import { getPurchaseById, formatMoney, formatDate } from '../utils/purchaseUtils'

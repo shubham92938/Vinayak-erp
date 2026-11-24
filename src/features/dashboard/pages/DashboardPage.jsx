@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { AlertCircle } from 'lucide-react'
 import { Button, Card, CardBody, useToast } from '../../../components/ui'
-import { SAMPLE_FIRMS } from '../../../config/firms'
+import { useAuth, useFirmContext } from '../../../context/hooks'
+import { getDataPermission } from '../../../core/accessControl'
 import DashboardHeader from '../components/DashboardHeader'
 import DashboardSkeleton from '../components/DashboardSkeleton'
 import FirmPerformanceChart from '../components/FirmPerformanceChart'
@@ -40,6 +41,11 @@ const DEFAULT_TRANSACTION_FILTERS = {
 
 export default function DashboardPage() {
   const toast = useToast()
+  const { currentUser } = useAuth()
+  const { currentFirmId, accessibleFirms } = useFirmContext()
+  const workspaceFirmId = currentFirmId ?? accessibleFirms[0]?.id ?? 'all'
+  const canViewAllFirms = getDataPermission(currentUser, 'Dashboard', 'view', 'all')
+  const canExportDashboard = getDataPermission(currentUser, 'Dashboard', 'export', 'own')
   const referenceDate = useMemo(() => new Date(), [])
   const financialYearOptions = useMemo(
     () => getFinancialYearOptions(referenceDate, 3),
@@ -59,11 +65,11 @@ export default function DashboardPage() {
     () => ({
       preset: DEFAULT_DATE_PRESET,
       financialYear: financialYearOptions[0].value,
-      firmId: 'all',
+      firmId: workspaceFirmId,
       customStart: defaultRange.start,
       customEnd: defaultRange.end,
     }),
-    [defaultRange, financialYearOptions],
+    [defaultRange, financialYearOptions, workspaceFirmId],
   )
 
   const [filters, setFilters] = useState(defaultFilters)
@@ -72,6 +78,12 @@ export default function DashboardPage() {
   )
   const [data, setData] = useState(null)
   const [refreshing, setRefreshing] = useState(false)
+
+  useEffect(() => {
+    if (filters.firmId === workspaceFirmId || (canViewAllFirms && filters.firmId === 'all')) return
+    // eslint-disable-next-line react-hooks/set-state-in-effect
+    setFilters(defaultFilters)
+  }, [canViewAllFirms, defaultFilters, filters.firmId, workspaceFirmId])
   const [loadError, setLoadError] = useState(null)
   const requestIdRef = useRef(0)
 
@@ -114,6 +126,7 @@ export default function DashboardPage() {
           endDate: appliedRange.end,
           firmId: filters.firmId,
           financialYear: filters.financialYear,
+          firms: accessibleFirms,
         })
 
         if (requestIdRef.current !== requestId) return
@@ -150,6 +163,7 @@ export default function DashboardPage() {
       appliedRange.end,
       filters.firmId,
       filters.financialYear,
+      accessibleFirms,
       toast,
     ],
   )
@@ -169,6 +183,9 @@ export default function DashboardPage() {
     setLoadError(null)
     setFilters((current) => {
       const next = { ...current, ...patch }
+      if (!canViewAllFirms && ('firmId' in patch)) {
+        next.firmId = workspaceFirmId
+      }
 
       if (patch.preset === 'custom' && current.preset !== 'custom') {
         next.customStart = appliedRange.start
@@ -266,7 +283,7 @@ export default function DashboardPage() {
   }
 
   const handleExport = () => {
-    if (!data) return
+    if (!canExportDashboard || !data) return
 
     if (filteredTransactions.length === 0) {
       toast.warning('Nothing to export', {
@@ -306,7 +323,8 @@ export default function DashboardPage() {
         onReset={handleReset}
         canReset={canReset}
         financialYearOptions={financialYearOptions}
-        firms={SAMPLE_FIRMS}
+        firms={accessibleFirms}
+        canViewAllFirms={canViewAllFirms}
         minDate={minDate}
         maxDate={todayISO}
         rangeLabel={rangeLabel}
@@ -315,7 +333,7 @@ export default function DashboardPage() {
         loading={isBusy}
         refreshing={refreshing}
         refreshDisabled={isBusy}
-        exportDisabled={!data || isBusy}
+        exportDisabled={!canExportDashboard || !data || isBusy}
         onRefresh={handleRefresh}
         onExport={handleExport}
         exportCount={filteredTransactions.length}
