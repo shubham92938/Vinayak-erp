@@ -450,3 +450,33 @@
     flex: 1;
   }
 }
+
+/* Recording-driven compact sales list */
+.sales-page {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+.sales-page .recorded-page-header {
+  margin-bottom: 8px;
+}
+
+.recorded-table__export {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  margin: 6px 10px 8px auto;
+  padding: 4px 8px;
+  color: #1d748c;
+  background: #f5fbfb;
+  border: 1px solid #c8dfdf;
+  border-radius: 2px;
+  font: inherit;
+  font-size: 9px;
+  cursor: pointer;
+}
+
+.recorded-table__export:hover {
+  background: #eaf7f7;
+}

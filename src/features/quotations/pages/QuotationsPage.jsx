@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { ActionMenu, Badge, Button, useToast } from '../../../components/ui'
 import { downloadCsv } from '../../../utils/csv'
 import { getQuotations, formatMoney, formatDate, QUOTATION_STATUSES } from '../services/quotationService'
@@ -25,6 +27,9 @@ const COLUMNS = [
 export default function QuotationsPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canConvert = hasModulePermission(currentUser, 'Sales Orders', 'create')
+  const canExport = hasModulePermission(currentUser, 'Quotations', 'export')
   const [filters, setFilters] = useState({ status: 'all', customerId: 'all' })
 
   const quotations = getQuotations().filter((quote) =>
@@ -51,6 +56,7 @@ export default function QuotationsPage() {
   }
 
   const convertQuote = (quote) => {
+    if (!canConvert) return
     const order = convertQuotationToSaleOrder(quote.id)
     toast.success(`Quote converted to ${order.number}`)
   }
@@ -65,7 +71,7 @@ export default function QuotationsPage() {
             <p className="quotations-header__description">Send price quotes to customers. Convert accepted quotes to Sales Orders.</p>
           </div>
           <div className="quotations-header__actions">
-            <Button variant="secondary" onClick={exportCsv}>Export CSV</Button>
+            <Button variant="secondary" onClick={exportCsv} disabled={!canExport}>Export CSV</Button>
           </div>
         </div>
         <div className="quotations-kpi-grid">
@@ -78,7 +84,7 @@ export default function QuotationsPage() {
 
       <DataTable
         data={quotations}
-        columns={buildColumns(navigate, convertQuote)}
+        columns={buildColumns(navigate, convertQuote, canConvert)}
         getRowId={(quote) => quote.id}
         search={filters.search}
         onSearchChange={(search) => setFilters((current) => ({ ...current, search }))}
@@ -109,7 +115,7 @@ export default function QuotationsPage() {
   )
 }
 
-function buildColumns(navigate, convertQuote) {
+function buildColumns(navigate, convertQuote, canConvert) {
   return [
     { id: 'number', header: 'Quotation Number', accessor: 'number', minWidth: '120px' },
     { id: 'customerName', header: 'Customer', accessor: 'customerName', minWidth: '160px' },
@@ -138,7 +144,7 @@ function buildColumns(navigate, convertQuote) {
           items={[
             { label: 'View details', onSelect: () => navigate(`/quotations/${row.id}`) },
             { label: 'Duplicate', onSelect: () => navigate(`/quotations/${row.id}?duplicate=1`) },
-            { label: 'Convert to Sales Order', disabled: row.status !== 'Accepted', onSelect: () => convertQuote(row) },
+            { label: 'Convert to Sales Order', disabled: row.status !== 'Accepted' || !canConvert, onSelect: () => convertQuote(row) },
           ]}
         />
       ),

@@ -1,9 +1,14 @@
 import { useState } from 'react'
 import { Button, Card, CardBody, Select, useToast } from '../../../components/ui'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
+import { useFirmContext } from '../../../context/hooks'
 import { FormActions, FormField, FormGrid, FormInput, FormSection } from '../../../components/forms'
 import { DataTable } from '../../../components/data-table'
-import { getPaymentsOut, recordPaymentOutFinance, mockAccounts, mockExpenses, formatMoney, formatDate, getPurchases } from '../../../core/financeStore'
-import { getCustomers } from '../../../core/store'
+import { getPaymentsOut, recordPaymentOutFinance, formatMoney, formatDate } from '../../../core/financeStore'
+import { getPurchases } from '../../../core/purchaseStore'
+import { getAccounts } from '../../../core/store'
+import { getExpenses } from '../../expenses/services/expenseService'
 import '../styles/paymentOut.css'
 
 const MODES = [
@@ -16,16 +21,19 @@ const EXPENSE_TYPES = ['Rent', 'Travel', 'Internet', 'Telephone', 'Repairs', 'Mi
 
 export default function PaymentOutPage() {
   const toast = useToast()
+  const { currentUser } = useAuth()
+  const canRecordPayment = hasModulePermission(currentUser, 'Payment Out', 'create')
+  useFirmContext()
 
   return (
     <div className="payment-out-page">
-      <PaymentOutList toast={toast} />
-      <PaymentOutForm toast={toast} />
+      <PaymentOutList />
+      <PaymentOutForm toast={toast} canRecordPayment={canRecordPayment} />
     </div>
   )
 }
 
-function PaymentOutList({ toast }) {
+function PaymentOutList() {
   const payments = getPaymentsOut()
 
   const columns = [
@@ -77,7 +85,7 @@ function PaymentOutList({ toast }) {
   )
 }
 
-function PaymentOutForm({ toast }) {
+function PaymentOutForm({ toast, canRecordPayment }) {
   const [form, setForm] = useState({
     vendorId: '',
     sourceType: 'purchase',
@@ -86,18 +94,18 @@ function PaymentOutForm({ toast }) {
     date: new Date().toISOString().slice(0, 16),
     amount: 0,
     mode: 'Cash',
-    accountId: mockAccounts[0].id,
+    accountId: getAccounts()[0]?.id ?? '',
     notes: '',
   })
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
 
-  const customers = getCustomers().filter((customer) => customer.vendorName)
   const openPurchases = getPurchases().filter((purchase) => purchase.due > 0 && purchase.status !== 'Paid')
+  const vendorNames = [...new Set(openPurchases.map((purchase) => purchase.vendorName).filter(Boolean))]
 
   const availableSources = form.sourceType === 'purchase'
     ? openPurchases.filter((purchase) => !form.vendorId || purchase.vendorName === form.vendorId)
-    : mockExpenses.filter((expense) => expense.type === form.expenseType)
+    : getExpenses().filter((expense) => expense.type === form.expenseType)
 
   const validate = () => {
     const nextErrors = {}
@@ -110,6 +118,7 @@ function PaymentOutForm({ toast }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    if (!canRecordPayment) return
     setIsSubmitting(true)
 
     if (!validate()) {
@@ -126,9 +135,9 @@ function PaymentOutForm({ toast }) {
     }
 
     try {
-      const vendorName = form.vendorId
-        || source?.vendorName
-        || (form.sourceType === 'expense' ? form.expenseType : 'Vendor')
+      const vendorName = form.sourceType === 'expense'
+        ? form.expenseType
+        : source?.vendorName ?? form.vendorId ?? 'Vendor'
       recordPaymentOutFinance({
         purchaseId: form.sourceType === 'purchase' ? (source?.number ?? form.sourceId) : null,
         expenseId: form.sourceType === 'expense' ? source?.id : null,
@@ -136,6 +145,7 @@ function PaymentOutForm({ toast }) {
         amount: Number(form.amount),
         mode: form.mode,
         accountId: form.accountId,
+        date: form.date,
         notes: form.notes,
       })
       toast.success(`Payment of ₹${formatMoney(Number(form.amount))} recorded. Account updated.`)
@@ -157,12 +167,21 @@ function PaymentOutForm({ toast }) {
               <FormField label="Vendor (or Expense Type)" error={errors.vendorId} required>
                 <Select
                   value={form.vendorId}
-                  onChange={(event) => setForm((current) => ({ ...current, vendorId: event.target.value, sourceType: event.target.value ? 'purchase' : form.sourceType }))}
+                  onChange={(event) => {
+                    const value = event.target.value
+                    const isExpense = value.startsWith('expense:')
+                    setForm((current) => ({
+                      ...current,
+                      vendorId: value,
+                      sourceType: isExpense ? 'expense' : 'purchase',
+                      expenseType: isExpense ? value.slice('expense:'.length) : '',
+                      sourceId: '',
+                    }))
+                  }}
                   options={[
-                    { value: '', label: 'Select vendor...' },
-                    ...customers.map((customer) => ({ value: customer.id, label: customer.name })),
-                    { value: 'EXPENSES', label: '--- Expenses ---' },
-                    ...EXPENSE_TYPES.map((type) => ({ value: type, label: type })),
+                    { value: '', label: 'Select vendor or expense...' },
+                    ...vendorNames.map((name) => ({ value: name, label: name })),
+                    ...EXPENSE_TYPES.map((type) => ({ value: `expense:${type}`, label: `Expense · ${type}` })),
                   ]}
                   placeholder="Select vendor"
                 />
@@ -175,7 +194,7 @@ function PaymentOutForm({ toast }) {
                     ? [{ value: '', label: 'Select purchase...' }, ...openPurchases
                         .filter((purchase) => !form.vendorId || purchase.vendorName === form.vendorId)
                         .map((purchase) => ({ value: purchase.number, label: `${purchase.number} — Due ${formatMoney(purchase.due ?? 0)}` }))]
-                    : [{ value: '', label: 'Select expense...' }, ...mockExpenses
+                    : [{ value: '', label: 'Select expense...' }, ...getExpenses()
                         .filter((expense) => expense.type === form.expenseType)
                         .map((expense) => ({ value: expense.id, label: `${expense.id} — ${expense.description} (${formatMoney(expense.amount)})` }))]}
                   placeholder="Select source"
@@ -191,14 +210,14 @@ function PaymentOutForm({ toast }) {
                 <Select value={form.mode} onChange={(event) => setForm((current) => ({ ...current, mode: event.target.value }))} options={MODES} />
               </FormField>
               <FormField label="Account" required>
-                <Select value={form.accountId} onChange={(event) => setForm((current) => ({ ...current, accountId: event.target.value }))} options={mockAccounts.map((account) => ({ value: account.id, label: account.name }))} />
+                <Select value={form.accountId} onChange={(event) => setForm((current) => ({ ...current, accountId: event.target.value }))} options={getAccounts().map((account) => ({ value: account.id, label: account.name }))} />
               </FormField>
             </FormGrid>
             <FormField label="Notes" optional>
               <FormInput value={form.notes} onChange={(event) => setForm((current) => ({ ...current, notes: event.target.value }))} placeholder="NEFT ref, cash received..." />
             </FormField>
             <FormActions>
-              <Button type="submit" variant="primary" disabled={isSubmitting}>Record Payment</Button>
+              <Button type="submit" variant="primary" disabled={isSubmitting || !canRecordPayment}>Record Payment</Button>
             </FormActions>
           </FormSection>
         </form>

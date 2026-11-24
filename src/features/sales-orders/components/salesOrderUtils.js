@@ -1,4 +1,4 @@
-import { SAMPLE_FIRMS } from '../../../config/firms'
+import { getFirmLabel as getCentralFirmLabel } from '../../users/utils/userUtils'
 
 export function formatMoney(amount) {
   return `₹${Number(amount ?? 0).toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`
@@ -11,8 +11,8 @@ export function formatDate(value) {
   return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(parsed)
 }
 
-export function getFirmLabel(firmId = SAMPLE_FIRMS[0].id) {
-  return SAMPLE_FIRMS.find((firm) => firm.id === firmId)?.name ?? firmId
+export function getFirmLabel(firmId) {
+  return getCentralFirmLabel(firmId)
 }
 
 export function getSaleOrderTotals(order) {

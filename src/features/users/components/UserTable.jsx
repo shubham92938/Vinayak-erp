@@ -28,9 +28,15 @@ export default function UserTable({
   onRowChangeRole,
   onRowActivate,
   onRowDeactivate,
+  onUserDelete,
   onBulkActivate,
   onBulkDeactivate,
   downloadUsers,
+  canEdit = true,
+  canDelete = true,
+  canExport = true,
+  canEditUser = () => canEdit,
+  canDeleteUser = () => canDelete,
 }) {
   const columns = useMemo(
     () => [
@@ -104,21 +110,23 @@ export default function UserTable({
             triggerLabel={`Actions for ${user.name}`}
             items={[
               { label: 'View details', onSelect: () => onRowView(user.id) },
-              { label: 'Edit user', onSelect: () => onRowEdit(user.id) },
-              { label: 'Change role', onSelect: () => onRowChangeRole(user.id) },
+              { label: 'Edit user', disabled: !canEditUser(user), onSelect: () => onRowEdit(user.id) },
+              { label: 'Change role', disabled: !canEditUser(user), onSelect: () => onRowChangeRole(user.id) },
               {
                 label: user.status === 'active' ? 'Deactivate user' : 'Activate user',
+                disabled: !canEditUser(user),
                 onSelect: () =>
                   user.status === 'active'
                     ? onRowDeactivate(user.id)
                     : onRowActivate(user.id),
               },
+              { label: 'Delete user', danger: true, disabled: !canDeleteUser(user), onSelect: () => onUserDelete(user.id) },
             ]}
           />
         ),
       },
     ],
-    [onRowView, onRowEdit, onRowChangeRole, onRowActivate, onRowDeactivate],
+    [onRowView, onRowEdit, onRowChangeRole, onRowActivate, onRowDeactivate, onUserDelete, canEditUser, canDeleteUser],
   )
 
   return (
@@ -140,11 +148,11 @@ export default function UserTable({
       selectable
       initialSort={null}
       initialPageSize={10}
-      actions={<Button variant="secondary" size="sm" onClick={() => downloadUsers(users)}>Export CSV</Button>}
+      actions={<Button variant="secondary" size="sm" onClick={() => downloadUsers(users)} disabled={!canExport}>Export CSV</Button>}
       toolbarActions={
         <>
-          <Button variant="secondary" size="sm" onClick={onBulkActivate}>Activate Selected</Button>
-          <Button variant="secondary" size="sm" onClick={onBulkDeactivate}>Deactivate Selected</Button>
+          <Button variant="secondary" size="sm" onClick={onBulkActivate} disabled={!canEdit}>Activate Selected</Button>
+          <Button variant="secondary" size="sm" onClick={onBulkDeactivate} disabled={!canEdit}>Deactivate Selected</Button>
         </>
       }
       bulkActions={(selectedRows) => {
@@ -153,10 +161,10 @@ export default function UserTable({
         return (
           <>
             {anyInactive && (
-              <Button variant="secondary" size="sm" onClick={onBulkActivate}>Activate Selected</Button>
+              <Button variant="secondary" size="sm" onClick={onBulkActivate} disabled={!canEdit}>Activate Selected</Button>
             )}
             {anyActive && (
-              <Button variant="secondary" size="sm" onClick={onBulkDeactivate}>Deactivate Selected</Button>
+              <Button variant="secondary" size="sm" onClick={onBulkDeactivate} disabled={!canEdit}>Deactivate Selected</Button>
             )}
           </>
         )

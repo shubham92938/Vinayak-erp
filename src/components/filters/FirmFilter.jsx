@@ -1,16 +1,18 @@
 import SelectFilter from './SelectFilter'
-import { SAMPLE_FIRMS } from '../../config/firms'
+import { useFirmContext } from '../../context/hooks'
 
 function FirmFilter({
   value = 'all',
   onChange,
-  firms = SAMPLE_FIRMS,
+  firms,
   label = 'Firm',
   allLabel = 'All firms',
   formatLabel,
   className = '',
 }) {
-  const options = firms.map((firm) => ({
+  const { accessibleFirms } = useFirmContext()
+  const optionsFirms = firms ?? accessibleFirms
+  const options = optionsFirms.map((firm) => ({
     value: firm.id,
     label: formatLabel
       ? formatLabel(firm)

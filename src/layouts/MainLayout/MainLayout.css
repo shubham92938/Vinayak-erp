@@ -1,98 +1,385 @@
-/* ==========================================================================
-   Application shell
-   ========================================================================== */
-
-.app-shell {
+/* Compact shell used by the recorded Vinayak Group website. */
+.website-shell {
   min-height: 100vh;
-  background: var(--color-background);
+  color: #263d43;
+  background: #f3fafa;
 }
 
-.app-main {
+.website-header {
+  position: relative;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  min-height: 58px;
+  padding: 5px clamp(8px, 2vw, 28px);
+  background: #fff;
+  border-bottom: 1px solid #e3eae8;
+}
+
+.website-header__brand {
+  flex: 0 0 auto;
+  color: #111d20;
+  text-decoration: none;
+}
+
+.website-logo {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  min-width: 116px;
+  line-height: 1;
+  text-align: center;
+}
+
+.website-logo__word {
+  color: #13191b;
+  font-family: Georgia, 'Times New Roman', serif;
+  font-size: 22px;
+  font-weight: 700;
+  letter-spacing: -0.08em;
+  white-space: nowrap;
+}
+
+.website-logo__word::first-letter {
+  color: #e31f2b;
+}
+
+.website-logo__word span {
+  margin-left: 2px;
+  color: #161d21;
+  font-size: 13px;
+  letter-spacing: -0.12em;
+}
+
+.website-logo__name {
+  align-self: flex-end;
+  margin-top: -4px;
+  color: #252b2f;
+  font-size: 8px;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.website-logo__tagline {
+  margin-top: 2px;
+  color: #e31f2b;
+  font-size: 6px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  white-space: nowrap;
+}
+
+.website-header__firm {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  max-width: min(620px, 58vw);
+  padding: 4px 14px;
+  overflow: hidden;
+  color: #fff;
+  background: #5caa3b;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(30, 83, 36, 0.18);
+  font-size: 10px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.website-header__firm strong {
+  font-weight: 700;
+}
+
+.website-header__firm-dot {
+  width: 6px;
+  height: 6px;
+  flex: 0 0 auto;
+  background: #d9f5c9;
+  border-radius: 50%;
+}
+
+.website-header__actions {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  flex: 0 0 auto;
+}
+
+.website-user {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 3px 5px;
+  color: #29494f;
+  background: transparent;
+  border: 0;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.website-user:hover {
+  background: #f0f7f7;
+}
+
+.website-user__avatar {
+  display: grid;
+  place-items: center;
+  width: 23px;
+  height: 23px;
+  color: #fff;
+  background: #126895;
+  border-radius: 50%;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.website-user__text {
   display: flex;
   flex-direction: column;
-  min-width: 0;
-  min-height: 100vh;
-  margin-left: var(--sidebar-width);
-  transition: margin-left var(--duration-slow) var(--ease-standard);
+  align-items: flex-start;
+  line-height: 1.1;
+  white-space: nowrap;
 }
 
-.app-shell--collapsed .app-main {
-  margin-left: var(--sidebar-width-collapsed);
+.website-user__text strong {
+  max-width: 100px;
+  overflow: hidden;
+  font-size: 9px;
+  text-overflow: ellipsis;
 }
 
-.app-content {
-  flex: 1;
+.website-user__text small {
+  color: #7d9194;
+  font-size: 8px;
+  text-transform: capitalize;
+}
+
+.website-logout {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: #688084;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.website-logout:hover {
+  color: #c53d3d;
+  background: #fff1f1;
+  border-color: #f1caca;
+}
+
+.website-nav {
+  position: relative;
+  z-index: 9;
+  color: #fff;
+  background: #111e50;
+  border-bottom: 3px solid #d8e9ee;
+}
+
+.website-nav__scroll {
   width: 100%;
-  min-width: 0;
-  padding: var(--space-6) var(--page-gutter) var(--space-12);
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
-.app-content:focus {
+.website-nav__scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.website-nav__items {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  min-width: max-content;
+  min-height: 29px;
+}
+
+.website-nav__link,
+.website-nav__dropdown > summary {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 3px;
+  min-height: 29px;
+  padding: 0 9px;
+  color: #fff;
+  border: 0;
+  font-size: 9px;
+  font-weight: 400;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.website-nav__link:hover,
+.website-nav__link.is-active,
+.website-nav__dropdown > summary:hover,
+.website-nav__dropdown.is-active > summary {
+  color: #fff;
+  background: #263d77;
+}
+
+.website-nav__dropdown {
+  position: relative;
+}
+
+.website-nav__dropdown > summary {
+  list-style: none;
+}
+
+.website-nav__dropdown > summary::-webkit-details-marker {
+  display: none;
+}
+
+.website-nav__dropdown > summary svg {
+  transition: transform 120ms ease;
+}
+
+.website-nav__dropdown[open] > summary svg {
+  transform: rotate(180deg);
+}
+
+.website-nav__menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 20;
+  display: flex;
+  flex-direction: column;
+  min-width: 160px;
+  padding: 5px 0;
+  background: #fff;
+  border: 1px solid #dce5e5;
+  border-radius: 0 0 3px 3px;
+  box-shadow: 0 5px 12px rgba(22, 48, 57, 0.18);
+}
+
+.website-nav__menu a {
+  display: block;
+  padding: 8px 12px;
+  color: #355158;
+  font-size: 10px;
+  text-decoration: none;
+  white-space: nowrap;
+}
+
+.website-nav__menu a:hover,
+.website-nav__menu a.is-active {
+  color: #09649d;
+  background: #eff8fa;
+}
+
+.website-context {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 26px;
+  padding: 3px 10px;
+  color: #5f777b;
+  background: #f0f8f7;
+  border-bottom: 1px solid #e1ecea;
+  font-size: 10px;
+}
+
+.website-context strong {
+  color: #306068;
+}
+
+.website-context a {
+  color: #0a6d9f;
+  text-decoration: none;
+}
+
+.website-context a:hover {
+  text-decoration: underline;
+}
+
+.website-content {
+  width: min(100% - 18px, 1240px);
+  min-height: calc(100vh - 116px);
+  margin: 0 auto;
+  padding: 10px 0 42px;
+}
+
+.website-content:focus {
   outline: none;
 }
 
-/* Backdrop */
-
-.app-backdrop {
-  position: fixed;
-  inset: 0;
-  z-index: var(--z-drawer-backdrop);
-  padding: 0;
-  background: var(--color-overlay);
-  border: 0;
-  cursor: default;
-  animation: app-backdrop-in var(--duration-base) var(--ease-standard);
-}
-
-@keyframes app-backdrop-in {
-  from {
-    opacity: 0;
-  }
-  to {
-    opacity: 1;
-  }
-}
-
-/* Skip link */
-
-.skip-link {
-  position: fixed;
-  top: var(--space-2);
-  left: var(--space-2);
-  z-index: calc(var(--z-toast) + 1);
-  padding: var(--space-2) var(--space-3);
-  color: var(--color-text-inverse);
-  background: var(--color-navy);
-  border-radius: var(--radius-md);
-  font-size: var(--font-size-sm);
-  font-weight: var(--font-weight-medium);
-  text-decoration: none;
-  transform: translateY(-200%);
-  transition: transform var(--duration-fast) var(--ease-standard);
-}
-
-.skip-link:focus {
-  color: var(--color-text-inverse);
-  transform: translateY(0);
-}
-
-@media (max-width: 768px) {
-  .app-main,
-  .app-shell--collapsed .app-main {
-    margin-left: 0;
+@media (max-width: 720px) {
+  .website-header {
+    min-height: 52px;
+    gap: 8px;
+    padding-inline: 6px;
   }
 
-  .app-content {
-    padding-top: var(--space-5);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .app-main {
-    transition: none;
+  .website-logo {
+    min-width: 85px;
   }
 
-  .app-backdrop {
-    animation: none;
+  .website-logo__word {
+    font-size: 17px;
+  }
+
+  .website-logo__word span {
+    font-size: 10px;
+  }
+
+  .website-logo__name {
+    font-size: 6px;
+  }
+
+  .website-logo__tagline {
+    font-size: 4.5px;
+  }
+
+  .website-header__firm {
+    flex: 1;
+    justify-content: center;
+    max-width: none;
+    padding-inline: 7px;
+    font-size: 8px;
+  }
+
+  .website-user__text,
+  .website-logout {
+    display: none;
+  }
+
+  .website-user {
+    padding: 2px;
+  }
+
+  .website-user__avatar {
+    width: 20px;
+    height: 20px;
+  }
+
+  .website-nav__items {
+    justify-content: flex-start;
+  }
+
+  .website-nav__link,
+  .website-nav__dropdown > summary {
+    min-height: 25px;
+    padding-inline: 6px;
+    font-size: 7px;
+  }
+
+  .website-context {
+    min-height: 22px;
+    font-size: 8px;
+  }
+
+  .website-content {
+    width: calc(100% - 8px);
+    padding-top: 7px;
   }
 }

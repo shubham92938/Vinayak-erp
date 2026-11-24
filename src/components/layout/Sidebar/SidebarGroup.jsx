@@ -1,6 +1,8 @@
 import { ChevronDown } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import SidebarLink from './SidebarLink'
+import { getWorkspaceRoutePath } from '../../../config/navigation'
+import { useFirmContext } from '../../../context/hooks'
 
 export default function SidebarGroup({
   group,
@@ -12,8 +14,11 @@ export default function SidebarGroup({
   onHideTooltip,
 }) {
   const { pathname } = useLocation()
+  const { currentFirm } = useFirmContext()
   const Icon = group.icon
-  const hasActiveChild = group.children.some((child) => child.to === pathname)
+  const hasActiveChild = group.children.some(
+    (child) => getWorkspaceRoutePath(currentFirm?.id, child.to) === pathname,
+  )
   const isExpanded = !collapsed && open
 
   const showGroupTooltip = (event) => {

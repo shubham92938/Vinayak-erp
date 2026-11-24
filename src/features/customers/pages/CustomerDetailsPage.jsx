@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, CardBody } from '../../../components/ui'
 import { getCustomerById } from '../../../core/store'
 import { formatMoney } from '../utils/customerUtils'
@@ -11,8 +11,10 @@ import '../styles/customers.css'
 
 const TABS = ['Overview', 'Sales History', 'Payment History', 'Activity']
 
-export default function CustomerDetailsPage({ customerId }) {
+export default function CustomerDetailsPage({ customerId: providedCustomerId }) {
   const navigate = useNavigate()
+  const { customerId: routeCustomerId } = useParams()
+  const customerId = providedCustomerId ?? routeCustomerId
   const [tab, setTab] = useState('Overview')
   const customer = getCustomerById(customerId)
 

@@ -146,3 +146,18 @@
     flex: 1;
   }
 }
+.price-list-page {
+  width: 100%;
+  max-width: 1180px;
+  margin-inline: auto;
+}
+
+.price-list-page .recorded-table {
+  margin-top: 0;
+}
+
+@media (max-width: 600px) {
+  .price-list-page .recorded-page-header__actions {
+    align-self: flex-end;
+  }
+}

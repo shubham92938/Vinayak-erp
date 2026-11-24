@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { Button, Card, CardBody, Modal, useToast } from '../../../components/ui'
 import { Select } from '../../../components/ui'
 import { FormField, FormGrid, FormInput, FormLabel, FormSection } from '../../../components/forms'
@@ -10,6 +12,8 @@ import '../styles/inventory.css'
 export default function StockAdjustmentPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canEditInventory = hasModulePermission(currentUser, 'Inventory', 'edit')
   const [form, setForm] = useState({ productId: '', newQuantity: 0, reason: '' })
   const [errors, setErrors] = useState({})
   const [confirmOpen, setConfirmOpen] = useState(false)
@@ -30,6 +34,7 @@ export default function StockAdjustmentPage() {
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    if (!canEditInventory) return
     if (!validate()) return
     setConfirmOpen(true)
   }
@@ -102,7 +107,7 @@ export default function StockAdjustmentPage() {
                 <FormLabel>Difference</FormLabel>
                 <FormInput readOnly value={form.newQuantity - (selectedProduct?.quantity ?? 0)} />
               </FormField>
-              <Button type="submit" variant="primary">Confirm Adjustment</Button>
+              <Button type="submit" variant="primary" disabled={!canEditInventory}>Confirm Adjustment</Button>
             </FormSection>
           </form>
           <AdjustmentHistory history={history} />
@@ -117,7 +122,7 @@ export default function StockAdjustmentPage() {
         footer={
           <>
             <Button variant="secondary" onClick={() => setConfirmOpen(false)}>Cancel</Button>
-            <Button variant="primary" onClick={handleConfirm}>Apply Adjustment</Button>
+            <Button variant="primary" onClick={handleConfirm} disabled={!canEditInventory}>Apply Adjustment</Button>
           </>
         }
       />

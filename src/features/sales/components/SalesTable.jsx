@@ -1,47 +1,31 @@
-import { useMemo } from 'react'
-import { ActionMenu, Badge, Button, Select } from '../../../components/ui'
-import { DataTable } from '../../../components/data-table'
+/* eslint-disable react-refresh/only-export-components */
+import { Eye, FileDown, XCircle } from 'lucide-react'
+import { RecordedTable } from '../../../components/recorded'
 import { getCustomers } from '../../../core/store'
 import { getSaleTotals } from '../services/saleService'
-import { formatMoney, formatDate, SALES_STATUSES } from './saleUtils'
-
-const STATUS_VARIANTS = {
-  Paid: 'success',
-  Outstanding: 'warning',
-  'Partially Paid': 'info',
-  Delivered: 'success',
-  Cancelled: 'danger',
-}
+import { formatDate, formatMoney } from './saleUtils'
 
 export const SALES_CSV_COLUMNS = [
-  { key: 'id', label: 'Sale ID' },
-  { key: 'number', label: 'Document Number' },
-  { key: 'type', label: 'Type' },
+  { key: 'number', label: 'Order Number' },
+  { key: 'type', label: 'Invoice/Challan' },
   { key: 'date', label: 'Date' },
-  { key: 'customer', label: 'Customer' },
-  { key: 'subtotal', label: 'Subtotal' },
-  { key: 'taxTotal', label: 'Tax' },
-  { key: 'total', label: 'Total' },
-  { key: 'paid', label: 'Paid' },
-  { key: 'due', label: 'Due' },
-  { key: 'status', label: 'Status' },
+  { key: 'customer', label: 'Buyer' },
+  { key: 'total', label: 'Total Bill Amount' },
+  { key: 'paid', label: 'Advance Paid Amount' },
+  { key: 'due', label: 'Due Amount' },
 ]
 
 export function saleCsvRows(sales) {
   return sales.map((sale) => {
     const totals = getSaleTotals(sale)
     return {
-      id: sale.id,
       number: sale.number,
       type: sale.type,
       date: sale.date,
       customer: sale.customerName,
-      subtotal: totals.subtotal,
-      taxTotal: totals.taxTotal,
       total: sale.total ?? totals.total,
-      paid: sale.paid ?? 0,
+      paid: sale.paid ?? sale.advance ?? 0,
       due: sale.due ?? 0,
-      status: sale.status,
     }
   })
 }
@@ -50,145 +34,72 @@ export default function SalesTable({
   sales,
   filters,
   onFiltersChange,
-  onClearFilters,
   onRowView,
   onRowCancel,
   onDownloadCsv,
+  canCancel = true,
+  canExport = true,
 }) {
   const customers = getCustomers()
-  const columns = useMemo(
-    () => [
-      {
-        id: 'number',
-        header: 'Document',
-        accessor: 'number',
-        minWidth: '130px',
-        cell: (sale) => (
-          <span className="sales-doc">
-            <span className="sales-doc__number">{sale.number}</span>
-            <span className="sales-doc__type">{sale.type}</span>
-          </span>
-        ),
-      },
-      {
-        id: 'customer',
-        header: 'Customer',
-        accessor: 'customerName',
-        minWidth: '190px',
-      },
-      {
-        id: 'date',
-        header: 'Date',
-        accessor: 'date',
-        width: '120px',
-        cell: (sale) => <span className="sales-date">{formatDate(sale.date)}</span>,
-      },
-      {
-        id: 'total',
-        header: 'Total',
-        accessor: 'total',
-        width: '110px',
-        align: 'right',
-        cell: (sale) => <span className="sales-money">{formatMoney(sale.total ?? getSaleTotals(sale).total)}</span>,
-      },
-      {
-        id: 'paid',
-        header: 'Paid',
-        accessor: 'paid',
-        width: '110px',
-        align: 'right',
-        cell: (sale) => <span className="sales-money">{formatMoney(sale.paid ?? 0)}</span>,
-      },
-      {
-        id: 'due',
-        header: 'Due',
-        accessor: 'due',
-        width: '110px',
-        align: 'right',
-        cell: (sale) => <span className="sales-money">{formatMoney(sale.due ?? 0)}</span>,
-      },
-      {
-        id: 'status',
-        header: 'Status',
-        accessor: 'status',
-        width: '120px',
-        cell: (sale) => <Badge variant={STATUS_VARIANTS[sale.status] ?? 'neutral'} size="sm">{sale.status}</Badge>,
-      },
-      {
-        id: 'actions',
-        header: 'Actions',
-        width: '70px',
-        sortable: false,
-        cell: (sale) => (
-          <ActionMenu
-            label="Sale actions"
-            triggerLabel={`Actions for ${sale.number}`}
-            items={[
-              { label: 'View sale', onSelect: () => onRowView(sale.id) },
-              { label: 'Cancel sale', danger: true, onSelect: () => onRowCancel(sale.id) },
-            ]}
-          />
-        ),
-      },
-    ],
-    [onRowView, onRowCancel],
-  )
+  const customerById = Object.fromEntries(customers.map((customer) => [customer.id, customer]))
+  const columns = [
+    { key: 'number', label: 'Order Number', minWidth: '105px' },
+    { key: 'type', label: 'Invoice/Challan', width: '90px' },
+    { key: 'date', label: 'Date', width: '82px', render: (sale) => formatDate(sale.date) },
+    { key: 'customerName', label: 'Buyer', minWidth: '170px' },
+    { key: 'total', label: 'Total Bill Amount', width: '105px', align: 'right', render: (sale) => formatMoney(sale.total ?? getSaleTotals(sale).total) },
+    { key: 'paid', label: 'Advance Paid Amount', width: '105px', align: 'right', render: (sale) => formatMoney(sale.paid ?? sale.advance ?? 0) },
+    { key: 'due', label: 'Due Amount', width: '95px', align: 'right', render: (sale) => formatMoney(sale.due ?? 0) },
+    { key: 'payment', label: 'Payment Mode', width: '85px', render: (sale) => sale.paymentMode ?? (sale.due ? 'Credit' : 'Online') },
+    {
+      key: 'actions', label: 'Action', width: '70px', align: 'center', render: (sale) => (
+        <span className="recorded-row-actions">
+          <button type="button" className="recorded-row-actions__button" onClick={() => onRowView(sale.id)} aria-label={`View ${sale.number}`} title="View"><Eye size={13} /></button>
+          {canCancel && <button type="button" className="recorded-row-actions__button recorded-row-actions__button--edit" onClick={() => onRowCancel(sale.id)} aria-label={`Cancel ${sale.number}`} title="Cancel"><XCircle size={13} /></button>}
+        </span>
+      ),
+    },
+  ]
+
+  const dateMatches = (sale) => {
+    if (filters.dateFilter === 'all') return true
+    const date = new Date(sale.date)
+    const now = new Date()
+    if (filters.dateFilter === 'today') return date.toISOString().slice(0, 10) === now.toISOString().slice(0, 10)
+    if (filters.dateFilter === 'month') return date.getMonth() === now.getMonth() && date.getFullYear() === now.getFullYear()
+    return true
+  }
 
   return (
-    <DataTable
-      data={sales}
+    <RecordedTable
+      rows={sales}
       columns={columns}
       getRowId={(sale) => sale.id}
-      search={filters.search}
-      onSearchChange={(search) => onFiltersChange({ search })}
-      searchPlaceholder="Search invoice or challan number..."
-      searchLabel="Search sales"
-      minWidth={920}
-      filtersActive={Boolean(filters.search || filters.customerId !== 'all' || filters.status !== 'all' || filters.type !== 'all' || filters.fromDate || filters.toDate)}
-      onClearFilters={onClearFilters}
-      filter={(sale) =>
-        (filters.customerId === 'all' || sale.customerId === filters.customerId) &&
-        (filters.status === 'all' || sale.status === filters.status) &&
-        (filters.type === 'all' || sale.type === filters.type) &&
-        (!filters.fromDate || String(sale.date).slice(0, 10) >= filters.fromDate) &&
-        (!filters.toDate || String(sale.date).slice(0, 10) <= filters.toDate)
-      }
-      filterKey={`${filters.customerId}-${filters.status}-${filters.type}-${filters.fromDate}-${filters.toDate}`}
-      selectable
       initialPageSize={10}
-      actions={<Button variant="secondary" size="sm" onClick={() => onDownloadCsv(sales)}>Export CSV</Button>}
-      filters={
-        <div className="sales-filters">
-          <Select
-            label="Customer"
-            options={[
-              { value: 'all', label: 'All customers' },
-              ...customers.map((customer) => ({ value: customer.id, label: customer.name })),
-            ]}
-            value={filters.customerId ?? 'all'}
-            onChange={(event) => onFiltersChange({ customerId: event.target.value })}
-            aria-label="Filter by customer"
-          />
-          <Select
-            label="Type"
-            options={[
-              { value: 'all', label: 'Invoice & Challan' },
-              { value: 'Invoice', label: 'Invoice' },
-              { value: 'Challan', label: 'Challan' },
-            ]}
-            value={filters.type ?? 'all'}
-            onChange={(event) => onFiltersChange({ type: event.target.value })}
-            aria-label="Filter by type"
-          />
-          <Select
-            label="Status"
-            options={[{ value: 'all', label: 'All statuses' }, ...SALES_STATUSES]}
-            value={filters.status ?? 'all'}
-            onChange={(event) => onFiltersChange({ status: event.target.value })}
-            aria-label="Filter by status"
-          />
-        </div>
-      }
+      pageSizeOptions={[5, 10, 15, 25]}
+      search={filters.search}
+      onSearchChange={(search) => onFiltersChange((current) => ({ ...current, search }))}
+      searchPlaceholder="Search orders or purchases"
+      searchLabel="Search sales"
+      filters={(
+        <>
+          <label><span>Payment Mode:</span><select value={filters.paymentMode} onChange={(event) => onFiltersChange((current) => ({ ...current, paymentMode: event.target.value }))}><option value="all">-- All Payment Modes --</option><option value="Online">Online</option><option value="Cash">Cash</option><option value="Credit">Credit</option></select></label>
+          <label><span>Buyer Type:</span><select value={filters.buyerType} onChange={(event) => onFiltersChange((current) => ({ ...current, buyerType: event.target.value }))}><option value="all">-- All Buyer Types --</option><option value="Customer">Customer</option><option value="Dealer">Dealer</option><option value="Firm">Firm</option></select></label>
+          <label><span>Date Filter:</span><select value={filters.dateFilter} onChange={(event) => onFiltersChange((current) => ({ ...current, dateFilter: event.target.value }))}><option value="all">All Dates</option><option value="today">Today</option><option value="month">This Month</option></select></label>
+        </>
+      )}
+      filterRow={(sale) => {
+        const customer = customerById[sale.customerId]
+        const buyerType = customer?.customerType === 'DEALER' || customer?.type === 'Dealer' ? 'Dealer' : 'Customer'
+        const paymentMode = sale.paymentMode ?? (sale.due ? 'Credit' : 'Online')
+        return (filters.paymentMode === 'all' || paymentMode === filters.paymentMode) &&
+          (filters.buyerType === 'all' || buyerType === filters.buyerType) &&
+          dateMatches(sale)
+      }}
+      actions={canExport ? <button type="button" className="recorded-table__export" onClick={onDownloadCsv}><FileDown size={13} /> Export</button> : null}
+      emptyMessage="No sales found."
+      ariaLabel="Sales"
+      minWidth={870}
     />
   )
 }

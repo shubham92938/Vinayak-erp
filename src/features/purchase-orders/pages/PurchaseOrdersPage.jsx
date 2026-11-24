@@ -1,28 +1,24 @@
 import { useState } from 'react'
+import { Plus } from 'lucide-react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { Button, Select, useToast } from '../../../components/ui'
 import { DataTable } from '../../../components/data-table'
-import { getPurchaseOrders, formatMoney } from '../../../core/purchaseOrderStore'
+import { downloadCsv } from '../../../utils/csv'
+import { getPurchaseOrders, formatMoney, confirmPurchaseOrder, orderStock } from '../../../core/purchaseOrderStore'
 import { PURCHASE_ORDER_STATUSES } from '../../../core/purchaseOrderStore'
 import { formatDate } from './purchaseOrderUtils'
 import '../styles/purchaseOrders.css'
 
-const COLUMNS = [
-  { key: 'number', label: 'Order Number' },
-  { key: 'vendorName', label: 'Vendor' },
-  { key: 'orderDate', label: 'Order Date' },
-  { key: 'expectedDelivery', label: 'Expected Delivery' },
-  { key: 'subtotal', label: 'Subtotal' },
-  { key: 'taxTotal', label: 'Tax' },
-  { key: 'total', label: 'Total' },
-  { key: 'receivedQty', label: 'Received Qty' },
-  { key: 'pendingQty', label: 'Pending Qty' },
-  { key: 'status', label: 'Status' },
-]
-
 export default function PurchaseOrdersPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canCreateOrders = hasModulePermission(currentUser, 'Purchase Orders', 'create')
+  const canApproveOrders = hasModulePermission(currentUser, 'Purchase Orders', 'approve')
+  const canReceiveOrders = hasModulePermission(currentUser, 'Purchase Orders', 'edit')
+  const canExportOrders = hasModulePermission(currentUser, 'Purchase Orders', 'export')
   const [filters, setFilters] = useState({ search: '', status: 'all' })
 
   const orders = getPurchaseOrders(filters)
@@ -34,11 +30,13 @@ export default function PurchaseOrdersPage() {
   }
 
   const handleApprove = (order) => {
+    if (!canApproveOrders) return
     confirmPurchaseOrder(order.id)
     toast.success('Purchase order approved')
   }
 
   const handleReceive = (order) => {
+    if (!canReceiveOrders) return
     orderStock(order.id, order.items)
     toast.success('Goods received. Stock updated.')
   }
@@ -53,7 +51,8 @@ export default function PurchaseOrdersPage() {
             <p className="purchase-orders-header__description">Track vendor orders through approval and receipt.</p>
           </div>
           <div className="purchase-orders-header__actions">
-            <Button variant="secondary" onClick={() => downloadCsvOrders(orders)}>Export CSV</Button>
+            {canCreateOrders && <Button size="sm" leadingIcon={<Plus size={14} />} onClick={() => navigate('new')}>Create Purchase Order</Button>}
+            <Button variant="secondary" onClick={() => downloadCsvOrders(orders)} disabled={!canExportOrders}>Export CSV</Button>
           </div>
         </div>
         <div className="purchase-orders-kpi-grid">
@@ -65,7 +64,7 @@ export default function PurchaseOrdersPage() {
 
       <DataTable
         data={orders}
-        columns={buildColumns(navigate, handleApprove, handleReceive)}
+        columns={buildColumns(navigate, handleApprove, handleReceive, canApproveOrders, canReceiveOrders)}
         getRowId={(order) => order.id}
         search={filters.search}
         onSearchChange={(search) => setFilters((current) => ({ ...current, search }))}
@@ -100,7 +99,6 @@ function downloadCsvOrders(orders) {
     receivedQty: order.receivedQty ?? 0,
     status: order.status,
   }))
-  const { buildCsv, downloadCsv } = require('../../../utils/csv')
   downloadCsv({ filename: 'vinayak-purchase-orders.csv', columns: CSV_COLUMNS, rows })
 }
 
@@ -117,7 +115,7 @@ const CSV_COLUMNS = [
   { key: 'status', label: 'Status' },
 ]
 
-function buildColumns(navigate, handleApprove, handleReceive) {
+function buildColumns(navigate, handleApprove, handleReceive, canApproveOrders, canReceiveOrders) {
   return [
     { id: 'number', header: 'Order Number', accessor: 'number', minWidth: '120px' },
     { id: 'vendorName', header: 'Vendor', accessor: 'vendorName', minWidth: '160px' },
@@ -146,8 +144,8 @@ function buildColumns(navigate, handleApprove, handleReceive) {
           triggerLabel={`Actions for ${row.number}`}
           items={[
             { label: 'View details', onSelect: () => navigate(`/purchase-orders/${row.id}`) },
-            { label: 'Approve order', disabled: row.status !== 'Draft', onSelect: () => handleApprove(row) },
-            { label: 'Record receipt', disabled: !(row.status === 'Approved' || row.status === 'Partially Received'), onSelect: () => handleReceive(row) },
+            { label: 'Approve order', disabled: row.status !== 'Draft' || !canApproveOrders, onSelect: () => handleApprove(row) },
+            { label: 'Record receipt', disabled: !(row.status === 'Approved' || row.status === 'Partially Received') || !canReceiveOrders, onSelect: () => handleReceive(row) },
           ]}
         />
       ),

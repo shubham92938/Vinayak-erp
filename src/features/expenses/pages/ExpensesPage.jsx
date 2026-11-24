@@ -1,5 +1,7 @@
 import { useState } from 'react'
-import { Button, Card, CardBody, Modal, Select, useToast } from '../../../components/ui'
+import { Button, Modal, Select, useToast } from '../../../components/ui'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { FormActions, FormField, FormGrid, FormInput, FormSection, FormTextarea } from '../../../components/forms'
 import { DataTable } from '../../../components/data-table'
 import { downloadCsv } from '../../../utils/csv'
@@ -26,6 +28,11 @@ const MODES = [
 
 export default function ExpensesPage() {
   const toast = useToast()
+  const { currentUser } = useAuth()
+  const canCreateExpenses = hasModulePermission(currentUser, 'Expenses', 'create')
+  const canEditExpenses = hasModulePermission(currentUser, 'Expenses', 'edit')
+  const canDeleteExpenses = hasModulePermission(currentUser, 'Expenses', 'delete')
+  const canExportExpenses = hasModulePermission(currentUser, 'Expenses', 'export')
   const [filters, setFilters] = useState({ search: '', type: 'all', status: 'all' })
   const [expenseToEdit, setExpenseToEdit] = useState(null)
   const [isNewOpen, setIsNewOpen] = useState(false)
@@ -74,8 +81,8 @@ export default function ExpensesPage() {
       sortable: false,
       cell: (row) => (
         <div className="expenses-actions">
-          <Button size="sm" variant="ghost" onClick={() => setExpenseToEdit(row)}>Edit</Button>
-          <Button size="sm" variant="ghost" onClick={() => setDeleting(row)}>Delete</Button>
+          <Button size="sm" variant="ghost" onClick={() => setExpenseToEdit(row)} disabled={!canEditExpenses}>Edit</Button>
+          <Button size="sm" variant="ghost" onClick={() => setDeleting(row)} disabled={!canDeleteExpenses}>Delete</Button>
         </div>
       ),
     },
@@ -91,8 +98,8 @@ export default function ExpensesPage() {
             <p className="expenses-header__description">Record daily expenses — travel, rent, repairs and more. Demo data.</p>
           </div>
           <div className="expenses-header__actions">
-            <Button size="sm" variant="secondary" onClick={exportCsv}>Export CSV</Button>
-            <Button size="sm" variant="primary" onClick={() => setIsNewOpen(true)}>New Expense</Button>
+            <Button size="sm" variant="secondary" onClick={exportCsv} disabled={!canExportExpenses}>Export CSV</Button>
+            {canCreateExpenses && <Button size="sm" variant="primary" onClick={() => setIsNewOpen(true)}>New Expense</Button>}
           </div>
         </div>
         <div className="expenses-kpi-grid">
@@ -141,6 +148,7 @@ export default function ExpensesPage() {
         onClose={() => setIsNewOpen(false)}
         expense={null}
         onSave={(expenseData) => {
+          if (!canCreateExpenses) return
           createExpense(expenseData)
           setIsNewOpen(false)
         }}
@@ -151,7 +159,7 @@ export default function ExpensesPage() {
         onClose={() => setExpenseToEdit(null)}
         expense={expenseToEdit}
         onSave={(expenseData) => {
-          if (expenseToEdit) updateExpense(expenseToEdit.id, expenseData)
+          if (expenseToEdit && canEditExpenses) updateExpense(expenseToEdit.id, expenseData)
           setExpenseToEdit(null)
         }}
       />
@@ -160,6 +168,7 @@ export default function ExpensesPage() {
         expense={deleting}
         onClose={() => setDeleting(null)}
         onDelete={() => {
+          if (!canDeleteExpenses) return
           deleteExpense(deleting.id)
           setDeleting(null)
           toast.success('Expense deleted')

@@ -1,11 +1,20 @@
+import { getActiveFirmId } from '../../../core/firmContextStore'
 import { PRODUCT_DEMO_DATA } from '../data/productDemoData'
 
 let products = PRODUCT_DEMO_DATA.map((product) => ({ ...product }))
 
-export const getProducts = () => products.map((product) => ({ ...product }))
+export const getAllProducts = () => products.map((product) => ({ ...product }))
+
+export const getProducts = () => {
+  const activeFirmId = getActiveFirmId()
+  return getAllProducts().filter((product) => !activeFirmId || product.firmId === activeFirmId)
+}
 
 export const getProductById = (productId) => {
-  const product = products.find((entry) => entry.id === productId)
+  const activeFirmId = getActiveFirmId()
+  const product = products.find((entry) =>
+    entry.id === productId && (!activeFirmId || entry.firmId === activeFirmId),
+  )
   return product ? { ...product } : null
 }
 
@@ -33,7 +42,12 @@ export function updateProduct(productId, productData) {
   const index = products.findIndex((entry) => entry.id === productId)
   if (index === -1) return null
 
-  const updated = { ...products[index], ...productData, updatedAt: new Date().toISOString() }
+  const updated = {
+    ...products[index],
+    ...productData,
+    firmId: products[index].firmId,
+    updatedAt: new Date().toISOString(),
+  }
   products[index] = updated
   return { ...updated }
 }

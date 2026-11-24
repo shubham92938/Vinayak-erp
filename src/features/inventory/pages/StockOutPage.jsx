@@ -1,5 +1,7 @@
 import { useState } from 'react'
 import { ShieldCheck, TrendingDown, TrendingUp } from 'lucide-react'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { useNavigate } from 'react-router-dom'
 import { Button, useToast } from '../../../components/ui'
 import { createStockOut, getStockTable } from '../services/inventoryService'
@@ -9,6 +11,8 @@ import '../styles/inventory.css'
 export default function StockOutPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canEditInventory = hasModulePermission(currentUser, 'Inventory', 'edit')
   const [isFormOpen, setIsFormOpen] = useState(false)
 
   const allProducts = getStockTable()
@@ -27,7 +31,7 @@ export default function StockOutPage() {
           </div>
           <div className="inventory-header__actions">
             <Button size="sm" variant="secondary" onClick={() => navigate('/inventory')}>Back to Inventory</Button>
-            <Button onClick={() => setIsFormOpen(true)}><TrendingDown size={14} /> Record Stock Out</Button>
+            {canEditInventory && <Button onClick={() => setIsFormOpen(true)}><TrendingDown size={14} /> Record Stock Out</Button>}
           </div>
         </div>
         <div className="inventory-kpi-grid">
@@ -42,6 +46,7 @@ export default function StockOutPage() {
           mode="stock-out"
           onClose={() => setIsFormOpen(false)}
           onSubmit={(data) => {
+            if (!canEditInventory) return
             createStockOut(data)
             toast.success('Stock Out recorded')
           }}

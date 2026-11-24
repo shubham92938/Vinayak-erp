@@ -60,7 +60,7 @@ export default function Sidebar({
     >
       <div className="app-sidebar__header">
         <Link
-          to="/dashboard"
+          to="/home"
           className="app-sidebar__brand"
           onClick={handleNavigate}
           aria-label="Vinayak ERP dashboard"

@@ -341,6 +341,86 @@
    Permissions
    -------------------------------------------------------------------------- */
 
+.users-permissions {
+  display: grid;
+  gap: var(--space-5);
+}
+
+.users-permissions__intro,
+.users-permissions__section-heading {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.users-permissions__intro h2,
+.users-permissions__section-heading h3 {
+  margin: 0;
+  font-size: var(--font-size-md);
+}
+
+.users-permissions__section-heading h3 {
+  font-size: var(--font-size-sm);
+}
+
+.users-permissions__intro p,
+.users-permissions__section-heading p {
+  margin: var(--space-1) 0 0;
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-xs);
+}
+
+.users-permissions__admin-note {
+  padding: var(--space-1-5) var(--space-2);
+  color: var(--color-success-strong);
+  background: var(--color-success-soft);
+  border-radius: var(--radius-sm);
+  font-size: var(--font-size-2xs);
+  white-space: nowrap;
+}
+
+.users-permissions__section {
+  display: grid;
+  gap: var(--space-3);
+  padding: var(--space-4);
+  background: var(--color-surface);
+  border: var(--border-default);
+  border-radius: var(--radius-md);
+}
+
+.users-firm-permissions {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: var(--space-2);
+}
+
+.users-access-checkbox,
+.users-permission-cell {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-1-5);
+  color: var(--color-text-secondary);
+  font-size: var(--font-size-2xs);
+}
+
+.users-permission-matrix--scope {
+  overflow-x: auto;
+}
+
+.users-permission-matrix--scope .users-permission-row {
+  min-width: 980px;
+}
+
+.users-permission-cell--scope {
+  align-items: flex-start;
+  width: 94px;
+}
+
+.users-permission-cell--scope span {
+  line-height: 1.25;
+}
+
 .users-permissions__actions {
   display: flex;
   justify-content: flex-end;

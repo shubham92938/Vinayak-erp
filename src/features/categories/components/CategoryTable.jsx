@@ -31,6 +31,9 @@ export default function CategoryTable({
   onRowDeactivate,
   onRowDelete,
   downloadCategories,
+  canEdit = true,
+  canDelete = true,
+  canExport = true,
 }) {
   const columns = useMemo(
     () => [
@@ -91,21 +94,22 @@ export default function CategoryTable({
             triggerLabel={`Actions for ${category.name}`}
             items={[
               { label: 'View', onSelect: () => onRowView(category.id) },
-              { label: 'Edit category', onSelect: () => onRowEdit(category.id) },
+              { label: 'Edit category', disabled: !canEdit, onSelect: () => onRowEdit(category.id) },
               {
                 label: category.status === 'active' ? 'Deactivate category' : 'Activate category',
+                disabled: !canEdit,
                 onSelect: () =>
                   category.status === 'active'
                     ? onRowDeactivate(category.id)
                     : onRowActivate(category.id),
               },
-              { label: 'Delete category', danger: true, onSelect: () => onRowDelete(category.id) },
+              { label: 'Delete category', danger: true, disabled: !canDelete, onSelect: () => onRowDelete(category.id) },
             ]}
           />
         ),
       },
     ],
-    [onRowView, onRowEdit, onRowActivate, onRowDeactivate, onRowDelete],
+    [onRowView, onRowEdit, onRowActivate, onRowDeactivate, onRowDelete, canEdit, canDelete],
   )
 
   const isFiltered =
@@ -128,7 +132,7 @@ export default function CategoryTable({
         onClearFilters={onClearFilters}
         selectable={false}
         actions={
-          <Button variant="secondary" size="sm" onClick={() => downloadCategories(categories)}>
+          <Button variant="secondary" size="sm" onClick={() => downloadCategories(categories)} disabled={!canExport}>
             Export CSV
           </Button>
         }

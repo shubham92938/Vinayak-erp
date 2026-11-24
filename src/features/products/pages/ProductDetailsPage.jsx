@@ -1,7 +1,9 @@
 import { useMemo, useState } from 'react'
 import { useParams } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { ArrowLeft, Edit, Power } from 'lucide-react'
-import { Badge, Button, Card, CardBody, Modal, useToast } from '../../../components/ui'
+import { Badge, Button, Card, CardBody, useToast } from '../../../components/ui'
 import { getCategoriesWithProductCounts } from '../../categories/services/categoryService'
 import { getFirmLabel } from '../../users/utils/userUtils'
 import { formatPrice, formatDate } from '../utils/productUtils'
@@ -34,6 +36,8 @@ const PRICE_TYPE_VARIANTS = {
 export default function ProductDetailsPage() {
   const { productId } = useParams()
   const toast = useToast()
+  const { currentUser } = useAuth()
+  const canEditProduct = hasModulePermission(currentUser, 'Products', 'edit')
   const { getProductById, saveProduct, toggleProductStatus } = useProducts()
   const categories = useMemo(() => getCategoriesWithProductCounts(), [])
   const categoriesById = useMemo(
@@ -49,16 +53,21 @@ export default function ProductDetailsPage() {
   const [isEditing, setIsEditing] = useState(false)
 
   const handleSaveProduct = (productData) => {
-    if (product?.id) {
-      saveProduct(product.id, productData)
-      toast.success('Product updated')
+    if (product?.id && canEditProduct) {
+      const updated = saveProduct(product.id, productData)
+      if (updated) {
+        toast.success('Product updated')
+        setIsEditing(false)
+      }
+      return updated
     }
-    setIsEditing(false)
+    return null
   }
 
   const handleToggleStatus = () => {
-    toggleProductStatus(product.id)
-    toast.success('Product status updated')
+    if (!canEditProduct) return
+    const updated = toggleProductStatus(product.id)
+    if (updated) toast.success('Product status updated')
   }
 
   if (!product) {
@@ -90,10 +99,10 @@ export default function ProductDetailsPage() {
             <Button variant="secondary" onClick={() => window.history.back()} leadingIcon={<ArrowLeft size={14} />}>
               Back to Products
             </Button>
-            <Button variant="secondary" onClick={handleToggleStatus} leadingIcon={<Power size={14} />}>
+            <Button variant="secondary" onClick={handleToggleStatus} leadingIcon={<Power size={14} />} disabled={!canEditProduct}>
               {product.status === 'active' ? 'Deactivate' : 'Activate'}
             </Button>
-            <Button onClick={() => setIsEditing(true)} leadingIcon={<Edit size={14} />}>
+            <Button onClick={() => setIsEditing(true)} leadingIcon={<Edit size={14} />} disabled={!canEditProduct}>
               Edit Product
             </Button>
           </div>
@@ -186,12 +195,7 @@ export default function ProductDetailsPage() {
         </Card>
       )}
 
-      <Modal
-        open={isEditing}
-        onClose={() => setIsEditing(false)}
-        title={`Edit ${product.name}`}
-        description="Update product details and pricing."
-      >
+      {isEditing && (
         <ProductForm
           mode="edit"
           product={product}
@@ -199,7 +203,7 @@ export default function ProductDetailsPage() {
           onClose={() => setIsEditing(false)}
           onSubmit={handleSaveProduct}
         />
-      </Modal>
+      )}
     </div>
   )
 }

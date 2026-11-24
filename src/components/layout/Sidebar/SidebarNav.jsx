@@ -1,8 +1,16 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
 import { NAV_SECTIONS } from '../../../config/navigation'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import SidebarGroup from './SidebarGroup'
 import SidebarLink from './SidebarLink'
+
+function getModuleId(item) {
+  if (item.id === 'firms') return 'Firms'
+  if (item.id === 'users-permissions') return 'Users & Permissions'
+  return item.label
+}
 
 export default function SidebarNav({
   collapsed,
@@ -12,9 +20,27 @@ export default function SidebarNav({
   onHideTooltip,
 }) {
   const { pathname } = useLocation()
+  const { currentUser } = useAuth()
   const [inventoryOpen, setInventoryOpen] = useState(() =>
-    pathname.startsWith('/inventory'),
+    pathname.includes('/inventory'),
   )
+
+  const visibleSections = useMemo(() => NAV_SECTIONS.map((section) => ({
+    ...section,
+    items: section.items
+      .map((item) => {
+        if (!item.children) return item
+        const children = item.children.filter(() =>
+          hasModulePermission(currentUser, getModuleId(item), 'view'),
+        )
+        return { ...item, children }
+      })
+      .filter((item) =>
+        item.children
+          ? item.children.length > 0
+          : hasModulePermission(currentUser, getModuleId(item), 'view'),
+      ),
+  })).filter((section) => section.items.length > 0), [currentUser])
 
   const handleGroupToggle = () => {
     onHideTooltip?.()
@@ -34,7 +60,7 @@ export default function SidebarNav({
       aria-label="Modules"
       onScroll={onHideTooltip}
     >
-      {NAV_SECTIONS.map((section) => (
+      {visibleSections.map((section) => (
         <div className="app-sidebar__section" key={section.id}>
           {!collapsed && (
             <p className="app-sidebar__section-label">{section.label}</p>

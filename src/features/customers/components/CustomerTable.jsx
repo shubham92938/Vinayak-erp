@@ -20,6 +20,9 @@ export default function CustomerTable({
   onRowDelete,
   onRowDeactivate,
   onRowActivate,
+  canEdit = true,
+  canDelete = true,
+  canExport = true,
 }) {
   const columns = useMemo(
     () => [
@@ -110,18 +113,19 @@ export default function CustomerTable({
             triggerLabel={`Actions for ${customer.name}`}
             items={[
               { label: 'View details', onSelect: () => onRowView(customer.id) },
-              { label: 'Edit customer', onSelect: () => onRowEdit(customer.id) },
+              { label: 'Edit customer', disabled: !canEdit, onSelect: () => onRowEdit(customer.id) },
               {
                 label: customer.status === 'Active' ? 'Deactivate' : 'Activate',
+                disabled: !canEdit,
                 onSelect: () => customer.status === 'Active' ? onRowDeactivate(customer.id) : onRowActivate(customer.id),
               },
-              { label: 'Delete customer', danger: true, onSelect: () => onRowDelete(customer.id) },
+              { label: 'Delete customer', danger: true, disabled: !canDelete, onSelect: () => onRowDelete(customer.id) },
             ]}
           />
         ),
       },
     ],
-    [onRowView, onRowEdit, onRowDelete, onRowActivate, onRowDeactivate],
+    [onRowView, onRowEdit, onRowDelete, onRowActivate, onRowDeactivate, canEdit, canDelete],
   )
 
   const isFiltered = Boolean(filters.query || filters.customerType !== 'all' || filters.status !== 'all' || filters.fromDate || filters.toDate)
@@ -148,7 +152,7 @@ export default function CustomerTable({
         selectable
         initialPageSize={10}
         actions={
-          <Button variant="secondary" size="sm" onClick={() => downloadCsv({ filename: 'vinayak-customers.csv', columns: getCustomerFields().map((field) => ({ key: field.key, label: field.label })), rows: getCustomersCsvRows(customers) })}>
+          <Button variant="secondary" size="sm" onClick={() => downloadCsv({ filename: 'vinayak-customers.csv', columns: getCustomerFields().map((field) => ({ key: field.key, label: field.label })), rows: getCustomersCsvRows(customers) })} disabled={!canExport}>
             Export CSV
           </Button>
         }

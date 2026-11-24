@@ -1,4 +1,6 @@
 import { NavLink } from 'react-router-dom'
+import { getWorkspaceRoutePath } from '../../../config/navigation'
+import { useFirmContext } from '../../../context/hooks'
 
 export default function SidebarLink({
   item,
@@ -9,6 +11,8 @@ export default function SidebarLink({
   onHideTooltip,
 }) {
   const Icon = item.icon
+  const { currentFirm } = useFirmContext()
+  const to = getWorkspaceRoutePath(currentFirm?.id, item.to)
 
   const showLinkTooltip = (event) => {
     if (collapsed) {
@@ -19,7 +23,7 @@ export default function SidebarLink({
   return (
     <li className="app-sidebar__list-item">
       <NavLink
-        to={item.to}
+        to={to}
         end
         onClick={() => {
           onHideTooltip?.()

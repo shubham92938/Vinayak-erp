@@ -1,5 +1,8 @@
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { CheckCircle2, CircleAlert, ShieldCheck } from 'lucide-react'
+import { useAuth } from '../../../context/hooks'
+import { canAccessRecord, hasModulePermission } from '../../../core/accessControl'
 import { Button, ConfirmDialog, Modal, Select, useToast } from '../../../components/ui'
 import UserTable from '../components/UserTable'
 import UserForm from '../components/UserForm'
@@ -15,7 +18,17 @@ const USER_ROLES_OPTIONS = USER_ROLES.map((role) => ({
 
 export default function UsersPage() {
   const toast = useToast()
+  const navigate = useNavigate()
+  const { currentUser } = useAuth()
   const { users, filters, setFilters, toggleUserStatus, deleteUser, createUser, saveUser } = useUsers()
+  const canCreateUsers = hasModulePermission(currentUser, 'Users & Permissions', 'create')
+  const canEditUsers = hasModulePermission(currentUser, 'Users & Permissions', 'edit')
+  const canDeleteUsers = hasModulePermission(currentUser, 'Users & Permissions', 'delete')
+  const canExportUsers = hasModulePermission(currentUser, 'Users & Permissions', 'export')
+  const canEditUser = (user) =>
+    canEditUsers && (currentUser?.role === 'super_admin' || canAccessRecord(currentUser, user, 'Users & Permissions', 'edit'))
+  const canDeleteUser = (user) =>
+    canDeleteUsers && (currentUser?.role === 'super_admin' || canAccessRecord(currentUser, user, 'Users & Permissions', 'delete'))
 
   const [formState, setFormState] = useState(null)
   const [confirmState, setConfirmState] = useState(null)
@@ -47,25 +60,31 @@ export default function UsersPage() {
   }
 
   const confirmBulkAction = () => {
-    if (!confirmBulkState) return
-    for (const user of confirmBulkState.users) toggleUserStatus(user.id)
-    toast.success(`Activated ${confirmBulkState.users.length} user(s)`)
+    if (!canEditUsers || !confirmBulkState) return
+    const editableUsers = confirmBulkState.users.filter(canEditUser)
+    editableUsers.forEach((user) => toggleUserStatus(user.id))
+    if (editableUsers.length > 0) toast.success(`Updated ${editableUsers.length} user(s)`)
     setConfirmBulkState(null)
   }
 
   const handleStatusChange = (userId, status) => {
     const user = users.find((current) => current.id === userId)
-    if (!user) return
-    saveUser(userId, { ...user, status })
-    toast.success(status === 'active' ? 'User activated' : 'User deactivated')
+    if (!user || !canEditUser(user)) return
+    const updated = saveUser(userId, { ...user, status })
+    if (updated) toast.success(status === 'active' ? 'User activated' : 'User deactivated')
   }
 
   const handleSaveUser = (user) => {
     if (formState?.mode === 'add') {
-      createUser(user)
+      if (!canCreateUsers) throw new Error('You do not have permission to create users')
+      const created = createUser(user)
+      if (!created) throw new Error('Could not create user')
       toast.success('User created')
     } else {
-      saveUser(user.id, user)
+      const existing = users.find((current) => current.id === user.id)
+      if (!existing || !canEditUser(existing)) throw new Error('You do not have permission to edit this user')
+      const updated = saveUser(user.id, user)
+      if (!updated) throw new Error('Could not update user')
       toast.success('User updated')
     }
     setFormState(null)
@@ -81,8 +100,8 @@ export default function UsersPage() {
             <p className="users-header__description">Manage users and their access across the ERP.</p>
           </div>
           <div className="users-header__actions">
-            <Button variant="secondary" onClick={exportCsv}>Export CSV</Button>
-            <Button size="sm" onClick={() => setFormState({ mode: 'add' })}>Add User</Button>
+            <Button variant="secondary" onClick={exportCsv} disabled={!canExportUsers}>Export CSV</Button>
+            {canCreateUsers && <Button size="sm" onClick={() => setFormState({ mode: 'add' })}>Add User</Button>}
           </div>
         </div>
 
@@ -123,24 +142,32 @@ export default function UsersPage() {
         filters={filters}
         onFiltersChange={setFilters}
         onClearFilters={clearFilters}
-        onRowView={(id) => setFormState({ mode: 'view', id })}
+        onRowView={(id) => navigate(`/users/${id}`)}
         onRowEdit={(id) => setFormState({ mode: 'edit', id })}
         onRowChangeRole={(id) => setFormState({ mode: 'changeRole', id })}
         onRowActivate={(id) => {
           const user = users.find((current) => current.id === id)
-          if (user?.status === 'inactive') toggleUserStatus(id)
+          if (user?.status === 'inactive' && canEditUser(user)) toggleUserStatus(id)
         }}
         onRowDeactivate={(id) => {
           const user = users.find((current) => current.id === id)
-          if (user?.status === 'active') setConfirmState({ type: 'deactivate', user })
+          if (user?.status === 'active' && canEditUser(user)) setConfirmState({ type: 'deactivate', user })
         }}
-        onUserDelete={(id) => setConfirmState({ type: 'delete', user: users.find((u) => u.id === id) })}
-        onBulkActivate={() => setConfirmBulkState({ type: 'activate', users: users.filter((u) => u.status === 'inactive') })}
-        onBulkDeactivate={() => setConfirmBulkState({ type: 'deactivate', users: users.filter((u) => u.status === 'active') })}
+        onUserDelete={(id) => {
+          const user = users.find((current) => current.id === id)
+          if (user && canDeleteUser(user)) setConfirmState({ type: 'delete', user })
+        }}
+        onBulkActivate={() => canEditUsers && setConfirmBulkState({ type: 'activate', users: users.filter((u) => u.status === 'inactive') })}
+        onBulkDeactivate={() => canEditUsers && setConfirmBulkState({ type: 'deactivate', users: users.filter((u) => u.status === 'active') })}
         downloadUsers={exportCsv}
+        canEdit={canEditUsers}
+        canDelete={canDeleteUsers}
+        canExport={canExportUsers}
+        canEditUser={canEditUser}
+        canDeleteUser={canDeleteUser}
       />
 
-      {formState && (
+      {(formState?.mode === 'add' || formState?.mode === 'edit') && (
         <UserForm
           key={formState.id ?? formState.mode}
           mode={formState.mode}
@@ -157,11 +184,11 @@ export default function UsersPage() {
         footer={
           <>
             <Button variant="secondary" onClick={() => setFormState(null)}>Cancel</Button>
-            <Button variant="primary" onClick={() => {
+            <Button variant="primary" disabled={!formState?.id || !canEditUser(users.find((u) => u.id === formState?.id))} onClick={() => {
               const user = users.find((u) => u.id === formState?.id)
-              if (user && formState) {
-                saveUser(user.id, { ...user, role: formState.role })
-                toast.success('Role updated')
+              if (user && formState && canEditUser(user)) {
+                const updated = saveUser(user.id, { ...user, role: formState.role })
+                if (updated) toast.success('Role updated')
               }
               setFormState(null)
             }}>Save Role</Button>
@@ -196,8 +223,10 @@ export default function UsersPage() {
         open={confirmState?.type === 'delete'}
         onClose={() => setConfirmState(null)}
         onConfirm={() => {
-          if (confirmState?.user) deleteUser(confirmState.user.id)
-          toast.success('User deleted')
+          if (confirmState?.user && canDeleteUser(confirmState.user)) {
+            const deleted = deleteUser(confirmState.user.id)
+            if (deleted) toast.success('User deleted')
+          }
           setConfirmState(null)
         }}
         title="Delete user?"

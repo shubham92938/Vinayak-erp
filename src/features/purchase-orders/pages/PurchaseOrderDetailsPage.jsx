@@ -1,14 +1,18 @@
 import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { Badge, Button, Card, CardBody } from '../../../components/ui'
 import { getPurchaseOrderById, orderStock, cancelPurchaseOrder, confirmPurchaseOrder } from '../../../core/purchaseOrderStore'
 import { formatMoney, formatDate } from './purchaseOrderUtils'
-import { getProducts } from '../../products/services/productService'
 import '../styles/purchaseOrders.css'
 
 export default function PurchaseOrderDetailsPage() {
   const navigate = useNavigate()
   const { orderId } = useParams()
+  const { currentUser } = useAuth()
+  const canApprove = hasModulePermission(currentUser, 'Purchase Orders', 'approve')
+  const canEdit = hasModulePermission(currentUser, 'Purchase Orders', 'edit')
   const [tab, setTab] = useState('Overview')
   const order = getPurchaseOrderById(orderId)
 
@@ -24,13 +28,13 @@ export default function PurchaseOrderDetailsPage() {
   const totalQty = order.items.reduce((sum, item) => sum + item.qty, 0)
 
   const handleApprove = () => {
-    confirmPurchaseOrder(order.id)
+    if (canApprove) confirmPurchaseOrder(order.id)
   }
   const handleReceive = () => {
-    orderStock(order.id, order.items)
+    if (canEdit) orderStock(order.id, order.items)
   }
   const handleCancel = () => {
-    cancelPurchaseOrder(order.id)
+    if (canEdit) cancelPurchaseOrder(order.id)
   }
 
   return (
@@ -46,9 +50,9 @@ export default function PurchaseOrderDetailsPage() {
           </div>
           <div className="purchase-orders-details-actions">
             <Button variant="secondary" onClick={() => navigate('/purchase-orders')}>Back to Orders</Button>
-            <Button variant="secondary" onClick={handleApprove} disabled={order.status !== 'Draft'}>Approve</Button>
-            <Button variant="secondary" onClick={handleReceive} disabled={order.status === 'Cancelled'}>Record Receipt</Button>
-            <Button variant="secondary" onClick={handleCancel} disabled={['Received', 'Cancelled'].includes(order.status)}>Cancel</Button>
+            <Button variant="secondary" onClick={handleApprove} disabled={order.status !== 'Draft' || !canApprove}>Approve</Button>
+            <Button variant="secondary" onClick={handleReceive} disabled={order.status === 'Cancelled' || !canEdit}>Record Receipt</Button>
+            <Button variant="secondary" onClick={handleCancel} disabled={['Received', 'Cancelled'].includes(order.status) || !canEdit}>Cancel</Button>
           </div>
         </div>
         <div className="purchase-orders-tabs">

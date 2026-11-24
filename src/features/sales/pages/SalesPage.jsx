@@ -1,112 +1,73 @@
-import { useState } from 'react'
+import { FileDown, FileSpreadsheet, Plus, RefreshCw } from 'lucide-react'
+import { useMemo, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth, useFirmContext } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
+import { cancelSale, getSalesFiltered } from '../../../core/salesStore'
 import { Button, ConfirmDialog, useToast } from '../../../components/ui'
 import { downloadCsv } from '../../../utils/csv'
-import { getSales, getSalesFiltered } from '../../../core/salesStore'
-import SaleTable, { SALES_CSV_COLUMNS, saleCsvRows } from '../components/SalesTable'
-import { formatDate, formatMoney } from '../components/saleUtils'
+import SalesTable, { SALES_CSV_COLUMNS, saleCsvRows } from '../components/SalesTable'
 import '../styles/sales.css'
+
+const EMPTY_FILTERS = { search: '', paymentMode: 'all', buyerType: 'all', dateFilter: 'all' }
 
 export default function SalesPage() {
   const toast = useToast()
   const navigate = useNavigate()
-  const [filters, setFilters] = useState({ search: '', customerId: 'all', status: 'all', type: 'all', fromDate: '', toDate: '' })
+  const { currentUser } = useAuth()
+  const { currentFirmId } = useFirmContext()
+  const canCreateSales = hasModulePermission(currentUser, 'Sales', 'create')
+  const canCancelSales = hasModulePermission(currentUser, 'Sales', 'edit')
+  const canExportSales = hasModulePermission(currentUser, 'Sales', 'export')
+  const [filters, setFilters] = useState(EMPTY_FILTERS)
   const [confirmState, setConfirmState] = useState(null)
-
-  const sales = getSalesFiltered(filters)
-  const kpis = getSalesKpis()
-
-  const handleCancelSale = (saleId) => {
-    const sale = sales.find((entry) => entry.id === saleId)
-    setConfirmState({ type: 'cancel', sale })
-  }
-
-  const confirmCancel = () => {
-    const { mockSales } = require('../../../core/salesStore')
-    if (!confirmState?.sale) return
-    const index = mockSales.findIndex((entry) => entry.id === confirmState.sale.id)
-    if (index !== -1) {
-      mockSales[index] = { ...mockSales[index], status: 'Cancelled', due: 0, paid: 0 }
-    }
-    toast.success('Sale cancelled')
-    setConfirmState(null)
-  }
+  const sales = useMemo(() => getSalesFiltered({ search: filters.search }), [filters.search])
 
   const exportCsv = () => {
-    downloadCsv({
-      filename: 'vinayak-sales.csv',
-      columns: SALES_CSV_COLUMNS,
-      rows: saleCsvRows(sales),
-    })
+    if (!canExportSales) return
+    downloadCsv({ filename: 'vinayak-sales.csv', columns: SALES_CSV_COLUMNS, rows: saleCsvRows(sales) })
+  }
+
+  const cancel = () => {
+    if (!canCancelSales || !confirmState) return
+    const result = cancelSale(confirmState.id)
+    if (result) toast.success('Sale cancelled')
+    setConfirmState(null)
   }
 
   return (
     <div className="sales-page">
-      <header className="sales-header">
-        <div className="sales-header__top">
-          <div className="sales-header__text">
-            <p className="sales-header__eyebrow"><span aria-hidden="true">#</span> Sales</p>
-            <h1 className="sales-header__title">Sales</h1>
-            <p className="sales-header__description">
-              Manage invoices and challans with automated stock and balance updates.
-            </p>
-          </div>
-          <div className="sales-header__actions">
-            <Button variant="secondary" onClick={exportCsv}>Export CSV</Button>
-            <Button size="sm" onClick={() => navigate('/sales', { replace: false })}>Refresh</Button>
-          </div>
-        </div>
-        <div className="sales-kpi-grid">
-          <KpiCard label="Total Sales" value={formatMoney(kpis.totalSales)} icon={42} />
-          <KpiCard label="Total Invoices" value={kpis.totalInvoices} icon={43} />
-          <KpiCard label="Total Challans" value={kpis.totalChallans} icon={44} />
-          <KpiCard label="Paid Amount" value={formatMoney(kpis.paid)} icon={45} />
-          <KpiCard label="Pending Amount" value={formatMoney(kpis.pending)} icon={46} />
+      <header className="recorded-page-header">
+        <h1>Sales</h1>
+        <div className="recorded-page-header__actions">
+          <button type="button" className="recorded-icon-button" onClick={exportCsv} disabled={!canExportSales} title="Export PDF" aria-label="Export PDF"><FileDown size={14} /></button>
+          <button type="button" className="recorded-icon-button" onClick={exportCsv} disabled={!canExportSales} title="Export Excel" aria-label="Export Excel"><FileSpreadsheet size={14} /></button>
+          <button type="button" className="recorded-icon-button" onClick={() => setFilters((current) => ({ ...current }))} title="Refresh sales" aria-label="Refresh sales"><RefreshCw size={14} /></button>
+          {canCreateSales && <Button size="sm" leadingIcon={<Plus size={14} />} onClick={() => navigate(`${currentFirmId ? `/firms/${currentFirmId}/workspace` : ''}/sales/new`)}>Create Sales Order</Button>}
         </div>
       </header>
 
-      <SaleTable
+      <SalesTable
         sales={sales}
         filters={filters}
         onFiltersChange={setFilters}
-        onClearFilters={() => setFilters({ search: '', customerId: 'all', status: 'all', type: 'all', fromDate: '', toDate: '' })}
-        onRowView={(id) => navigate(`/sales/${id}`)}
-        onRowCancel={handleCancelSale}
+        onRowView={(id) => navigate(`${currentFirmId ? `/firms/${currentFirmId}/workspace` : ''}/sales/${id}`)}
+        onRowCancel={(id) => setConfirmState({ id })}
         onDownloadCsv={exportCsv}
+        canCancel={canCancelSales}
+        canExport={canExportSales}
       />
 
       <ConfirmDialog
-        open={confirmState?.type === 'cancel'}
+        open={Boolean(confirmState)}
         onClose={() => setConfirmState(null)}
-        onConfirm={confirmCancel}
+        onConfirm={cancel}
         title="Cancel sale?"
-        description={`Cancel ${confirmState?.sale?.number ?? ''} and restore its amounts.`}
+        description="This will mark the selected sale as cancelled."
         confirmLabel="Cancel Sale"
         cancelLabel="Keep Sale"
         tone="danger"
       />
-    </div>
-  )
-}
-
-function getSalesKpis() {
-  const sales = getSales()
-  return {
-    totalSales: sales.reduce((sum, sale) => sum + (sale.total ?? 0), 0),
-    totalInvoices: sales.filter((sale) => sale.type === 'Invoice').length,
-    totalChallans: sales.filter((sale) => sale.type === 'Challan').length,
-    paid: sales.reduce((sum, sale) => sum + (sale.paid ?? 0), 0),
-    pending: sales.reduce((sum, sale) => sum + (sale.due ?? 0), 0),
-  }
-}
-
-function KpiCard({ label, value, icon }) {
-  return (
-    <div className="sales-kpi-card">
-      <div className="sales-kpi-card__top">
-        <span className="sales-kpi-card__label">{label}</span>
-        <span className="sales-kpi-card__value">{value}</span>
-      </div>
     </div>
   )
 }

@@ -2,6 +2,8 @@ import { useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import { Button, Card, CardBody, Modal, Select, useToast } from '../../../components/ui'
 import { useUsers } from '../hooks/useUsers'
+import { useAuth } from '../../../context/hooks'
+import { canAccessRecord, hasModulePermission } from '../../../core/accessControl'
 import UserActivityTimeline from '../components/UserActivityTimeline'
 import UserPermissionMatrix from '../components/UserPermissionMatrix'
 import UserProfileCard from '../components/UserProfileCard'
@@ -15,23 +17,27 @@ export default function UserDetailsPage() {
   const navigate = useNavigate()
   const { userId } = useParams()
   const toast = useToast()
+  const { currentUser } = useAuth()
   const { getUserById, saveUser, getActivityForUser, toggleUserStatus } = useUsers()
   const user = getUserById(userId)
+  const canEditUsers = hasModulePermission(currentUser, 'Users & Permissions', 'edit') && (
+    currentUser?.role === 'super_admin' || canAccessRecord(currentUser, user, 'Users & Permissions', 'edit')
+  )
   const [tab, setTab] = useState('Overview')
-  const [role, setRole] = useState('viewer')
+  const [role, setRole] = useState(() => user?.role ?? 'viewer')
   const [isEditingRole, setIsEditingRole] = useState(false)
 
   const handleSaveRole = () => {
-    if (!user) return
-    saveUser(user.id, { ...user, role })
-    toast.success('Role updated')
+    if (!user || !canEditUsers) return
+    const updated = saveUser(user.id, { ...user, role })
+    if (updated) toast.success('Role updated')
     setIsEditingRole(false)
   }
 
   const handleToggleStatus = () => {
-    if (!user) return
+    if (!user || !canEditUsers) return
     const updated = toggleUserStatus(user.id)
-    toast.success(updated?.status === 'active' ? 'User activated' : 'User deactivated')
+    if (updated) toast.success(updated.status === 'active' ? 'User activated' : 'User deactivated')
   }
 
   return (
@@ -48,7 +54,7 @@ export default function UserDetailsPage() {
           {user ? (
             <div className="users-details-header__actions">
               <Button variant="secondary" onClick={() => navigate('/users')}>Back to Users</Button>
-              <Button variant="secondary" onClick={handleToggleStatus}>
+              <Button variant="secondary" onClick={handleToggleStatus} disabled={!canEditUsers}>
                 {user.status === 'active' ? 'Deactivate' : 'Activate'}
               </Button>
             </div>
@@ -75,7 +81,7 @@ export default function UserDetailsPage() {
 
       {user && (
         <>
-          <UserProfileCard user={user} actions={<Button size="sm" onClick={() => setIsEditingRole(true)}>Edit Role</Button>} />
+          <UserProfileCard user={user} actions={<Button size="sm" onClick={() => setIsEditingRole(true)} disabled={!canEditUsers}>Edit Role</Button>} />
 
           {tab === 'Overview' && (
             <Card className="users-details-card">
@@ -112,7 +118,7 @@ export default function UserDetailsPage() {
         footer={
           <>
             <Button variant="secondary" onClick={() => setIsEditingRole(false)}>Cancel</Button>
-            <Button variant="primary" onClick={handleSaveRole}>Save Role</Button>
+            <Button variant="primary" onClick={handleSaveRole} disabled={!canEditUsers}>Save Role</Button>
           </>
         }
       >

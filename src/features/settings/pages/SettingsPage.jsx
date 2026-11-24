@@ -1,8 +1,8 @@
 import { useState } from 'react'
 import { Button, Card, CardBody, Select, useToast } from '../../../components/ui'
 import { FormActions, FormField, FormGrid, FormInput, FormSection } from '../../../components/forms'
-import { SAMPLE_FIRMS, DEFAULT_FIRM_ID } from '../../../config/firms'
 import { mockFinancialSettings } from '../../../core/store'
+import { useFirmContext } from '../../../context/hooks'
 import '../styles/settings.css'
 
 const SETTINGS_TABS = ['General', 'Firm', 'Financial', 'Inventory', 'Document', 'Profile']
@@ -53,7 +53,11 @@ const GENERAL_FORM = {
 
 function GeneralSection() {
   const toast = useToast()
-  const [form, setForm] = useState(GENERAL_FORM)
+  const { currentFirm } = useFirmContext()
+  const [form, setForm] = useState(() => ({
+    ...GENERAL_FORM,
+    businessName: currentFirm?.name ?? GENERAL_FORM.businessName,
+  }))
 
   const handleSave = () => {
     toast.success('Settings saved.')
@@ -91,32 +95,44 @@ function GeneralSection() {
 
 function FirmSection() {
   const toast = useToast()
-  const [selectedFirmId, setSelectedFirmId] = useState(DEFAULT_FIRM_ID)
+  const { accessibleFirms, currentFirmId, selectFirm } = useFirmContext()
+  const [selectedFirmId, setSelectedFirmId] = useState(currentFirmId ?? accessibleFirms[0]?.id ?? '')
   const [note, setNote] = useState('')
 
-  const firms = SAMPLE_FIRMS
-  const selected = firms.find((firm) => firm.id === selectedFirmId)
+  const firms = accessibleFirms
+  const selected = firms.find((firm) => firm.id === selectedFirmId) ?? firms[0]
 
   return (
     <SettingsCard title="Firm Settings" subtitle="Select the firm you are operating from">
       <FormField label="Active Firm" hint="All operations are scoped to the selected firm.">
         <Select
-          value={selectedFirmId}
+          value={selected?.id ?? ''}
           onChange={(event) => setSelectedFirmId(event.target.value)}
           options={firms.map((firm) => ({ value: firm.id, label: firm.name }))}
         />
       </FormField>
       <div className="settings-firm-card">
-        <h3>{selected?.name}</h3>
-        <p className="settings-firm-description">{selected?.description}</p>
-        <p><strong>Type:</strong> {selected?.entity}</p>
-        <p><strong>Location:</strong> {selected?.location}</p>
+        <h3>{selected?.name ?? 'No firm selected'}</h3>
+        <p className="settings-firm-description">{selected?.businessType ?? selected?.entity ?? '—'}</p>
+        <p><strong>Type:</strong> {selected?.businessType ?? selected?.entity ?? '—'}</p>
+        <p><strong>Location:</strong> {selected?.city ?? selected?.location ?? '—'}</p>
       </div>
       <FormField label="Notes">
         <FormInput value={note} onChange={(event) => setNote(event.target.value)} placeholder="Switch firms when auditing or switching books" />
       </FormField>
       <FormActions>
-        <Button type="button" variant="primary" onClick={() => toast.success(`Now using ${selected?.name}`)}>Switch to Selected Firm</Button>
+        <Button
+          type="button"
+          variant="primary"
+          disabled={!selected}
+          onClick={() => {
+            if (!selected) return
+            selectFirm(selected.id)
+            toast.success(`Now using ${selected.name}`)
+          }}
+        >
+          Switch to Selected Firm
+        </Button>
       </FormActions>
     </SettingsCard>
   )

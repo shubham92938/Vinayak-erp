@@ -1,14 +1,17 @@
 /**
  * Expense service — CRUD over the central mock store.
  */
-import { mockExpenses, mockTransactions, mockAccounts, nextId } from '../../../core/store'
+import { mockExpenses, mockTransactions, getAccounts, nextId } from '../../../core/store'
+import { DEFAULT_FIRM_ID } from '../../../config/firms'
+import { getActiveFirmId } from '../../../core/firmContextStore'
 
 export function getExpenses() {
-  return mockExpenses
+  const activeFirmId = getActiveFirmId()
+  return activeFirmId ? mockExpenses.filter((expense) => expense.firmId === activeFirmId) : mockExpenses
 }
 
 export function getExpenseById(expenseId) {
-  return mockExpenses.find((entry) => entry.id === expenseId)
+  return getExpenses().find((entry) => entry.id === expenseId)
 }
 
 export function createExpense(expenseData) {
@@ -16,6 +19,7 @@ export function createExpense(expenseData) {
     id: nextId('exp'),
     status: 'Paid',
     ...expenseData,
+    firmId: getActiveFirmId() ?? expenseData.firmId ?? DEFAULT_FIRM_ID,
   }
   mockExpenses.push(expense)
 
@@ -27,35 +31,39 @@ export function createExpense(expenseData) {
     amount: Number(expense.amount || 0),
     balance: 0,
     description: expense.description ?? `${expense.type} expense`,
-    accountId: expense.accountId ?? mockAccounts[0]?.id,
+    accountId: expense.accountId ?? getAccounts()[0]?.id,
     customerId: null,
     productId: null,
+    firmId: expense.firmId,
   })
 
   return { ...expense }
 }
 
 export function updateExpense(id, expenseData) {
-  const expense = mockExpenses.find((entry) => entry.id === id)
+  const expense = getExpenseById(id)
   if (!expense) throw new Error('Expense not found')
-  Object.assign(expense, expenseData)
-  return { ...expense }
+  const index = mockExpenses.findIndex((entry) => entry.id === id)
+  const updated = { ...mockExpenses[index], ...expenseData, firmId: mockExpenses[index].firmId }
+  mockExpenses[index] = updated
+  return { ...updated }
 }
 
 export function deleteExpense(id) {
+  const expense = getExpenseById(id)
+  if (!expense) throw new Error('Expense not found')
   const index = mockExpenses.findIndex((entry) => entry.id === id)
-  if (index === -1) throw new Error('Expense not found')
   mockExpenses.splice(index, 1)
 }
 
 export const EXPENSE_STATUSES = ['Paid', 'Draft', 'Void', 'Refunded']
 
 export function getExpenseTypes() {
-  const types = [...new Set(mockExpenses.map((expense) => expense.type))]
+  const types = [...new Set(getExpenses().map((expense) => expense.type))]
   return [...new Set([...types, 'Misc', 'Other'])]
 }
 
 export function getExpenseCategories() {
-  const categories = [...new Set(mockExpenses.map((expense) => expense.category))]
+  const categories = [...new Set(getExpenses().map((expense) => expense.category))]
   return [...categories, 'Other']
 }

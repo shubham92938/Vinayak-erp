@@ -1,8 +1,8 @@
-import { DEFAULT_FIRM_ID } from '../../../config/firms'
-import { mockPurchases } from '../../../core/financeStore'
+import { getPurchaseById as getCentralPurchaseById } from '../../../core/purchaseStore'
+import { getFirmLabel as getCentralFirmLabel } from '../../users/utils/userUtils'
 
 export function getPurchaseById(purchaseId) {
-  return mockPurchases.find((entry) => entry.id === purchaseId || entry.number === purchaseId)
+  return getCentralPurchaseById(purchaseId)
 }
 
 export function formatMoney(amount) {
@@ -16,8 +16,8 @@ export function formatDate(value) {
   return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(parsed)
 }
 
-export function getFirmLabel(firmId = DEFAULT_FIRM_ID) {
-  return 'Vinayak Associates'
+export function getFirmLabel(firmId) {
+  return getCentralFirmLabel(firmId)
 }
 
 export function formatPurchaseStatus(status) {

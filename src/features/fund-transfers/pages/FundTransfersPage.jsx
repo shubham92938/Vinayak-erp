@@ -1,32 +1,36 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
+import { useAuth } from '../../../context/hooks'
+import { hasModulePermission } from '../../../core/accessControl'
 import { Button, Card, CardBody, Select, useToast } from '../../../components/ui'
-import { FormActions, FormField, FormSection } from '../../../components/forms'
+import { FormActions, FormField } from '../../../components/forms'
 import { DataTable } from '../../../components/data-table'
-import { mockTransactions, mockAccounts, formatMoney, formatDate } from '../../../core/store'
+import { getAccounts, getTransactions, formatMoney, formatDate } from '../../../core/store'
 import { recordFundTransfer } from '../../../core/financeStore'
 import '../styles/fundTransfers.css'
 
 export default function FundTransfersPage() {
   const toast = useToast()
   const navigate = useNavigate()
+  const { currentUser } = useAuth()
+  const canTransfer = hasModulePermission(currentUser, 'Fund Transfers', 'create')
 
   return (
     <div className="fund-transfers-page">
-      <TransferForm toast={toast} navigate={navigate} />
+      <TransferForm toast={toast} navigate={navigate} canTransfer={canTransfer} />
       <TransfersTable />
     </div>
   )
 }
 
-function TransferForm({ toast }) {
+function TransferForm({ toast, canTransfer }) {
   const [fromAccountId, setFromAccountId] = useState('')
   const [toAccountId, setToAccountId] = useState('')
   const [amount, setAmount] = useState('')
   const [notes, setNotes] = useState('')
   const [errors, setErrors] = useState({})
 
-  const accounts = mockAccounts
+  const accounts = getAccounts()
 
   const accountName = (accountId) => accounts.find((account) => account.id === accountId)?.name ?? ''
 
@@ -42,6 +46,7 @@ function TransferForm({ toast }) {
 
   const handleSubmit = (event) => {
     event.preventDefault()
+    if (!canTransfer) return
     if (!validate()) {
       toast.error('Please complete the required fields')
       return
@@ -115,7 +120,7 @@ function TransferForm({ toast }) {
             </p>
           )}
           <FormActions>
-            <Button type="submit" variant="primary">Transfer Fund</Button>
+            <Button type="submit" variant="primary" disabled={!canTransfer}>Transfer Fund</Button>
           </FormActions>
         </form>
       </CardBody>
@@ -132,7 +137,7 @@ function TransfersTable() {
     { id: 'amount', header: 'Amount', accessor: 'amount', width: '120px', align: 'right', cell: (row) => <span className="fund-transfers-money">{formatMoney(row.amount)}</span> },
   ]
 
-  const rows = mockTransactions
+  const rows = getTransactions()
     .filter((txn) => txn.type === 'transfer')
     .sort((a, b) => new Date(b.date).getTime() - new Date(a.date).getTime())
 
