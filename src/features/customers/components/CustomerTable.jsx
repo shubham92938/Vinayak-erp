@@ -5,7 +5,7 @@ import { DateRangeFilter } from '../../../components/filters'
 import { getFirmLabel } from '../utils/customerUtils'
 import { formatMoney } from '../utils/customerUtils'
 import { CUSTOMER_TYPES, CUSTOMER_STATUSES } from '../utils/customerUtils'
-import { downloadCsv, buildCsv } from '../../../utils/csv'
+import { downloadCsv } from '../../../utils/csv'
 import { getCustomerFields, getCustomersCsvRows } from '../services/customerService'
 
 const STATUS_BADGE_VARIANTS = { Active: 'success', Inactive: 'neutral' }

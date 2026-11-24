@@ -14,3 +14,33 @@
   border-radius: var(--radius-full);
   pointer-events: none;
 }
+
+.notification-button__count {
+  position: absolute;
+  top: 0;
+  right: 0;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 5px;
+  background: var(--color-danger);
+  border: 2px solid var(--color-surface);
+  border-radius: var(--radius-full);
+  color: var(--color-surface);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  font-variant-numeric: tabular-nums;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  pointer-events: none;
+  box-sizing: border-box;
+}
+
+.notification-button__dot {
+  /* hidden when the count badge is shown */
+}
+
+.notification-button:has(.notification-button__count) .notification-button__dot {
+  display: none;
+}

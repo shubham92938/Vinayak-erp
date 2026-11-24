@@ -1,0 +1,84 @@
+/* --------------------------------------------------------------------------
+   Fund Transfers styles
+   -------------------------------------------------------------------------- */
+
+.fund-transfers-page {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-4);
+}
+
+.fund-transfers-card {
+  max-width: 560px;
+}
+
+.fund-transfers-title {
+  margin: 0 0 var(--space-3);
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.fund-transfers-form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.fund-transfers-grid {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+}
+
+.fund-transfers-hint {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-tertiary);
+  margin: 0;
+}
+
+.fund-transfers-amount,
+.fund-transfers-notes {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.fund-transfers-amount:focus,
+.fund-transfers-notes:focus {
+  outline: 2px solid var(--color-blue);
+  outline-offset: 1px;
+  border-color: var(--color-blue-hover);
+}
+
+.fund-transfers-history {
+  margin-top: var(--space-4);
+}
+
+.fund-transfers-date {
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-secondary);
+}
+
+.fund-transfers-money {
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.fund-transfers-empty {
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: center;
+  padding: var(--space-8);
+  margin: 0;
+}
+
+@media (max-width: 640px) {
+  .fund-transfers-card {
+    max-width: none;
+  }
+}

@@ -1,0 +1,202 @@
+/* --------------------------------------------------------------------------
+   Purchases styles
+   -------------------------------------------------------------------------- */
+
+.purchases-page {
+  width: 100%;
+  max-width: 1160px;
+  margin-inline: auto;
+}
+
+.purchases-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-3);
+  padding: var(--space-4) var(--space-5);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-xs);
+}
+
+.purchases-header__top {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+}
+
+.purchases-header__text {
+  min-width: 0;
+}
+
+.purchases-header__eyebrow {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-caps);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.purchases-header__title {
+  margin: var(--space-1) 0 0;
+  font-size: var(--font-size-lg);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.purchases-header__description {
+  margin-top: var(--space-0-5);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+}
+
+.purchases-header__actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+.purchases-kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: var(--space-3);
+  margin-top: var(--space-3);
+}
+
+.purchases-kpi-card {
+  padding: var(--space-3);
+  min-height: 60px;
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.purchases-kpi-card__label {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.purchases-kpi-card__value {
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-semibold);
+  color: var(--color-text-primary);
+}
+
+.purchases-vendor {
+  font-size: var(--font-size-sm);
+}
+
+.purchases-date {
+  font-size: var(--font-size-2xs);
+  color: var(--color-text-secondary);
+}
+
+.purchases-money {
+  font-size: var(--font-size-sm);
+  font-variant-numeric: tabular-nums;
+}
+
+.purchases-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  width: 100%;
+  align-items: flex-start;
+}
+
+.purchases-details-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-4);
+  margin-bottom: var(--space-4);
+}
+
+.purchases-details-actions {
+  display: flex;
+  gap: var(--space-2);
+}
+
+@media (max-width: 640px) {
+  .purchases-kpi-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+  .purchases-details-header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+  .purchases-details-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .purchases-details-actions .ui-button {
+    flex: 1;
+  }
+  .purchases-header__actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .purchases-header__actions .ui-button {
+    flex: 1;
+  }
+}
+
+.purchases-stat {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+  padding: var(--space-3);
+  background: var(--color-surface-muted);
+  border-radius: var(--radius-md);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-primary);
+}
+
+.purchases-stat__label {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  letter-spacing: var(--letter-spacing-wide);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}
+
+.purchases-detail-card {
+  margin-bottom: var(--space-4);
+}
+
+.purchases-detail-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: var(--space-3);
+}
+
+.purchases-detail-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--space-4);
+}
+
+.purchases-detail-table th,
+.purchases-detail-table td {
+  padding: var(--space-2) var(--space-3);
+  border-bottom: 1px solid var(--color-border);
+  font-size: var(--font-size-sm);
+  color: var(--color-text-secondary);
+  text-align: left;
+}
+
+.purchases-detail-table th {
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-semibold);
+  text-transform: uppercase;
+  color: var(--color-text-tertiary);
+}

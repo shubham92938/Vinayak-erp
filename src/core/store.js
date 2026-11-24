@@ -7,8 +7,12 @@
  */
 import { DEFAULT_FIRM_ID } from '../config/firms'
 import { nextId, roundMoney } from './numbers'
+import { formatMoney as formatMoneyBase, formatDate as formatDateBase } from './numbers'
 
 export { nextId, nextNumber, calcTax, calcTotal, decimalAdd, decimalSub } from './numbers'
+
+export const formatMoney = formatMoneyBase
+export const formatDate = formatDateBase
 
 /* --------------------------------------------------------------------------
    Central store

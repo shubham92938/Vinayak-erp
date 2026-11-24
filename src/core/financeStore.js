@@ -10,6 +10,11 @@ import {
   nextNumber,
   nextId,
 } from './store'
+import { mockSales } from './salesStore'
+
+export { formatMoney, formatDate } from './numbers'
+export { mockAccounts, mockExpenses } from './store'
+// export { mockAccounts, mockExpenses } from './store'
 
 export const mockPurchases = [
   { id: 'PO-20261023', number: 'PO-20261023', vendorName: 'Nemotron Traders', vendorContact: 'Arjun Khanna', vendorInvoiceNumber: 'NEMO/88812', purchaseDate: '2026-10-26T10:10:00', items: [{ productId: 'prod-03', name: 'OnePlus 12', qty: 5, unit: 'pcs', price: 169900, taxPct: 18, discount: 0 }], discount: 0, subtotal: 849500, taxTotal: 152910, total: 1002410, advance: 0, paid: 0, due: 1002410, status: 'Outstanding' },
@@ -81,6 +86,7 @@ export function deletePurchase(id) {
 export function recordPurchasePayment(purchaseId, amount, mode, accountId, notes = '') {
   const purchase = getPurchaseById(purchaseId)
   if (!purchase) throw new Error('Purchase not found')
+  if (notes) purchase.notes = notes
 
   purchase.paid = Math.round((purchase.paid + amount) * 100) / 100
   purchase.due = Math.max(0, Math.round((purchase.due - amount) * 100) / 100)
@@ -332,6 +338,16 @@ export function recordPaymentInFinance(data) {
     if (customer) customer.openingBalance = Math.max(0, Math.round((customer.openingBalance - data.amount) * 100) / 100)
   }
 
+  // Reduce the invoice's outstanding amount — payments update outstanding amounts.
+  if (data.invoiceId) {
+    const sale = mockSales.find((entry) => entry.number === data.invoiceId || entry.id === data.invoiceId)
+    if (sale) {
+      sale.paid = Math.round((sale.paid + data.amount) * 100) / 100
+      sale.due = Math.max(0, Math.round((sale.due - data.amount) * 100) / 100)
+      sale.status = sale.due === 0 ? 'Paid' : 'Partially Paid'
+    }
+  }
+
   if (data.accountId) {
     const account = mockTransactions.find((entry) => entry.id === data.accountId)
     if (account) account.balance = Math.round((account.balance + data.amount) * 100) / 100
@@ -339,7 +355,7 @@ export function recordPaymentInFinance(data) {
 
   mockTransactions.push({
     id: nextId('txn'),
-    type: 'sale',
+    type: 'payment-in',
     date: payment.date,
     amount: data.amount,
     balance: 0,

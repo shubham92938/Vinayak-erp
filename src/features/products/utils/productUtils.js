@@ -2,10 +2,16 @@ import { getFirmLabel, getInitials } from '../../users/utils/userUtils'
 
 export { getFirmLabel }
 
+export function formatMoney(amount) {
+  return `₹${Number(amount || 0).toLocaleString('en-IN', { maximumFractionDigits: 2, minimumFractionDigits: 2 })}`
+}
+
 export const PRODUCT_STATUSES = [
   { value: 'active', label: 'Active' },
   { value: 'inactive', label: 'Inactive' },
 ]
+
+
 
 export const STOCK_STATUSES = [
   { value: 'all', label: 'All stock' },

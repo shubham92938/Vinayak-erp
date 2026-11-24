@@ -29,11 +29,22 @@ export function calcTotal(subtotal, discount, taxPct) {
   return roundMoney(net + calcTax(net, taxPct))
 }
 
-export function formatMoney(amount, currencySymbol = '₹') {
-  return `${currencySymbol}${Number(amount || 0).toLocaleString('en-IN', {
+export function formatMoney(amount) {
+  return `₹${Number(amount || 0).toLocaleString('en-IN', {
     maximumFractionDigits: 2,
     minimumFractionDigits: 2,
   })}`
+}
+
+export function formatDate(value) {
+  if (!value) return '—'
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return '—'
+  return new Intl.DateTimeFormat('en-IN', {
+    day: 'numeric',
+    month: 'short',
+    year: 'numeric',
+  }).format(parsed)
 }
 
 let sequence = 1
