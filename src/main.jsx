@@ -6,6 +6,7 @@ import './styles/reset.css'
 import './styles/global.css'
 import './styles/responsive.css'
 import App from './App.jsx'
+import './styles/modern.css'
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

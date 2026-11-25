@@ -6,45 +6,52 @@
 :root {
   color-scheme: light;
 
-  /* Core brand palette */
-  --color-navy: #172B4D;
-  --color-blue: #2563EB;
-  --color-background: #F6F8FA;
+  /* Core brand palette — Vinayak Group: confident ink, living teal, warm signal */
+  --brand-ink: #102A43;
+  --brand-ink-strong: #0B1F33;
+  --brand-teal: #0F766E;
+  --brand-teal-bright: #14B8A6;
+  --brand-teal-soft: #E8FAF6;
+  --brand-coral: #E56B5D;
+  --brand-gold: #F2B84B;
+  --color-navy: #102A43;
+  --color-blue: #0F766E;
+  --color-background: #F6F9FB;
   --color-surface: #FFFFFF;
-  --color-text-primary: #172B4D;
-  --color-text-secondary: #64748B;
-  --color-border: #E5E9F0;
-  --color-success: #16865B;
-  --color-warning: #D99A24;
-  --color-danger: #DC4545;
+  --color-text-primary: #102A43;
+  --color-text-secondary: #718395;
+  --color-border: #E1EBF0;
+  --color-success: #0F8B80;
+  --color-warning: #B7791F;
+  --color-danger: #C84D46;
 
   /* Derived accents and neutrals */
-  --color-navy-strong: #0F1F3A;
-  --color-blue-hover: #1D4ED8;
-  --color-blue-active: #1E40AF;
-  --color-blue-soft: #EFF6FF;
-  --color-blue-border: #BFDBFE;
-  --color-surface-subtle: #F8FAFC;
-  --color-surface-muted: #F1F5F9;
-  --color-surface-hover: #F1F5F9;
-  --color-border-strong: #CBD5E1;
-  --color-text-tertiary: #94A3B8;
+  --color-navy-strong: #0B1F33;
+  --color-blue-hover: #0B5F59;
+  --color-blue-active: #084D48;
+  --color-blue-soft: #E8FAF6;
+  --color-blue-border: #BFECE4;
+  --color-surface-subtle: #F7FAFC;
+  --color-surface-muted: #EFF5F7;
+  --color-surface-hover: #F1F8F7;
+  --color-border-strong: #C4D6DE;
+  --color-text-tertiary: #9AAAB6;
   --color-text-inverse: #FFFFFF;
-  --color-success-soft: #E8F5EF;
-  --color-success-border: #BFE3D2;
-  --color-success-strong: #106B48;
-  --color-warning-soft: #FCF5E5;
-  --color-warning-border: #F1DFB4;
+  --color-success-soft: #E5F8F3;
+  --color-success-border: #BDE8DE;
+  --color-success-strong: #0B665F;
+  --color-warning-soft: #FFF7E5;
+  --color-warning-border: #F2DFB0;
   --color-warning-strong: #8A5D0A;
-  --color-danger-soft: #FDEEEE;
-  --color-danger-border: #F5C9C9;
-  --color-danger-strong: #C23B3B;
-  --color-danger-active: #A83232;
-  --color-overlay: rgba(15, 23, 42, 0.5);
-  --color-selection: #C7DBFD;
+  --color-danger-soft: #FFF0EE;
+  --color-danger-border: #F3CCC7;
+  --color-danger-strong: #B54740;
+  --color-danger-active: #963D38;
+  --color-overlay: rgba(11, 31, 51, 0.58);
+  --color-selection: #BDEDE6;
 
   /* Focus */
-  --focus-ring-color: rgba(37, 99, 235, 0.22);
+  --focus-ring-color: rgba(20, 184, 166, 0.22);
   --focus-ring: 0 0 0 3px var(--focus-ring-color);
   --focus-ring-danger: 0 0 0 3px rgba(220, 69, 69, 0.16);
 
@@ -100,11 +107,11 @@
   --space-20: 5rem; /* 80px */
 
   /* Radii */
-  --radius-xs: 3px;
-  --radius-sm: 4px;
-  --radius-md: 6px;
-  --radius-lg: 8px;
-  --radius-xl: 10px;
+  --radius-xs: 5px;
+  --radius-sm: 7px;
+  --radius-md: 10px;
+  --radius-lg: 14px;
+  --radius-xl: 18px;
   --radius-full: 9999px;
 
   /* Borders */
@@ -112,16 +119,16 @@
   --border-default: 1px solid var(--color-border);
   --border-strong: 1px solid var(--color-border-strong);
 
-  /* Elevation — intentionally subtle */
-  --shadow-xs: 0 1px 2px rgba(23, 43, 77, 0.04);
-  --shadow-sm: 0 1px 2px rgba(23, 43, 77, 0.05),
-    0 1px 3px rgba(23, 43, 77, 0.04);
-  --shadow-md: 0 4px 12px -2px rgba(23, 43, 77, 0.08),
-    0 2px 4px -2px rgba(23, 43, 77, 0.04);
-  --shadow-lg: 0 12px 32px -8px rgba(23, 43, 77, 0.18),
-    0 4px 10px -4px rgba(23, 43, 77, 0.08);
-  --shadow-xl: 0 24px 56px -16px rgba(23, 43, 77, 0.24),
-    0 8px 20px -8px rgba(23, 43, 77, 0.1);
+  /* Elevation — soft editorial depth */
+  --shadow-xs: 0 1px 2px rgba(16, 42, 67, 0.04);
+  --shadow-sm: 0 2px 5px rgba(16, 42, 67, 0.05),
+    0 1px 2px rgba(16, 42, 67, 0.04);
+  --shadow-md: 0 8px 20px -5px rgba(16, 42, 67, 0.11),
+    0 2px 5px -2px rgba(16, 42, 67, 0.05);
+  --shadow-lg: 0 18px 42px -12px rgba(16, 42, 67, 0.2),
+    0 5px 12px -4px rgba(16, 42, 67, 0.08);
+  --shadow-xl: 0 30px 70px -20px rgba(16, 42, 67, 0.25),
+    0 10px 24px -8px rgba(16, 42, 67, 0.1);
 
   /* Controls */
   --control-height-sm: 28px;
@@ -141,12 +148,12 @@
   --transition-base: var(--duration-base) var(--ease-standard);
 
   /* Layout */
-  --topbar-height: 56px;
+  --topbar-height: 72px;
   --sidebar-width: 248px;
   --sidebar-width-collapsed: 64px;
   --sidebar-mobile-width: 280px;
-  --content-max-width: 1180px;
-  --page-gutter: var(--space-8);
+  --content-max-width: 1320px;
+  --page-gutter: var(--space-6);
 
   /* Layers */
   --z-sticky: 100;

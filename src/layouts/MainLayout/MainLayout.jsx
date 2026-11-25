@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation, useNavigate } from 'react-router-dom'
 import { ChevronDown, LogOut } from 'lucide-react'
+import BrandLockup from '../../components/brand/BrandLockup'
 import { getWorkspaceRoutePath } from '../../config/navigation'
 import { hasModulePermission } from '../../core/accessControl'
 import { useAuth, useFirmContext } from '../../context/hooks'
@@ -50,13 +51,7 @@ function isActive(pathname, item, currentFirm) {
 }
 
 function WebsiteLogo() {
-  return (
-    <span className="website-logo" aria-label="Vinayak Group">
-      <span className="website-logo__word">vinayak<span>ग्रुप</span></span>
-      <span className="website-logo__name">GROUP</span>
-      <span className="website-logo__tagline">BUILT REAL... BUILT TRUE...</span>
-    </span>
-  )
+  return <BrandLockup size="sm" />
 }
 
 function UserActions({ currentUser, logout }) {
