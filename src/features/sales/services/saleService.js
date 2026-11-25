@@ -54,5 +54,12 @@ function computeTotals(items, discount) {
 }
 
 export function getSaleTotals(sale) {
-  return computeTotals(sale.items, sale.discount ?? 0)
+  if (Number.isFinite(Number(sale?.subtotal)) && Number.isFinite(Number(sale?.total))) {
+    return {
+      subtotal: Number(sale.subtotal),
+      taxTotal: Number(sale.taxTotal ?? 0),
+      total: Number(sale.total),
+    }
+  }
+  return computeTotals(sale?.items ?? [], sale?.discount ?? 0)
 }

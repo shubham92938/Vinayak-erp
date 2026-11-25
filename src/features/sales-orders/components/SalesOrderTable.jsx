@@ -32,16 +32,16 @@ export default function SalesOrderTable({ orders, filters, onFiltersChange, onRo
   const customers = getCustomers()
   const customerById = Object.fromEntries(customers.map((customer) => [customer.id, customer]))
   const columns = [
-    { key: 'number', label: 'S.No', width: '82px', render: (order) => order.number },
-    { key: 'customerName', label: 'Buyer', minWidth: '160px' },
-    { key: 'orderDate', label: 'Date', width: '84px', render: (order) => formatDate(order.orderDate) },
-    { key: 'total', label: 'Total Bill Amount', width: '105px', align: 'right', render: (order) => formatMoney(order.total) },
-    { key: 'advance', label: 'Advance Paid Amount', width: '108px', align: 'right', render: (order) => formatMoney(order.advance ?? 0) },
-    { key: 'due', label: 'Due Amount', width: '95px', align: 'right', render: (order) => formatMoney(Math.max(0, (order.total ?? 0) - (order.advance ?? 0))) },
-    { key: 'paymentMode', label: 'Payment Mode', width: '86px', render: (order) => order.paymentMode ?? 'Online' },
-    { key: 'saleType', label: 'Sale Type', width: '80px', render: (order) => order.saleType ?? 'Retail' },
-    { key: 'status', label: 'Status', width: '85px', render: (order) => <span className={`recorded-status recorded-status--${String(order.status).toLowerCase().replaceAll(' ', '-')}`}>{order.status}</span> },
-    { key: 'actions', label: 'Action', width: '55px', align: 'center', render: (order) => <button type="button" className="recorded-row-actions__button" onClick={() => onRowView(order.id)} aria-label={`View ${order.number}`} title="View"><Eye size={13} /></button> },
+    { key: 'number', label: 'S.NO. ↕', width: '82px', render: (order) => order.number },
+    { key: 'customerName', label: 'BUYER ↕', minWidth: '160px' },
+    { key: 'orderDate', label: 'DATE ↕', width: '84px', render: (order) => formatDate(order.orderDate) },
+    { key: 'total', label: 'TOTAL BILL AMOUNT ↕', width: '125px', align: 'right', render: (order) => formatMoney(order.total) },
+    { key: 'advance', label: 'ADVANCE PAID AMOUNT ↕', width: '128px', align: 'right', render: (order) => formatMoney(order.advance ?? 0) },
+    { key: 'due', label: 'DUE AMOUNT ↕', width: '105px', align: 'right', render: (order) => formatMoney(Math.max(0, (order.total ?? 0) - (order.advance ?? 0))) },
+    { key: 'paymentMode', label: 'PAYMENT MODE ↕', width: '105px', render: (order) => order.paymentMode ?? 'Online' },
+    { key: 'saleType', label: 'SALE TYPE ↕', width: '95px', render: (order) => order.saleType ?? 'Retail' },
+    { key: 'status', label: 'STATUS ↕', width: '95px', render: (order) => <span className={`recorded-status recorded-status--${String(order.status).toLowerCase().replaceAll(' ', '-')}`}>{order.status}</span> },
+    { key: 'actions', label: 'ACTION', width: '70px', align: 'center', render: (order) => <button type="button" className="recorded-row-actions__button" onClick={() => onRowView(order.id)} aria-label={`View ${order.number}`} title="View"><Eye size={13} /></button> },
   ]
 
   return (
@@ -55,11 +55,12 @@ export default function SalesOrderTable({ orders, filters, onFiltersChange, onRo
       onSearchChange={(search) => onFiltersChange((current) => ({ ...current, search }))}
       searchPlaceholder="Search Buyer"
       searchLabel="Search buyer"
+      searchTitle="Search Buyer"
       filters={(
         <>
-          <label><span>Payment Mode:</span><select value={filters.paymentMode} onChange={(event) => onFiltersChange((current) => ({ ...current, paymentMode: event.target.value }))}><option value="all">-- All Payment --</option><option>Online</option><option>Cash</option><option>Credit</option></select></label>
-          <label><span>Sale Type:</span><select value={filters.saleType} onChange={(event) => onFiltersChange((current) => ({ ...current, saleType: event.target.value }))}><option value="all">-- All Sale Type --</option><option>Retail</option><option>Wholesale</option><option>Dealer</option></select></label>
-          <label><span>Buyer Type:</span><select value={filters.buyerType} onChange={(event) => onFiltersChange((current) => ({ ...current, buyerType: event.target.value }))}><option value="all">-- All Buyers --</option><option>Customer</option><option>Dealer</option></select></label>
+          <label><span>Payment Mode</span><select value={filters.paymentMode} onChange={(event) => onFiltersChange((current) => ({ ...current, paymentMode: event.target.value }))}><option value="all">-- All Payment Modes --</option><option>Online</option><option>Cash</option></select></label>
+          <label><span>Sale Type</span><select value={filters.saleType} onChange={(event) => onFiltersChange((current) => ({ ...current, saleType: event.target.value }))}><option value="all">-- All Sale Types --</option><option>Retail</option><option>Wholesale</option><option>Dealer</option></select></label>
+          <label><span>Buyer Type</span><select value={filters.buyerType} onChange={(event) => onFiltersChange((current) => ({ ...current, buyerType: event.target.value }))}><option value="all">-- All Buyers Type --</option><option>Customer</option><option>Dealer</option></select></label>
           <label><span>From Date:</span><input type="date" value={filters.fromDate} onChange={(event) => onFiltersChange((current) => ({ ...current, fromDate: event.target.value }))} aria-label="Sales orders from date" /></label>
           <label><span>To Date:</span><input type="date" value={filters.toDate} onChange={(event) => onFiltersChange((current) => ({ ...current, toDate: event.target.value }))} aria-label="Sales orders to date" /></label>
         </>
@@ -76,7 +77,7 @@ export default function SalesOrderTable({ orders, filters, onFiltersChange, onRo
       actions={canExport ? <button type="button" className="recorded-table__export" onClick={onDownloadCsv}><FileDown size={13} /> Export</button> : null}
       emptyMessage="No sales orders found."
       ariaLabel="Sales orders"
-      minWidth={900}
+      minWidth={1180}
     />
   )
 }

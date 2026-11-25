@@ -45,7 +45,7 @@ export const NAV_SECTIONS = [
     label: 'Sales Management',
     items: [
       { id: 'sales', label: 'Sales', to: '/sales', icon: ShoppingCart },
-      { id: 'sales-orders', label: 'Sales Orders', to: '/sales-orders', icon: ClipboardList },
+      { id: 'sales-orders', label: 'Sales Orders', to: '/orders', icon: ClipboardList },
     ],
   },
   {

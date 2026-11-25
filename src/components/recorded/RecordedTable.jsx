@@ -54,6 +54,7 @@ export default function RecordedTable({
   onSearchChange,
   searchPlaceholder = 'Search',
   searchLabel = 'Search records',
+  searchTitle = 'Search:',
   filters,
   actions,
   filterRow,
@@ -114,7 +115,7 @@ export default function RecordedTable({
         </div>
 
         <label className="recorded-table__search">
-          <span>Search:</span>
+          <span>{searchTitle}</span>
           <span className="recorded-table__search-input">
             <Search size={13} aria-hidden="true" />
             <input

@@ -38,7 +38,7 @@ const NAVIGATION = [
   {
     label: 'Sales Management', module: 'Sales', icon: ShoppingCart, items: [
       { label: 'Sales', path: '/sales', module: 'Sales' },
-      { label: 'Sales Orders', path: '/sales-orders', module: 'Sales Orders' },
+      { label: 'Sales Orders', path: '/orders', module: 'Sales Orders' },
     ],
   },
   {
