@@ -836,3 +836,36 @@ body {
     height: 40px;
   }
 }
+
+/* Product creation follows the recorded two-column image + form layout. */
+.recorded-product-form form {
+  display: grid;
+  grid-template-columns: minmax(220px, 28%) minmax(0, 1fr);
+  align-items: start;
+  gap: 22px;
+}
+
+.recorded-product-form__photo {
+  width: auto;
+}
+
+.recorded-product-form__body {
+  min-width: 0;
+  padding-top: 0;
+  padding-left: 22px;
+  border-top: 0;
+  border-left: 1px solid #edf2f4;
+}
+
+@media (max-width: 700px) {
+  .recorded-product-form form {
+    grid-template-columns: 1fr;
+  }
+
+  .recorded-product-form__body {
+    padding-top: 18px;
+    padding-left: 0;
+    border-top: 1px solid #edf2f4;
+    border-left: 0;
+  }
+}

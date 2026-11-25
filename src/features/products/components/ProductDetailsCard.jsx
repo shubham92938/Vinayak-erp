@@ -1,59 +1,100 @@
 import { Card, CardBody } from '../../../components/ui'
-import { formatPrice } from '../utils/productUtils'
-import ProductImage from './ProductImage'
-import ProductStatusBadge from './ProductStatusBadge'
-import StockStatusBadge from './StockStatusBadge'
+import { formatPrice, getStockStatus, productImageUrl } from '../utils/productUtils'
+
+const STOCK_LABELS = {
+  'in-stock': 'In Stock',
+  'low-stock': 'Low Stock',
+  'out-of-stock': 'Out of Stock',
+  untracked: 'Untracked',
+}
+
+function productSlug(name) {
+  return String(name ?? '')
+    .trim()
+    .toLocaleLowerCase()
+    .replace(/[^a-z0-9]+/g, '-')
+    .replace(/^-|-$/g, '')
+}
+
+function displayUnit(unit) {
+  const value = String(unit ?? '').trim()
+  if (!value) return '—'
+  return `${value.charAt(0).toLocaleUpperCase()}${value.slice(1)} (${value})`
+}
+
+function displayTax(product) {
+  const tax = [product?.taxSGST, product?.taxCGST, product?.taxIGST]
+    .map((value) => Number(value ?? 0))
+    .reduce((total, value) => total + (Number.isFinite(value) ? value : 0), 0)
+  return `${tax} %`
+}
+
+function Barcode({ value }) {
+  return (
+    <span className="recorded-product-barcode" aria-label={`Barcode ${value}`}>
+      <span aria-hidden="true" />
+    </span>
+  )
+}
 
 export default function ProductDetailsCard({
   product,
   categoryName = '—',
   firmName = '—',
-  actions,
 }) {
   if (!product) return null
 
+  const stockStatus = getStockStatus(product)
+  const image = product.image || productImageUrl(product.name)
   const rows = [
-    { label: 'Product', value: product.name, showImage: true },
-    { label: 'Code', value: product.code },
-    { label: 'Category', value: categoryName },
+    { label: 'Name', value: product.name },
     { label: 'Firm', value: firmName },
-    { label: 'Description', value: product.description },
-    { label: 'Unit', value: product.unit },
-    { label: 'Buying Price', value: formatPrice(product.buyingPrice) },
-    { label: 'Selling Price', value: formatPrice(product.sellingPrice) },
-    { label: 'MRP', value: product.mrp ? formatPrice(product.mrp) : '—' },
-    { label: 'Current Stock', value: `${product.quantity ?? 0} ${product.unit ?? ''}`.trim() },
-    { label: 'Min Stock', value: `${product.minStock ?? 0} ${product.unit ?? ''}`.trim() },
-    { label: 'Status', value: <ProductStatusBadge product={product} /> },
-    { label: 'Stock', value: <StockStatusBadge product={product} /> },
+    { label: 'Slug', value: productSlug(product.name) },
+    { label: 'Code', value: product.code || '—' },
+    { label: 'Barcode', value: <Barcode value={product.code || product.id} /> },
+    { label: 'Categories', value: categoryName },
+    { label: 'Unit', value: displayUnit(product.unit) },
+    { label: 'Quantity', value: product.quantity ?? 0 },
     {
-      label: 'Stock Tracking',
-      value: product.stockTracking === false ? 'Disabled' : 'Enabled',
+      label: 'Stock In/out',
+      value: (
+        <span className={`recorded-detail-stock recorded-detail-stock--${stockStatus}`}>
+          {STOCK_LABELS[stockStatus]}
+        </span>
+      ),
     },
+    { label: 'Tax', value: displayTax(product) },
+    { label: 'Dealer Price', value: formatPrice(product.buyingPrice) },
+    { label: 'Customer Price', value: formatPrice(product.sellingPrice) },
+    { label: 'Notes', value: product.description || '' },
   ]
 
   return (
-    <Card className="product-details-card">
-      <CardBody>
-        <div className="product-details-card__head">
-          <ProductImage product={product} size={48} />
-          <div className="product-details-card__title">
-            <h3 className="product-details-card__name">{product.name}</h3>
-            <span className="product-details-card__code">{product.code}</span>
+    <div className="recorded-product-details">
+      <Card className="recorded-product-details__image-card">
+        <CardBody>
+          <h2 className="recorded-product-details__card-title">Product Image</h2>
+          <div className="recorded-product-details__image-frame">
+            <img src={image} alt={product.image ? `Image of ${product.name}` : 'No product photo'} />
           </div>
-          {actions && <div className="product-details-card__actions">{actions}</div>}
-        </div>
-        <div className="product-details-card__meta">
-          {rows.map((row) => (
-            <div key={row.label} className="product-details-card__meta-item">
-              <span className="product-details-card__meta-label">{row.label}</span>
-              <span className="product-details-card__meta-value">
-                {row.showImage ? <ProductImage product={product} size={44} /> : row.value}
-              </span>
-            </div>
-          ))}
-        </div>
-      </CardBody>
-    </Card>
+        </CardBody>
+      </Card>
+
+      <Card className="recorded-product-details__table-card">
+        <CardBody flush>
+          <h2 className="recorded-product-details__card-title">Product Details</h2>
+          <table className="recorded-product-details__table">
+            <tbody>
+              {rows.map((row) => (
+                <tr key={row.label}>
+                  <th scope="row">{row.label}</th>
+                  <td>{row.value}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </CardBody>
+      </Card>
+    </div>
   )
 }

@@ -1,4 +1,4 @@
-import { getFirmLabel, getInitials } from '../../users/utils/userUtils'
+import { getFirmLabel } from '../../users/utils/userUtils'
 
 export { getFirmLabel }
 
@@ -35,31 +35,26 @@ export const UNITS = [
   { value: 'cartons', label: 'cartons' },
   { value: 'packs', label: 'packs' },
   { value: 'rolls', label: 'rolls' },
+  { value: 'm', label: 'm' },
   { value: 'meters', label: 'meters' },
   { value: 'nos', label: 'nos' },
   { value: 'sets', label: 'sets' },
   { value: 'caps', label: 'caps' },
 ]
 
-const AVATAR_COLORS = [
-  '#2563eb', '#0ea5e9', '#059669', '#d97706', '#dc2626',
-  '#7c3aed', '#0d9488', '#db2777', '#4f46e5',
-]
-
 /**
- * Placeholder avatar for products without an image.
- * A tiny inline SVG data URL — no network requests, no server upload.
+ * Placeholder for products without an uploaded image.
+ * A tiny inline SVG data URL keeps the recorded "NO PHOTO" state local and
+ * avoids a network request or an invented catalogue image.
  */
-export function productImageUrl(name) {
-  const initials = getInitials(name).slice(0, 2).toUpperCase() || 'P'
-  const color = AVATAR_COLORS[initials.charCodeAt(0) % AVATAR_COLORS.length]
-  const light = `${color}18`
+export function productImageUrl() {
   const svg =
-    '<svg xmlns="http://www.w3.org/2000/svg" width="160" height="160" viewBox="0 0 160 160">' +
-    `<rect width="160" height="160" rx="24" fill="${light}"/>` +
-    '<circle cx="80" cy="58" r="22" fill="' + color + '"/>' +
-    `<path d="M52 104c8-15 24-25 32-25s16.4 10.6 24 25" fill="none" stroke="${color}" stroke-width="9" stroke-linecap="round"/>` +
-    `<text x="80" y="124" text-anchor="middle" font-family="system-ui, sans-serif" font-size="16" font-weight="600" fill="${color}">${initials}</text>` +
+    '<svg xmlns="http://www.w3.org/2000/svg" width="320" height="240" viewBox="0 0 320 240">' +
+    '<rect width="320" height="240" fill="#f0f4f1"/>' +
+    '<path d="M101 128V99c0-10 8-18 18-18h27l12-14h24l12 14h27c10 0 18 8 18 18v29" fill="none" stroke="#778581" stroke-width="7" stroke-linejoin="round"/>' +
+    '<circle cx="170" cy="113" r="28" fill="none" stroke="#778581" stroke-width="7"/>' +
+    '<circle cx="209" cy="91" r="5" fill="#778581"/>' +
+    '<text x="170" y="171" text-anchor="middle" font-family="system-ui, sans-serif" font-size="25" font-weight="700" fill="#263b38">NO PHOTO</text>' +
     '</svg>'
 
   return `data:image/svg+xml,${encodeURIComponent(svg)}`

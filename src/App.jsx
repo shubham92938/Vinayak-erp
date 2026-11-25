@@ -27,6 +27,7 @@ import NotificationsPage from './features/notifications/pages/NotificationsPage'
 import PaymentInPage from './features/payment-in/pages/PaymentInPage'
 import PaymentOutPage from './features/payment-out/pages/PaymentOutPage'
 import PriceListPage from './features/price-list/pages/PriceListPage'
+import ProductCreatePage from './features/products/pages/ProductCreatePage'
 import ProductDetailsPage from './features/products/pages/ProductDetailsPage'
 import ProductsPage from './features/products/pages/ProductsPage'
 import ProfitLossPage from './features/profit-loss/pages/ProfitLossPage'
@@ -61,6 +62,7 @@ const PAGE_ROUTES = [
   { path: 'users', module: 'Users & Permissions', element: <UsersPage /> },
   { path: 'users/:userId', module: 'Users & Permissions', element: <UserDetailsPage /> },
   { path: 'products', module: 'Products', element: <ProductsPage /> },
+  { path: 'products/create', module: 'Products', element: <ProductCreatePage /> },
   { path: 'products/:productId', module: 'Products', element: <ProductDetailsPage /> },
   { path: 'categories', module: 'Categories', element: <CategoriesPage /> },
   { path: 'categories/:categoryId', module: 'Categories', element: <CategoryDetailsPage /> },

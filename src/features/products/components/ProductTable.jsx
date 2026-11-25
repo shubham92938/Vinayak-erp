@@ -1,13 +1,17 @@
-import { Camera, Edit3, Eye } from 'lucide-react'
+import { Edit3, Eye } from 'lucide-react'
 import { RecordedTable } from '../../../components/recorded'
 import { getFirmLabel } from '../../users/utils/userUtils'
-import { formatPrice, getStockStatus } from '../utils/productUtils'
+import { formatPrice, getStockStatus, productImageUrl } from '../utils/productUtils'
 
 function ProductImageCell({ product }) {
-  if (product.image) {
-    return <img className="recorded-product__image" src={product.image} alt="" />
-  }
-  return <span className="recorded-product__no-photo" title="No product photo"><Camera size={13} aria-hidden="true" /></span>
+  return (
+    <img
+      className="recorded-product__image"
+      src={product.image || productImageUrl(product.name)}
+      alt={product.image ? `${product.name} image` : 'No product photo'}
+      title={product.image ? `${product.name} image` : 'No product photo'}
+    />
+  )
 }
 
 export default function ProductTable({
@@ -115,6 +119,7 @@ export default function ProductTable({
       getRowId={(product) => product.id}
       initialPageSize={5}
       pageSizeOptions={[5, 10, 15, 25]}
+      paginationWindow={10}
       search={filters.search}
       onSearchChange={(search) => onFiltersChange((current) => ({ ...current, search }))}
       searchPlaceholder="Search"

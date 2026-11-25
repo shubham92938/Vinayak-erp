@@ -4,6 +4,38 @@ import './recordedTable.css'
 
 const DEFAULT_PAGE_SIZES = [5, 10, 15, 25]
 
+function getExpandedPageNumbers(totalPages, currentPage, windowSize) {
+  if (totalPages <= windowSize + 2) {
+    return Array.from({ length: totalPages }, (_, index) => index + 1)
+  }
+
+  if (currentPage <= windowSize) {
+    return [
+      ...Array.from({ length: windowSize }, (_, index) => index + 1),
+      'ellipsis-end',
+      totalPages - 1,
+      totalPages,
+    ]
+  }
+
+  if (currentPage > totalPages - windowSize) {
+    return [
+      1,
+      'ellipsis-start',
+      ...Array.from({ length: windowSize }, (_, index) => totalPages - windowSize + 1 + index),
+    ]
+  }
+
+  const radius = Math.floor((windowSize - 1) / 2)
+  return [
+    1,
+    'ellipsis-start',
+    ...Array.from({ length: windowSize - 1 }, (_, index) => currentPage - radius + index),
+    'ellipsis-end',
+    totalPages,
+  ]
+}
+
 /**
  * The main website uses compact, server-table-like screens rather than the
  * dashboard data grid used by the original recreation. This small table keeps
@@ -16,6 +48,7 @@ export default function RecordedTable({
   getRowId = (row, index) => row?.id ?? index,
   pageSizeOptions = DEFAULT_PAGE_SIZES,
   initialPageSize = 10,
+  paginationWindow = 5,
   search = '',
   onSearchChange,
   searchPlaceholder = 'Search',
@@ -142,8 +175,11 @@ export default function RecordedTable({
         <div className="recorded-table__pagination" aria-label="Pagination">
           <button type="button" onClick={() => goToPage(1)} disabled={safePage === 1} aria-label="First page"><ChevronsLeft size={14} /></button>
           <button type="button" onClick={() => goToPage(safePage - 1)} disabled={safePage === 1} aria-label="Previous page"><ChevronLeft size={14} /></button>
-          {Array.from({ length: Math.min(totalPages, 5) }, (_, index) => {
-            const pageNumber = index + 1
+          {(paginationWindow > 5
+            ? getExpandedPageNumbers(totalPages, safePage, paginationWindow)
+            : Array.from({ length: Math.min(totalPages, 5) }, (_, index) => index + 1)
+          ).map((pageNumber) => {
+            if (typeof pageNumber !== 'number') return <span key={pageNumber}>…</span>
             return (
               <button
                 type="button"
@@ -156,7 +192,7 @@ export default function RecordedTable({
               </button>
             )
           })}
-          {totalPages > 5 && <span>…</span>}
+          {paginationWindow <= 5 && totalPages > 5 && <span>…</span>}
           <button type="button" onClick={() => goToPage(safePage + 1)} disabled={safePage === totalPages} aria-label="Next page"><ChevronRight size={14} /></button>
           <button type="button" onClick={() => goToPage(totalPages)} disabled={safePage === totalPages} aria-label="Last page"><ChevronsRight size={14} /></button>
         </div>
