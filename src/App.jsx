@@ -126,7 +126,7 @@ function guardedElement(route) {
   return <ModuleGuard moduleId={route.module}>{route.element}</ModuleGuard>
 }
 
-function WorkspacePages() {
+function renderWorkspacePages() {
   return (
     <>
       <Route index element={guardedElement({ module: 'Dashboard', element: <DashboardPage /> })} />
@@ -141,7 +141,7 @@ function WorkspacePages() {
   )
 }
 
-function LegacyWorkspacePages() {
+function renderLegacyWorkspacePages() {
   return (
     <>
       {PAGE_ROUTES.map((route) => (
@@ -169,10 +169,10 @@ function AppRoutes() {
           <Route index element={<FirmProfilePage />} />
         </Route>
         <Route path="/firms/:firmId/workspace" element={<WorkspaceRoute />}>
-          <WorkspacePages />
+          {renderWorkspacePages()}
         </Route>
         <Route element={<LegacyWorkspaceRoute />}>
-          <LegacyWorkspacePages />
+          {renderLegacyWorkspacePages()}
         </Route>
       </Route>
       <Route path="/design-system" element={<DesignSystemPage />} />
