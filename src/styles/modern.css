@@ -5,8 +5,9 @@
  */
 
 :root {
-  --modern-gradient: linear-gradient(135deg, #0f766e, #14b8a6);
-  --modern-ink-gradient: linear-gradient(135deg, #0b1f33, #163f58);
+  /* UI UX Pro Max B2B palette: navy foundation + blue action + teal signature */
+  --modern-gradient: linear-gradient(135deg, #0f172a, #0369a1);
+  --modern-ink-gradient: linear-gradient(135deg, #020617, #1e3a5f);
 }
 
 body {
@@ -572,7 +573,7 @@ body {
 
 .recorded-primary-button:hover:not(:disabled),
 .recorded-add-row:hover {
-  background: linear-gradient(135deg, #0b665f, #0f9f93);
+  background: linear-gradient(135deg, #0c4a6e, #0284c7);
   transform: translateY(-1px);
 }
 
@@ -804,5 +805,34 @@ body {
   .recorded-order-card,
   .recorded-purchase-form {
     padding: 14px;
+  }
+}
+
+/* Accessibility and responsive guardrails from UI UX Pro Max ---------------- */
+
+.login-password__toggle {
+  min-width: 44px;
+  min-height: 44px;
+}
+
+@media (max-width: 700px) {
+  .website-nav__link,
+  .website-nav__dropdown > summary {
+    min-height: 44px;
+  }
+
+  .recorded-icon-button,
+  .recorded-row-actions__button,
+  .recorded-cart-button,
+  .recorded-delete-button {
+    width: 44px;
+    min-width: 44px;
+    height: 44px;
+    min-height: 44px;
+  }
+
+  .recorded-table__pagination button {
+    min-width: 40px;
+    height: 40px;
   }
 }
