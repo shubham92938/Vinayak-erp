@@ -1,162 +1,146 @@
-import { useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { Button } from '../../../components/ui'
-import { getSaleById, getPayments } from '../services/saleService'
-import { formatMoney, formatDate } from '../components/saleUtils'
+import { X } from 'lucide-react'
+import { useEffect, useMemo } from 'react'
+import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
+import { getSaleById } from '../services/saleService'
+import { getSalesOrderById } from '../../sales-orders/services/salesOrderService'
+import { formatMoney, formatRecordedDate } from '../components/saleUtils'
 import { getProducts } from '../../products/services/productService'
-import PrintInvoice from '../components/PrintInvoice'
-import PrintChallan from '../components/PrintChallan'
-import { getSaleTotals } from '../services/saleService'
+import { productImageUrl } from '../../products/utils/productUtils'
+import { useFirmContext } from '../../../context/hooks'
 import '../styles/sales.css'
 
-const TABS = ['Overview', 'Products', 'Payments', 'Activity']
+function detailValue(value) {
+  return value === null || value === undefined || value === '' ? '—' : value
+}
 
 export default function SaleDetailsPage() {
   const navigate = useNavigate()
+  const location = useLocation()
+  const [searchParams] = useSearchParams()
+  const { currentFirmId } = useFirmContext()
   const { saleId } = useParams()
   const sale = getSaleById(saleId)
-  const [tab, setTab] = useState('Overview')
+  const salesOrder = sale ? null : getSalesOrderById(saleId)
+  const record = useMemo(() => sale ?? (salesOrder ? {
+    ...salesOrder,
+    date: salesOrder.orderDate,
+    paid: salesOrder.advance ?? 0,
+    due: Math.max(0, (salesOrder.total ?? 0) - (salesOrder.advance ?? 0)),
+    detailStatus: salesOrder.status,
+  } : null), [sale, salesOrder])
+  const isSalesOrder = Boolean(!sale && salesOrder)
 
-  if (!sale) {
+  useEffect(() => {
+    if (!record || searchParams.get('print') !== '1') return undefined
+    const timer = window.setTimeout(() => window.print(), 0)
+    return () => window.clearTimeout(timer)
+  }, [record, searchParams])
+  const routePrefix = location.pathname.startsWith('/firms/') && currentFirmId
+    ? `/firms/${currentFirmId}/workspace`
+    : ''
+
+  const goBack = () => navigate(`${routePrefix}/${isSalesOrder ? 'orders' : 'sales'}`)
+
+  if (!record) {
     return (
       <div className="sales-page">
-        <h1>Sale not found</h1>
-        <Button variant="secondary" onClick={() => navigate('/sales')}>Back to Sales</Button>
+        <section className="recorded-invoice-details">
+          <header className="recorded-invoice-details__header">
+            <h1>Invoice not found</h1>
+            <button type="button" className="recorded-invoice-close" onClick={goBack} aria-label="Close invoice details"><X size={16} /></button>
+          </header>
+          <p className="sales-empty">The selected invoice is not available in the current firm.</p>
+        </section>
       </div>
     )
   }
 
-  const totals = getSaleTotals(sale)
-  const products = sale.items.map((item) => ({
-    name: item.name,
-    code: getProducts().find((product) => product.id === item.productId)?.code ?? '',
-    qty: item.qty,
-    unit: item.unit,
-    price: item.price,
-    taxPct: item.taxPct,
-    discount: item.discount ?? 0,
-  }))
-  const payments = getPayments({ saleId })
+  const products = getProducts()
+  const totals = {
+    subtotal: Number(record.subtotal ?? record.items?.reduce((sum, item) => sum + Number(item.qty ?? 0) * Number(item.price ?? 0), 0) ?? 0),
+    taxTotal: Number(record.taxTotal ?? 0),
+    discount: Number(record.discount ?? 0),
+    total: Number(record.total ?? 0),
+  }
+  const paid = Number(record.paid ?? record.advance ?? 0)
+  const due = Number(record.due ?? Math.max(0, totals.total - paid))
+  const items = Array.isArray(record.items) ? record.items : []
 
   return (
     <div className="sales-page">
-      <header className="sales-header">
-        <div className="sales-details-header">
-          <div className="sales-header__text">
-            <p className="sales-header__eyebrow"><span aria-hidden="true">#</span> Sale Details</p>
-            <h1 className="sales-header__title">{sale.number}</h1>
-            <p className="sales-header__description">
-              Customer: {sale.customerName} · {formatDate(sale.date)} · Total: {formatMoney(sale.total ?? totals.total)}
-            </p>
+      <section className="recorded-invoice-details" aria-labelledby="invoice-details-title">
+        <header className="recorded-invoice-details__header">
+          <h1 id="invoice-details-title">{isSalesOrder ? 'Sales Order Details' : 'Completed Invoice Details'}</h1>
+          <button type="button" className="recorded-invoice-close" onClick={goBack} aria-label="Close invoice details" title="Close"><X size={16} /></button>
+        </header>
+
+        <div className="recorded-invoice-details__body">
+          <div className="recorded-invoice-meta">
+            <ReadOnlyField label="Invoice Date" value={formatRecordedDate(record.date)} />
+            <ReadOnlyField label="Dealer" value={record.dealer ?? record.customerName} />
+            <ReadOnlyField label="Supplied To" value={record.suppliedTo ?? record.customerName} />
+            <ReadOnlyField label="Status" value={record.detailStatus ?? (record.status === 'APPROVED' ? 'Completed' : record.status)} />
+            <ReadOnlyField label="Vehicle Number" value={record.vehicleNumber} />
+            <ReadOnlyField label="Driver Number" value={record.driverNumber} />
           </div>
-          <div className="sales-details-actions">
-            <Button variant="secondary" onClick={() => navigate('/sales')}>Back to Sales</Button>
-            <Button variant="secondary" onClick={() => window.print()}>Print</Button>
+
+          <div className="recorded-invoice-lines-wrap">
+            <table className="recorded-invoice-lines">
+              <thead>
+                <tr><th>No.</th><th>Product Image</th><th>Product Name</th><th>Product Code</th><th>Quantity</th><th>Price</th><th>Tax</th><th>Sub Total</th></tr>
+              </thead>
+              <tbody>
+                {items.length === 0 ? (
+                  <tr><td colSpan="8" className="recorded-invoice-empty">No product lines recorded for this invoice.</td></tr>
+                ) : items.map((item, index) => {
+                  const product = products.find((entry) => entry.id === item.productId)
+                  const taxPct = Number(item.taxPct ?? 0)
+                  const lineSubtotal = Number(item.qty ?? 0) * Number(item.price ?? 0)
+                  const lineTax = lineSubtotal * taxPct / 100
+                  return (
+                    <tr key={`${item.productId ?? item.name}-${index}`}>
+                      <td>{index + 1}</td>
+                      <td><img className="recorded-invoice-product-image" src={item.image || product?.image || productImageUrl()} alt="No product photo" /></td>
+                      <td className="recorded-invoice-product-name">{item.name ?? product?.name ?? '—'}</td>
+                      <td>{item.code ?? product?.code ?? '—'}</td>
+                      <td>{item.qty ?? 0}</td>
+                      <td>{formatMoney(item.price ?? 0)}</td>
+                      <td>{taxPct}% ({formatMoney(lineTax)})</td>
+                      <td>{formatMoney(lineSubtotal)}</td>
+                    </tr>
+                  )
+                })}
+              </tbody>
+              <tfoot>
+                <SummaryRow label="Subtotal" value={totals.subtotal} />
+                <SummaryRow label="Total Tax" value={totals.taxTotal} />
+                <SummaryRow label="Discount" value={totals.discount} />
+                <SummaryRow label="Grand Total" value={totals.total} emphasis="grand" />
+                <SummaryRow label="Paid" value={paid} emphasis="paid" />
+                <SummaryRow label="Due Amount" value={due} emphasis="due" />
+              </tfoot>
+            </table>
           </div>
+
+          <label className="recorded-invoice-notes">
+            <span>Notes</span>
+            <textarea value={detailValue(record.notes)} readOnly rows="2" aria-label="Invoice notes" />
+          </label>
         </div>
-
-        <div className="sales-tabs">
-          {TABS.map((tabName) => (
-            <button
-              key={tabName}
-              type="button"
-              className={['sales-tab', tab === tabName && 'sales-tab--active'].filter(Boolean).join(' ')}
-              onClick={() => setTab(tabName)}
-            >
-              {tabName}
-            </button>
-          ))}
-        </div>
-      </header>
-
-      {tab === 'Overview' && (
-        <div className="sales-detail-grid">
-          <Stat label="Customer" value={sale.customerName} />
-          <Stat label="Status" value={sale.status} />
-          <Stat label="Date" value={formatDate(sale.date)} />
-          <Stat label="Total Amount" value={formatMoney(sale.total ?? totals.total)} />
-          <Stat label="Paid Amount" value={formatMoney(sale.paid ?? 0)} />
-          <Stat label="Due Amount" value={formatMoney(sale.due ?? 0)} />
-          <Stat label="Items" value={sale.items.length} />
-        </div>
-      )}
-
-      {tab === 'Products' && (
-        <table className="sales-detail-table">
-          <thead>
-            <tr><th>Product</th><th>Code</th><th>Qty</th><th>Price</th><th className="align-right">Amount</th></tr>
-          </thead>
-          <tbody>
-            {products.map((product, index) => (
-              <tr key={index}>
-                <td>{product.name}</td>
-                <td>{product.code}</td>
-                <td>{product.qty}</td>
-                <td>{formatMoney(product.price)}</td>
-                <td className="align-right">{formatMoney(product.qty * product.price)}</td>
-              </tr>
-            ))}
-          </tbody>
-          <tfoot>
-            <tr><td colSpan={5} className="align-right"><strong>Total: {formatMoney(sale.total ?? totals.total)}</strong></td></tr>
-          </tfoot>
-        </table>
-      )}
-
-      {tab === 'Payments' && (
-        <PaymentList payments={payments} />
-      )}
-
-      {tab === 'Activity' && <ActivitySale sale={sale} products={products} />}
-
-      <div className="sales-print-area" hidden>
-        {sale.type === 'Invoice' ? <PrintInvoice sale={sale} totals={totals} /> : <PrintChallan challan={sale} />}
-      </div>
+      </section>
     </div>
   )
 }
 
-function Stat({ label, value }) {
+function ReadOnlyField({ label, value }) {
   return (
-    <div className="sales-detail-stat">
-      <span className="sales-detail-stat__label">{label}</span>
-      <span className="sales-detail-stat__value">{value}</span>
-    </div>
+    <label className="recorded-invoice-field">
+      <span>{label}</span>
+      <input value={detailValue(value)} readOnly aria-label={label} />
+    </label>
   )
 }
 
-function PaymentList({ payments }) {
-  if (!payments.length) {
-    return <p className="sales-empty">No payments recorded yet.</p>
-  }
-  return (
-    <table className="sales-detail-table">
-      <thead><tr><th>Date</th><th>Reference</th><th className="align-right">Amount</th><th>Mode</th></tr></thead>
-      <tbody>
-        {payments.map((payment) => (
-          <tr key={payment.id}>
-            <td>{formatDate(payment.date)}</td>
-            <td>{payment.invoiceId}</td>
-            <td className="align-right">{formatMoney(payment.amount)}</td>
-            <td>{payment.mode}</td>
-          </tr>
-        ))}
-      </tbody>
-    </table>
-  )
-}
-
-function ActivitySale({ sale, products }) {
-  return (
-    <ul className="sales-activity">
-      <li className="sales-activity__item">
-        <strong>Sale created</strong> <small>{formatDate(sale.date)}</small>
-      </li>
-      {products.map((product) => (
-        <li key={product.code} className="sales-activity__item">
-          <strong>{product.name}</strong> <small>{product.code}</small>
-        </li>
-      ))}
-    </ul>
-  )
+function SummaryRow({ label, value, emphasis = '' }) {
+  return <tr className={emphasis ? `recorded-invoice-summary--${emphasis}` : ''}><td colSpan="7">{label}</td><td>{formatMoney(value)}</td></tr>
 }

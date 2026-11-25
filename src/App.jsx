@@ -81,6 +81,11 @@ const PAGE_ROUTES = [
   { path: 'sales', module: 'Sales', element: <SalesPage /> },
   { path: 'sales/new', module: 'Sales', element: <RecordedSalesOrderForm mode="sale" /> },
   { path: 'sales/:saleId', module: 'Sales', element: <SaleDetailsPage /> },
+  // Recording-compatible Sales routes. The query string selects the same
+  // create screen for the Sales and Sales Orders navigation entry points.
+  { path: 'orders/create', module: 'Sales', element: <RecordedSalesOrderForm mode="sale" /> },
+  { path: 'orders', module: 'Sales Orders', element: <SalesOrdersPage /> },
+  { path: 'orders/details/:saleId', module: 'Sales', element: <SaleDetailsPage /> },
   { path: 'sales-orders', module: 'Sales Orders', element: <SalesOrdersPage /> },
   { path: 'sales-orders/new', module: 'Sales Orders', element: <RecordedSalesOrderForm mode="order" /> },
   { path: 'sales-orders/:orderId', module: 'Sales Orders', element: <SalesOrderDetailsPage /> },
@@ -120,6 +125,8 @@ const EXPLICIT_ROUTE_IDS = new Set([
   'price-list',
   'customers',
   'firms',
+  'sales',
+  'sales-orders',
 ])
 
 const PLACEHOLDER_ROUTES = NAV_ROUTES.filter(

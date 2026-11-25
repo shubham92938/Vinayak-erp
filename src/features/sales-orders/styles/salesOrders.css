@@ -276,3 +276,41 @@
   color: #765514;
   background: #ffe2a2;
 }
+
+.sales-orders-page--recorded {
+  max-width: 1520px;
+}
+
+.sales-orders-page--recorded .recorded-page-header {
+  border-radius: 0;
+}
+
+.sales-orders-page--recorded .recorded-table__entries {
+  display: none;
+}
+
+.sales-orders-page--recorded .recorded-table__toolbar {
+  align-items: stretch;
+}
+
+.sales-orders-page--recorded .recorded-table__filters > label {
+  align-items: stretch;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.sales-orders-page--recorded .recorded-table__filters > label > span:first-child {
+  color: #537079;
+  font-size: 10px;
+}
+
+.sales-orders-page--recorded .recorded-table__filters select,
+.sales-orders-page--recorded .recorded-table__filters input {
+  min-width: 150px;
+}
+
+.sales-orders-page--recorded .recorded-table__search {
+  align-items: stretch;
+  flex-direction: column;
+  gap: 4px;
+}

@@ -11,11 +11,21 @@ export function formatDate(value) {
   return new Intl.DateTimeFormat('en-IN', { day: 'numeric', month: 'short', year: 'numeric' }).format(parsed)
 }
 
+export function formatRecordedDate(value) {
+  if (!value) return '—'
+  const parsed = new Date(value)
+  if (Number.isNaN(parsed.getTime())) return '—'
+  const day = String(parsed.getDate()).padStart(2, '0')
+  const month = String(parsed.getMonth() + 1).padStart(2, '0')
+  return `${day}-${month}-${parsed.getFullYear()}`
+}
+
 export function getFirmLabel(firmId) {
   return getCentralFirmLabel(firmId)
 }
 
 export const SALES_STATUSES = [
+  { value: 'APPROVED', label: 'Approved' },
   { value: 'Paid', label: 'Paid' },
   { value: 'Outstanding', label: 'Outstanding' },
   { value: 'Partially Paid', label: 'Partially Paid' },

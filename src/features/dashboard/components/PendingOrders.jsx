@@ -96,7 +96,7 @@ export default function PendingOrders({ orders = [] }) {
 
       <CardFooter className="dash-panel-footer">
         <span className="dash-panel-note">Sales order pipeline</span>
-        <Link to="/sales-orders" className="dash-panel-link">
+        <Link to="/orders" className="dash-panel-link">
           View sales orders
           <ArrowRight size={14} aria-hidden="true" />
         </Link>

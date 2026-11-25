@@ -1,7 +1,6 @@
 import { Plus, RefreshCw } from 'lucide-react'
 import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
-import { Button } from '../../../components/ui'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth, useFirmContext } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
 import { getSalesOrders } from '../services/salesOrderService'
@@ -13,8 +12,13 @@ const EMPTY_FILTERS = { search: '', paymentMode: 'all', saleType: 'all', buyerTy
 
 export default function SalesOrdersPage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const { currentUser } = useAuth()
   const { currentFirmId } = useFirmContext()
+  const routePrefix = location.pathname.startsWith('/firms/') && currentFirmId
+    ? `/firms/${currentFirmId}/workspace`
+    : ''
+  const isRecordedOrdersRoute = location.pathname.endsWith('/orders')
   const canCreate = hasModulePermission(currentUser, 'Sales Orders', 'create')
   const canExport = hasModulePermission(currentUser, 'Sales Orders', 'export')
   const [filters, setFilters] = useState(EMPTY_FILTERS)
@@ -26,11 +30,11 @@ export default function SalesOrdersPage() {
   }
 
   return (
-    <div className="sales-orders-page">
+    <div className={['sales-orders-page', isRecordedOrdersRoute && 'sales-orders-page--recorded'].filter(Boolean).join(' ')}>
       <header className="recorded-page-header">
         <h1>Sales Orders</h1>
         <div className="recorded-page-header__actions">
-          {canCreate && <Button size="sm" leadingIcon={<Plus size={14} />} onClick={() => navigate(`${currentFirmId ? `/firms/${currentFirmId}/workspace` : ''}/sales-orders/new`)} aria-label="Create sales order">Create</Button>}
+          {canCreate && <button type="button" className="recorded-icon-button" onClick={() => navigate(`${routePrefix}/orders/create?source=orders`)} aria-label="Create sales order" title="Create sales order"><Plus size={16} /></button>}
           <button type="button" className="recorded-icon-button" onClick={() => setFilters((current) => ({ ...current }))} title="Refresh sales orders" aria-label="Refresh sales orders"><RefreshCw size={14} /></button>
         </div>
       </header>
@@ -39,9 +43,9 @@ export default function SalesOrdersPage() {
         orders={orders}
         filters={filters}
         onFiltersChange={setFilters}
-        onRowView={(id) => navigate(`${currentFirmId ? `/firms/${currentFirmId}/workspace` : ''}/sales-orders/${id}`)}
+        onRowView={(id) => navigate(isRecordedOrdersRoute ? `${routePrefix}/orders/details/${id}` : `${routePrefix}/sales-orders/${id}`)}
         onDownloadCsv={exportCsv}
-        canExport={canExport}
+        canExport={!isRecordedOrdersRoute && canExport}
       />
     </div>
   )
