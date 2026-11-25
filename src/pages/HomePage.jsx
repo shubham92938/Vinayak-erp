@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Building2, LogOut, MapPin, Plus, Search, ShieldCheck } from 'lucide-react'
+import BrandLockup from '../components/brand/BrandLockup'
 import { Button, Input, useToast } from '../components/ui'
 import { getFirmId } from '../config/firms'
 import { canCreateFirm } from '../core/accessControl'
@@ -92,8 +93,7 @@ export default function HomePage() {
     <div className="firm-home">
       <header className="firm-home__topbar">
         <a href="/home" className="firm-home__brand" aria-label="Vinayak ERP home">
-          <span className="firm-home__brand-mark">V</span>
-          <span>Vinayak <strong>ERP</strong></span>
+          <BrandLockup compact size="sm" />
         </a>
         <div className="firm-home__userbar">
           <span className="firm-home__user">

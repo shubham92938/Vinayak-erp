@@ -1,41 +1,32 @@
 .firm-home {
   min-height: 100vh;
-  color: #2d4046;
-  background: #f3fafa;
+  color: #102a43;
+  background:
+    radial-gradient(circle at 12% 0%, rgba(20, 184, 166, 0.1), transparent 25rem),
+    linear-gradient(180deg, #f7fbfc 0%, #f1f7f8 100%);
 }
 
 .firm-home__topbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  min-height: 54px;
-  padding: 5px 16px;
-  background: #fff;
-  border-bottom: 1px solid #e1e9e8;
+  min-height: 72px;
+  padding: 10px clamp(18px, 4vw, 56px);
+  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid #e3edf1;
+  box-shadow: 0 5px 20px rgba(15, 37, 56, 0.04);
+  backdrop-filter: blur(18px);
 }
 
 .firm-home__brand {
   display: inline-flex;
   align-items: center;
-  color: #1b292d;
+  color: #102a43;
   text-decoration: none;
 }
 
-.firm-home__brand-mark {
-  display: none;
-}
-
-.firm-home__brand::before {
-  content: 'vinayak';
-  color: #11191c;
-  font-family: Georgia, 'Times New Roman', serif;
-  font-size: 21px;
-  font-weight: 700;
-  letter-spacing: -0.08em;
-}
-
-.firm-home__brand span {
-  display: none;
+.firm-home__brand:hover {
+  color: #102a43;
 }
 
 .firm-home__userbar,
@@ -45,91 +36,144 @@
 }
 
 .firm-home__userbar {
-  gap: 10px;
+  gap: 12px;
 }
 
 .firm-home__user {
-  gap: 6px;
+  gap: 9px;
 }
 
 .firm-home__user-avatar {
   display: grid;
   place-items: center;
-  width: 22px;
-  height: 22px;
+  width: 31px;
+  height: 31px;
   color: #fff;
-  background: #126895;
-  border-radius: 50%;
-  font-size: 8px;
-  font-weight: 700;
+  background: linear-gradient(145deg, #102a43, #1e5672);
+  border: 2px solid #d7f2ee;
+  border-radius: 10px;
+  font-size: 10px;
+  font-weight: 800;
 }
 
 .firm-home__user > span:last-child {
   display: flex;
   flex-direction: column;
-  gap: 1px;
+  gap: 3px;
 }
 
 .firm-home__user strong {
-  max-width: 130px;
+  max-width: 170px;
   overflow: hidden;
-  color: #39575d;
-  font-size: 10px;
+  color: #1c3446;
+  font-size: 11px;
+  font-weight: 700;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .firm-home__user small {
-  color: #8a9b9e;
-  font-size: 8px;
+  color: #7b8e9d;
+  font-size: 9px;
   text-transform: capitalize;
 }
 
+.firm-home__userbar .ui-button {
+  min-height: 34px;
+  padding-inline: 11px;
+  color: #c84d46;
+  border-color: #f2d6d2;
+  border-radius: 9px;
+}
+
+.firm-home__userbar .ui-button:hover {
+  color: #a73f3a;
+  background: #fff1ef;
+  border-color: #edc4be;
+}
+
 .firm-home__main {
-  width: min(100% - 16px, 1220px);
+  width: min(100% - 40px, 1280px);
   margin: 0 auto;
-  padding: 12px 0 54px;
+  padding: clamp(30px, 5vw, 64px) 0 72px;
 }
 
 .firm-home__heading-row {
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  gap: 12px;
-  margin-bottom: 10px;
+  gap: 24px;
+  margin-bottom: 22px;
 }
 
-.firm-home__eyebrow,
-.firm-home__description {
-  display: none;
+.firm-home__eyebrow {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  margin: 0 0 9px;
+  color: #0f766e;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.firm-home__eyebrow svg {
+  width: 15px;
+  height: 15px;
 }
 
 .firm-home h1 {
   margin: 0;
-  color: #263e44;
-  font-size: 15px;
-  font-weight: 600;
+  color: #102a43;
+  font-size: clamp(27px, 4vw, 40px);
+  font-weight: 780;
+  letter-spacing: -0.05em;
+}
+
+.firm-home__description {
+  max-width: 600px;
+  margin: 10px 0 0;
+  color: #718395;
+  font-size: 13px;
+  line-height: 1.65;
 }
 
 .firm-home__heading-row > .ui-button {
-  height: 26px;
-  padding-inline: 9px;
-  font-size: 10px;
+  min-height: 42px;
+  padding-inline: 16px;
+  color: #fff;
+  background: #102a43;
+  border-color: #102a43;
+  border-radius: 11px;
+  box-shadow: 0 9px 18px rgba(16, 42, 67, 0.14);
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.firm-home__heading-row > .ui-button:hover {
+  background: #0b3d4a;
+  border-color: #0b3d4a;
+  box-shadow: 0 12px 23px rgba(16, 42, 67, 0.2);
+  transform: translateY(-1px);
 }
 
 .firm-home__toolbar {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
-  min-height: 32px;
-  margin-bottom: 8px;
-  padding: 4px 0;
-  border-bottom: 1px solid #e2ebea;
+  gap: 16px;
+  min-height: 58px;
+  margin-bottom: 15px;
+  padding: 9px 12px;
+  background: rgba(255, 255, 255, 0.7);
+  border: 1px solid #e2edf0;
+  border-radius: 14px;
+  box-shadow: 0 6px 18px rgba(15, 37, 56, 0.035);
 }
 
 .firm-home__search {
-  width: min(245px, 100%);
+  width: min(330px, 100%);
 }
 
 .firm-home__toolbar .ui-field__label {
@@ -137,53 +181,76 @@
 }
 
 .firm-home__toolbar .ui-input {
-  height: 27px;
-  font-size: 10px;
+  height: 38px;
+  background: #fff;
+  border-color: #dce9ed;
+  border-radius: 10px;
+  font-size: 11px;
+}
+
+.firm-home__toolbar .ui-input:focus {
+  border-color: #16a394;
+  box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.12);
 }
 
 .firm-home__count {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  color: #809396;
-  font-size: 9px;
+  gap: 7px;
+  color: #7a8d9a;
+  font-size: 10px;
+  font-weight: 650;
   white-space: nowrap;
+}
+
+.firm-home__count svg {
+  color: #13a998;
 }
 
 .firm-card-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(168px, 1fr));
-  gap: 8px;
-  justify-content: start;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
 }
 
 .firm-card {
   position: relative;
   display: flex;
   flex-direction: column;
-  min-height: 119px;
-  padding: 11px 12px 10px;
+  min-height: 218px;
+  padding: 22px;
   overflow: hidden;
-  color: #344e54;
+  color: #304d60;
   text-align: left;
   cursor: pointer;
-  background: #fff;
-  border: 1px solid #e0e8e7;
-  border-bottom: 3px solid #a8d3ee;
-  border-radius: 3px;
-  box-shadow: 0 2px 4px rgba(37, 79, 86, 0.06);
-  transition: box-shadow 120ms ease, border-color 120ms ease;
+  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid #e0ebef;
+  border-radius: 18px;
+  box-shadow: 0 8px 24px rgba(16, 42, 67, 0.055);
+  transition: border-color var(--transition-base), box-shadow var(--transition-base), transform var(--transition-base);
+}
+
+.firm-card::after {
+  position: absolute;
+  right: -30px;
+  bottom: -64px;
+  width: 150px;
+  height: 150px;
+  content: '';
+  background: radial-gradient(circle, rgba(20, 184, 166, 0.11), transparent 68%);
+  pointer-events: none;
 }
 
 .firm-card:hover,
 .firm-card:focus-visible {
-  border-color: #8fc5e6;
-  box-shadow: 0 4px 10px rgba(37, 79, 86, 0.13);
+  border-color: #a9ddd5;
+  box-shadow: 0 17px 34px rgba(16, 42, 67, 0.12);
+  transform: translateY(-3px);
 }
 
 .firm-card:focus-visible {
-  outline: 2px solid #1380b0;
-  outline-offset: 2px;
+  outline: 3px solid rgba(20, 184, 166, 0.22);
+  outline-offset: 3px;
 }
 
 .firm-card--inactive {
@@ -192,37 +259,66 @@
 }
 
 .firm-card__topline {
-  display: none;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 34px;
+}
+
+.firm-card__icon {
+  display: grid;
+  place-items: center;
+  width: 36px;
+  height: 36px;
+  color: #0f766e;
+  background: #e4faf6;
+  border: 1px solid #c9eee7;
+  border-radius: 11px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.04em;
+}
+
+.firm-card__status {
+  padding: 5px 8px;
+  color: #b54740;
+  background: #fff1ef;
+  border: 1px solid #f5d4cf;
+  border-radius: 999px;
+  font-size: 9px;
+  font-weight: 750;
 }
 
 .firm-card__name {
-  margin: 1px 0 9px;
+  margin: 22px 0 15px;
   overflow: hidden;
-  color: #35484c;
-  font-size: 11px;
-  font-weight: 700;
-  line-height: 1.25;
+  color: #173b54;
+  font-size: 17px;
+  font-weight: 760;
+  letter-spacing: -0.025em;
+  line-height: 1.2;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
 .firm-card__details {
   display: grid;
-  gap: 5px;
+  gap: 9px;
   margin: 0;
 }
 
 .firm-card__details > div {
   display: flex;
   align-items: baseline;
-  gap: 4px;
+  gap: 7px;
   min-width: 0;
 }
 
 .firm-card__details dt {
-  flex-shrink: 0;
-  color: #6f858a;
-  font-size: 9px;
+  flex: 0 0 72px;
+  color: #8a9aa6;
+  font-size: 10px;
+  font-weight: 600;
 }
 
 .firm-card__details dt::after {
@@ -233,24 +329,52 @@
   min-width: 0;
   margin: 0;
   overflow: hidden;
-  color: #536b70;
-  font-size: 9px;
-  font-weight: 500;
+  color: #4d687a;
+  font-size: 10px;
+  font-weight: 650;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
+.firm-card__details dd svg {
+  display: inline-block;
+  margin-right: 4px;
+  color: #13a998;
+  vertical-align: -2px;
+}
+
 .firm-card__more {
-  margin-top: 5px;
-  color: #08729e;
-  font-size: 8px;
+  margin-top: 15px;
+  color: #0f8b80;
+  font-size: 10px;
+  font-weight: 650;
 }
 
 .firm-card__open {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 9px;
   margin-top: auto;
-  padding-top: 7px;
-  color: #0b6f9f;
-  font-size: 9px;
+  padding-top: 18px;
+  color: #102a43;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.firm-card__open span {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  color: #0f766e;
+  background: #e8faf6;
+  border-radius: 8px;
+  transition: transform var(--transition-fast);
+}
+
+.firm-card:hover .firm-card__open span {
+  transform: translateX(3px);
 }
 
 .firm-home__empty {
@@ -258,29 +382,46 @@
   align-items: center;
   flex-direction: column;
   justify-content: center;
-  min-height: 180px;
-  background: #fff;
-  border: 1px dashed #cadbd9;
+  min-height: 260px;
+  padding: 32px;
+  background: rgba(255, 255, 255, 0.75);
+  border: 1px dashed #bfd8dc;
+  border-radius: 18px;
 }
 
 .firm-home__empty-icon {
-  display: none;
+  display: grid;
+  place-items: center;
+  width: 46px;
+  height: 46px;
+  color: #0f766e;
+  background: #e4faf6;
+  border: 1px solid #c9eee7;
+  border-radius: 14px;
 }
 
 .firm-home__empty h2 {
-  margin: 0;
-  font-size: 14px;
+  margin: 16px 0 0;
+  color: #173b54;
+  font-size: 17px;
+  font-weight: 750;
 }
 
 .firm-home__empty p {
-  margin: 6px 0 12px;
-  color: #819398;
+  margin: 7px 0 16px;
+  color: #7b8e9d;
   font-size: 11px;
+}
+
+@media (max-width: 900px) {
+  .firm-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 560px) {
   .firm-home__topbar {
-    padding-inline: 8px;
+    padding-inline: 12px;
   }
 
   .firm-home__user > span:last-child {
@@ -288,13 +429,25 @@
   }
 
   .firm-home__main {
-    width: calc(100% - 8px);
-    padding-top: 8px;
+    width: calc(100% - 24px);
+    padding-top: 30px;
+  }
+
+  .firm-home__heading-row {
+    align-items: stretch;
+    flex-direction: column;
+    gap: 17px;
+  }
+
+  .firm-home__heading-row > .ui-button {
+    align-self: flex-start;
   }
 
   .firm-home__toolbar {
     align-items: stretch;
     flex-direction: column;
+    gap: 9px;
+    padding: 10px;
   }
 
   .firm-home__search {
@@ -306,6 +459,10 @@
   }
 
   .firm-card-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    grid-template-columns: 1fr;
+  }
+
+  .firm-card {
+    min-height: 204px;
   }
 }
