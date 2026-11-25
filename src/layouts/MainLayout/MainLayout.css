@@ -427,3 +427,136 @@
     padding-top: 18px;
   }
 }
+
+/* Recorded website shell --------------------------------------------------
+   Keep the workspace routes and permissions, but use the compact horizontal
+   shell shown in the supplied Products/Categories recording. */
+
+.website-shell {
+  background: #f4f7fa;
+}
+
+.website-header {
+  min-height: 58px;
+  padding: 7px max(16px, calc((100% - 1030px) / 2));
+  border-bottom: 1px solid #edf0f2;
+  box-shadow: none;
+}
+
+.website-header__firm {
+  position: absolute;
+  left: 50%;
+  max-width: min(460px, 48vw);
+  min-height: 34px;
+  color: #31521a;
+  background: #edf6d8;
+  border-color: #8ca65b;
+  transform: translateX(-50%);
+}
+
+.website-header__firm strong {
+  color: #31521a;
+}
+
+.website-header__firm-dot {
+  display: none;
+}
+
+.website-nav {
+  background: #202c6b;
+  border-bottom-color: #172258;
+  box-shadow: none;
+}
+
+.website-nav__items {
+  min-height: 43px;
+  padding-inline: 10px;
+}
+
+.website-nav__link,
+.website-nav__dropdown > summary {
+  min-height: 43px;
+  padding-inline: 9px;
+  color: #fff;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.website-nav__link::after,
+.website-nav__dropdown > summary::after {
+  right: 9px;
+  left: 9px;
+  height: 2px;
+  background: #8ed3ff;
+}
+
+.website-nav__link:hover,
+.website-nav__link.is-active,
+.website-nav__dropdown > summary:hover,
+.website-nav__dropdown.is-active > summary {
+  color: #fff;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.website-nav__icon {
+  flex: 0 0 auto;
+  stroke-width: 1.7;
+}
+
+.website-nav__menu {
+  top: 100%;
+  left: 0;
+  min-width: 144px;
+  padding: 0;
+  border-color: #d7dce5;
+  border-radius: 2px;
+  box-shadow: 0 4px 10px rgba(21, 35, 67, 0.2);
+}
+
+.website-nav__menu::before {
+  display: none;
+}
+
+.website-nav__menu a {
+  min-height: 32px;
+  padding: 0 11px;
+  color: #203b58;
+  border-radius: 0;
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.website-nav__menu a:hover,
+.website-nav__menu a.is-active {
+  padding-left: 11px;
+  color: #07549b;
+  background: #edf5ff;
+}
+
+.website-context {
+  display: none;
+}
+
+.website-content {
+  width: calc(100% - 26px);
+  max-width: none;
+  min-height: calc(100vh - 101px);
+  padding-top: 20px;
+}
+
+@media (max-width: 700px) {
+  .website-header {
+    padding-inline: 12px;
+  }
+
+  .website-header__firm {
+    position: static;
+    max-width: 45vw;
+    transform: none;
+  }
+
+  .website-content {
+    width: calc(100% - 20px);
+    padding-top: 14px;
+  }
+}

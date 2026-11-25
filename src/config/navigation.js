@@ -36,8 +36,8 @@ export const NAV_SECTIONS = [
     label: 'Products',
     items: [
       { id: 'products', label: 'Products', to: '/products', icon: Package },
-      { id: 'price-list', label: 'Price List', to: '/price-lists', icon: ReceiptIndianRupee },
       { id: 'categories', label: 'Categories', to: '/categories', icon: Tags },
+      { id: 'price-list', label: 'Price List', to: '/price-lists', icon: ReceiptIndianRupee },
     ],
   },
   {
