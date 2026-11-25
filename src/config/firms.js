@@ -99,6 +99,12 @@ export const SAMPLE_FIRMS = [
 
 export const DEFAULT_FIRM_ID = SAMPLE_FIRMS[0].id
 
+// The supplied Products/Categories recording was captured in this firm. Keep
+// the normal default firm unchanged for the rest of the ERP, but use this ID
+// when opening the recording-style legacy routes without an explicit workspace
+// URL or firm selection.
+export const RECORDED_FIRM_ID = 'shree-vinayak-agency'
+
 export function getFirmId(firm) {
   return firm?.firmId ?? firm?.id ?? null
 }

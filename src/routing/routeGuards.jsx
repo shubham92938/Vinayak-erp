@@ -1,5 +1,6 @@
 import { useEffect } from 'react'
 import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom'
+import { RECORDED_FIRM_ID } from '../config/firms'
 import { canAccessFirm, canViewFirmDetails, hasModulePermission } from '../core/accessControl'
 import { getFirmById } from '../core/firmStore'
 import { useAuth, useFirmContext } from '../context/hooks'
@@ -74,10 +75,21 @@ export function FirmProfileRoute() {
 
 export function LegacyWorkspaceRoute() {
   const { currentUser } = useAuth()
-  const { currentFirmId } = useFirmContext()
+  const { currentFirmId, accessibleFirms, selectFirm } = useFirmContext()
   const location = useLocation()
+  const recordedFirm = accessibleFirms.find((firm) => firm.id === RECORDED_FIRM_ID)
+  const fallbackFirm = recordedFirm ?? accessibleFirms[0] ?? null
+
+  useEffect(() => {
+    if (currentUser && !currentFirmId && fallbackFirm) {
+      selectFirm(fallbackFirm.id)
+    }
+  }, [currentFirmId, currentUser, fallbackFirm, selectFirm])
 
   if (!currentUser) return <Navigate to="/login" replace />
+  if (!currentFirmId && fallbackFirm) {
+    return <div className="route-loading" role="status">Opening {fallbackFirm.name} workspace…</div>
+  }
   if (!currentFirmId || !canAccessFirm(currentUser, currentFirmId)) {
     return <Navigate to="/home" replace state={deniedState(location, currentFirmId)} />
   }

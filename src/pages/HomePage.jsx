@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { Building2, LogOut, MapPin, Plus, Search, ShieldCheck } from 'lucide-react'
 import BrandLockup from '../components/brand/BrandLockup'
 import { Button, Input, useToast } from '../components/ui'
-import { getFirmId } from '../config/firms'
+import { getFirmId, RECORDED_FIRM_ID } from '../config/firms'
 import { canCreateFirm } from '../core/accessControl'
 import { createFirmWithAdmin } from '../core/firmStore'
 import { useAuth, useFirmContext } from '../context/hooks'
@@ -71,8 +71,13 @@ export default function HomePage() {
 
   const visibleFirms = useMemo(() => {
     const query = search.trim().toLowerCase()
-    if (!query) return accessibleFirms
-    return accessibleFirms.filter((firm) =>
+    const orderedFirms = [...accessibleFirms].sort((first, second) => {
+      if (first.id === RECORDED_FIRM_ID) return -1
+      if (second.id === RECORDED_FIRM_ID) return 1
+      return String(first.name ?? '').localeCompare(String(second.name ?? ''))
+    })
+    if (!query) return orderedFirms
+    return orderedFirms.filter((firm) =>
       [firm.name, firm.businessType, firm.city, firm.state, getFirmId(firm)]
         .filter(Boolean)
         .join(' ')
