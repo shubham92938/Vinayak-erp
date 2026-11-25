@@ -12,6 +12,7 @@ import {
 import BalancePage from './features/balance/pages/BalancePage'
 import CategoriesPage from './features/categories/pages/CategoriesPage'
 import CategoryDetailsPage from './features/categories/pages/CategoryDetailsPage'
+import CategoryFormPage from './features/categories/pages/CategoryFormPage'
 import ComponentsPreviewPage from './features/components-preview/pages/ComponentsPreviewPage'
 import CustomersPage from './features/customers/pages/CustomersPage'
 import CustomerDetailsPage from './features/customers/pages/CustomerDetailsPage'
@@ -65,6 +66,8 @@ const PAGE_ROUTES = [
   { path: 'products/create', module: 'Products', element: <ProductCreatePage /> },
   { path: 'products/:productId', module: 'Products', element: <ProductDetailsPage /> },
   { path: 'categories', module: 'Categories', element: <CategoriesPage /> },
+  { path: 'categories/create', module: 'Categories', element: <CategoryFormPage mode="add" /> },
+  { path: 'categories/:categoryId/edit', module: 'Categories', element: <CategoryFormPage mode="edit" /> },
   { path: 'categories/:categoryId', module: 'Categories', element: <CategoryDetailsPage /> },
   { path: 'price-lists', module: 'Price List', element: <PriceListPage /> },
   { path: 'price-list', module: 'Price List', element: <PriceListPage /> },

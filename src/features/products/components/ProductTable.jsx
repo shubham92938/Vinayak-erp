@@ -120,6 +120,7 @@ export default function ProductTable({
       initialPageSize={5}
       pageSizeOptions={[5, 10, 15, 25]}
       paginationWindow={10}
+      showFirstLast={false}
       search={filters.search}
       onSearchChange={(search) => onFiltersChange((current) => ({ ...current, search }))}
       searchPlaceholder="Search"

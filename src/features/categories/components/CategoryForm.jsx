@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { X } from 'lucide-react'
 import { Button, Modal, useToast } from '../../../components/ui'
 import {
   FormActions,
@@ -8,20 +9,29 @@ import {
   FormSelect,
   FormTextarea,
 } from '../../../components/forms'
+import { useFirmContext } from '../../../context/hooks'
 import { getCurrentUser, getManageableFirms, isSuperAdmin } from '../../users/utils/userUtils'
 import { CATEGORY_STATUSES, validateCategory } from '../services/categoryService'
+import { getCategorySlug } from '../services/categoryUtils'
 import '../styles/categories.css'
 
 const CODE_PATTERN = /^[A-Za-z0-9][A-Za-z0-9-_]{1,11}$/
 
-export default function CategoryForm({ mode, category, onClose, onSubmit }) {
+function deriveCategoryCode(name) {
+  const compact = getCategorySlug(name).replaceAll('-', '').slice(0, 12).toUpperCase()
+  return compact.length >= 2 ? compact : 'CAT'
+}
+
+export default function CategoryForm({ mode, category, onClose, onSubmit, standalone = false }) {
   const toast = useToast()
   const isCreating = mode === 'add'
   const isEditing = mode === 'edit' && Boolean(category)
 
   const currentUser = getCurrentUser()
+  const { currentFirmId } = useFirmContext()
   const isSuperAdminUser = isSuperAdmin(currentUser)
   const currentUserFirmId = currentUser?.firmId ?? null
+  const defaultFirmId = category?.firmId ?? currentFirmId ?? (isSuperAdminUser ? '' : currentUserFirmId ?? '')
 
   const firmOptions = getManageableFirms(currentUser).map((firm) => ({
     value: firm.id,
@@ -33,7 +43,7 @@ export default function CategoryForm({ mode, category, onClose, onSubmit }) {
     code: category?.code ?? '',
     description: category?.description ?? '',
     status: category?.status ?? 'active',
-    firmId: category?.firmId ?? (isSuperAdminUser ? '' : currentUserFirmId ?? ''),
+    firmId: defaultFirmId,
   }))
   const [errors, setErrors] = useState({})
   const [isSubmitting, setIsSubmitting] = useState(false)
@@ -42,10 +52,11 @@ export default function CategoryForm({ mode, category, onClose, onSubmit }) {
     setForm((current) => ({ ...current, [field]: event.target.value }))
 
   const validate = () => {
+    const effectiveCode = form.code.trim() || deriveCategoryCode(form.name)
     const serviceErrors = validateCategory({
       firmId: form.firmId,
       name: form.name,
-      code: form.code,
+      code: effectiveCode,
       excludeId: category?.id,
     })
 
@@ -57,9 +68,7 @@ export default function CategoryForm({ mode, category, onClose, onSubmit }) {
       nextErrors.name = 'Category name must be between 2 and 80 characters'
     }
 
-    if (!form.code.trim()) {
-      nextErrors.code = 'Category code is required'
-    } else if (!CODE_PATTERN.test(form.code.trim())) {
+    if (!effectiveCode || !CODE_PATTERN.test(effectiveCode)) {
       nextErrors.code = 'Use letters, digits, hyphens or underscores (2-12 characters)'
     }
 
@@ -91,21 +100,57 @@ export default function CategoryForm({ mode, category, onClose, onSubmit }) {
     const categoryData = {
       id: category?.id,
       name: form.name.trim(),
-      code: form.code.trim().toUpperCase(),
+      code: (form.code.trim() || deriveCategoryCode(form.name)).toUpperCase(),
       description: form.description?.trim() ?? '',
       firmId: form.firmId || null,
       status: form.status,
     }
 
     try {
-      await onSubmit(categoryData)
-      onClose()
-      toast.success(isCreating ? 'Category created' : 'Category updated')
+      const saved = await onSubmit(categoryData)
+      if (saved !== null && saved !== false) {
+        onClose()
+        toast.success(isCreating ? 'Category created' : 'Category updated')
+      }
     } catch {
       toast.error('Could not save category')
     } finally {
       setIsSubmitting(false)
     }
+  }
+
+  if (standalone) {
+    return (
+      <section className="recorded-category-form" aria-labelledby="category-form-title">
+        <header className="recorded-category-form__header">
+          <h1 id="category-form-title">{isCreating ? 'Create Categories' : 'Edit Categories'}</h1>
+          <button type="button" onClick={onClose} aria-label="Close category form" title="Close">
+            <X size={16} />
+          </button>
+        </header>
+        <form onSubmit={handleSubmit} noValidate>
+          <label className="recorded-category-form__field">
+            <span>Name <b>*</b></span>
+            <input value={form.name} onChange={updateField('name')} placeholder="Enter name" autoFocus />
+            {errors.name && <small>{errors.name}</small>}
+          </label>
+          <label className="recorded-category-form__field recorded-category-form__description-field">
+            <textarea
+              value={form.description}
+              onChange={updateField('description')}
+              placeholder="Enter Categories Description"
+              aria-label="Category description"
+              rows={3}
+            />
+          </label>
+          <div className="recorded-category-form__footer">
+            <button type="submit" className="recorded-category-form__submit" disabled={isSubmitting}>
+              {isSubmitting ? 'Saving…' : isCreating ? 'Create' : 'Update'}
+            </button>
+          </div>
+        </form>
+      </section>
+    )
   }
 
   return (

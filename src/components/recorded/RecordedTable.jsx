@@ -49,6 +49,7 @@ export default function RecordedTable({
   pageSizeOptions = DEFAULT_PAGE_SIZES,
   initialPageSize = 10,
   paginationWindow = 5,
+  showFirstLast = true,
   search = '',
   onSearchChange,
   searchPlaceholder = 'Search',
@@ -173,7 +174,7 @@ export default function RecordedTable({
           <strong>{rangeEnd}</strong> of <strong>{filteredRows.length}</strong> entries
         </p>
         <div className="recorded-table__pagination" aria-label="Pagination">
-          <button type="button" onClick={() => goToPage(1)} disabled={safePage === 1} aria-label="First page"><ChevronsLeft size={14} /></button>
+          {showFirstLast && <button type="button" onClick={() => goToPage(1)} disabled={safePage === 1} aria-label="First page"><ChevronsLeft size={14} /></button>}
           <button type="button" onClick={() => goToPage(safePage - 1)} disabled={safePage === 1} aria-label="Previous page"><ChevronLeft size={14} /></button>
           {(paginationWindow > 5
             ? getExpandedPageNumbers(totalPages, safePage, paginationWindow)
@@ -194,7 +195,7 @@ export default function RecordedTable({
           })}
           {paginationWindow <= 5 && totalPages > 5 && <span>…</span>}
           <button type="button" onClick={() => goToPage(safePage + 1)} disabled={safePage === totalPages} aria-label="Next page"><ChevronRight size={14} /></button>
-          <button type="button" onClick={() => goToPage(totalPages)} disabled={safePage === totalPages} aria-label="Last page"><ChevronsRight size={14} /></button>
+          {showFirstLast && <button type="button" onClick={() => goToPage(totalPages)} disabled={safePage === totalPages} aria-label="Last page"><ChevronsRight size={14} /></button>}
         </div>
       </div>
       {actions}
