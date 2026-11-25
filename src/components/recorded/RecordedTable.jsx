@@ -98,7 +98,10 @@ export default function RecordedTable({
           <span>Show</span>
           <select
             value={pageSize}
-            onChange={(event) => setPageSize(Number(event.target.value))}
+            onChange={(event) => {
+              setPage(1)
+              setPageSize(Number(event.target.value))
+            }}
             aria-label="Rows per page"
           >
             {pageSizeOptions.map((size) => <option key={size} value={size}>{size}</option>)}
@@ -117,7 +120,10 @@ export default function RecordedTable({
             <input
               type="search"
               value={search}
-              onChange={(event) => onSearchChange?.(event.target.value)}
+              onChange={(event) => {
+                setPage(1)
+                onSearchChange?.(event.target.value)
+              }}
               placeholder={searchPlaceholder}
               aria-label={searchLabel}
             />
