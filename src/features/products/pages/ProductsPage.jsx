@@ -88,7 +88,7 @@ export default function ProductsPage() {
             <RefreshCw size={14} />
           </button>
           {canCreateProducts && (
-            <Button size="sm" leadingIcon={<Plus size={14} />} onClick={() => setFormState({ mode: 'add' })}>
+            <Button size="sm" leadingIcon={<Plus size={14} />} onClick={() => navigate('/products/create')}>
               Create Products
             </Button>
           )}

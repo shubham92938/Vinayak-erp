@@ -1,22 +1,23 @@
+import { Edit3, Trash2 } from 'lucide-react'
 import { useMemo } from 'react'
-import { ActionMenu, Badge, Button, Select } from '../../../components/ui'
-import { DataTable } from '../../../components/data-table'
-import { FirmFilter } from '../../../components/filters'
-import { getFirmLabel } from '../../users/utils/userUtils'
+import { RecordedTable } from '../../../components/recorded'
+import { getFirms } from '../../../core/firmStore'
 import { CATEGORY_STATUSES } from '../services/categoryService'
-import { formatCategoryDate } from '../services/categoryUtils'
+import { formatRecordedCategoryDate, getCategorySlug } from '../services/categoryUtils'
+import '../styles/categories.css'
 
-const STATUS_OPTIONS = [
-  { value: 'all', label: 'All statuses' },
-  ...CATEGORY_STATUSES,
-]
-
-function CategoryName({ category }) {
+function RecordedCategoryAction({ icon: Icon, label, tone, onClick, disabled }) {
   return (
-    <span className="categories-name">
-      <span className="categories-name__name">{category.name}</span>
-      <span className="categories-name__code">{category.code}</span>
-    </span>
+    <button
+      type="button"
+      className={['recorded-category-action', tone && `recorded-category-action--${tone}`].filter(Boolean).join(' ')}
+      onClick={onClick}
+      disabled={disabled}
+      aria-label={label}
+      title={label}
+    >
+      <Icon size={14} strokeWidth={1.8} />
+    </button>
   )
 }
 
@@ -24,131 +25,129 @@ export default function CategoryTable({
   categories,
   filters,
   onFiltersChange,
-  onClearFilters,
-  onRowView,
   onRowEdit,
-  onRowActivate,
-  onRowDeactivate,
   onRowDelete,
-  downloadCategories,
   canEdit = true,
   canDelete = true,
-  canExport = true,
+  showAdvancedFilters = false,
 }) {
-  const columns = useMemo(
-    () => [
-      {
-        id: 'name',
-        header: 'Category Name',
-        accessor: 'name',
-        minWidth: '180px',
-        cell: (category) => <CategoryName category={category} />,
-      },
-      {
-        id: 'description',
-        header: 'Description',
-        accessor: 'description',
-        minWidth: '190px',
-      },
-      {
-        id: 'firm',
-        header: 'Firm',
-        accessor: (category) => getFirmLabel(category.firmId),
-        width: '160px',
-        cell: (category) => <span className="categories-firm">{getFirmLabel(category.firmId)}</span>,
-      },
-      {
-        id: 'productCount',
-        header: 'Products',
-        accessor: 'productCount',
-        width: '90px',
-        align: 'center',
-        cell: (category) => <span className="categories-product-count">{category.productCount ?? 0}</span>,
-      },
-      {
-        id: 'status',
-        header: 'Status',
-        accessor: 'status',
-        width: '110px',
-        cell: (category) => (
-          <Badge variant={category.status === 'active' ? 'success' : 'neutral'} size="sm">
-            {category.status === 'active' ? 'Active' : 'Inactive'}
-          </Badge>
-        ),
-      },
-      {
-        id: 'createdAt',
-        header: 'Created Date',
-        accessor: 'createdAt',
-        width: '120px',
-        cell: (category) => <span className="categories-date">{formatCategoryDate(category.createdAt)}</span>,
-      },
-      {
-        id: 'actions',
-        header: 'Actions',
-        width: '72px',
-        sortable: false,
-        cell: (category) => (
-          <ActionMenu
-            label="Category actions"
-            triggerLabel={`Actions for ${category.name}`}
-            items={[
-              { label: 'View', onSelect: () => onRowView(category.id) },
-              { label: 'Edit category', disabled: !canEdit, onSelect: () => onRowEdit(category.id) },
-              {
-                label: category.status === 'active' ? 'Deactivate category' : 'Activate category',
-                disabled: !canEdit,
-                onSelect: () =>
-                  category.status === 'active'
-                    ? onRowDeactivate(category.id)
-                    : onRowActivate(category.id),
-              },
-              { label: 'Delete category', danger: true, disabled: !canDelete, onSelect: () => onRowDelete(category.id) },
-            ]}
-          />
-        ),
-      },
-    ],
-    [onRowView, onRowEdit, onRowActivate, onRowDeactivate, onRowDelete, canEdit, canDelete],
+  const orderedCategories = useMemo(
+    () => [...categories].sort((first, second) => {
+      if (first.recordedOrder !== undefined && second.recordedOrder !== undefined) {
+        return first.recordedOrder - second.recordedOrder
+      }
+      if (first.recordedOrder !== undefined) return -1
+      if (second.recordedOrder !== undefined) return 1
+      return String(first.name ?? '').localeCompare(String(second.name ?? ''))
+    }),
+    [categories],
   )
 
-  const isFiltered =
-    Boolean(filters.search) ||
-    filters.firmId !== 'all' ||
-    filters.status !== 'all'
+  const categoryColumns = useMemo(() => [
+    {
+      key: 'number',
+      label: 'ID',
+      width: '54px',
+      align: 'center',
+      render: (_category, index) => index + 1,
+    },
+    {
+      key: 'name',
+      label: 'NAME ↕',
+      minWidth: '210px',
+      render: (category) => category.name,
+    },
+    {
+      key: 'slug',
+      label: 'SLUG ↕',
+      minWidth: '190px',
+      render: (category) => getCategorySlug(category),
+    },
+    {
+      key: 'description',
+      label: 'DESCRIPTION ↕',
+      minWidth: '200px',
+      render: (category) => category.description || '—',
+    },
+    {
+      key: 'createdAt',
+      label: 'CREATED AT ↕',
+      width: '145px',
+      align: 'center',
+      render: (category) => formatRecordedCategoryDate(category.createdAt),
+    },
+    {
+      key: 'actions',
+      label: 'ACTION',
+      width: '112px',
+      align: 'center',
+      render: (category) => (
+        <span className="recorded-category-actions">
+          <RecordedCategoryAction
+            icon={Edit3}
+            label={`Edit ${category.name}`}
+            tone="edit"
+            onClick={() => onRowEdit(category.id)}
+            disabled={!canEdit}
+          />
+          <RecordedCategoryAction
+            icon={Trash2}
+            label={`Delete ${category.name}`}
+            tone="delete"
+            onClick={() => onRowDelete(category.id)}
+            disabled={!canDelete}
+          />
+        </span>
+      ),
+    },
+  ], [canDelete, canEdit, onRowDelete, onRowEdit])
+
+  const firms = useMemo(() => getFirms(), [])
+
+  const advancedFilters = showAdvancedFilters ? (
+    <div className="recorded-category-filters">
+      <label>
+        <span>Firm:</span>
+        <select
+          value={filters.firmId}
+          onChange={(event) => onFiltersChange((current) => ({ ...current, firmId: event.target.value }))}
+          aria-label="Filter categories by firm"
+        >
+          <option value="all">All firms</option>
+          {firms.map((firm) => <option key={firm.id} value={firm.id}>{firm.name}</option>)}
+        </select>
+      </label>
+      <label>
+        <span>Status:</span>
+        <select
+          value={filters.status}
+          onChange={(event) => onFiltersChange((current) => ({ ...current, status: event.target.value }))}
+          aria-label="Filter categories by status"
+        >
+          <option value="all">All statuses</option>
+          {CATEGORY_STATUSES.map((status) => <option key={status.value} value={status.value}>{status.label}</option>)}
+        </select>
+      </label>
+    </div>
+  ) : null
 
   return (
-    <div className="categories-table">
-      <DataTable
-        data={categories}
-        columns={columns}
-        getRowId={(category) => category.id}
-        search={filters.search}
-        onSearchChange={(search) => onFiltersChange((current) => ({ ...current, search }))}
-        searchPlaceholder="Search category name or code..."
-        searchLabel="Search categories"
-        minWidth={920}
-        filtersActive={isFiltered}
-        onClearFilters={onClearFilters}
-        selectable={false}
-        actions={
-          <Button variant="secondary" size="sm" onClick={() => downloadCategories(categories)} disabled={!canExport}>
-            Export CSV
-          </Button>
-        }
-        filters={
-          <div className="categories-filters">
-            <FirmFilter value={filters.firmId} onChange={(firmId) => onFiltersChange({ firmId })} />
-            <Select
-              label="Status"
-              options={STATUS_OPTIONS}
-              value={filters.status}
-              onChange={(event) => onFiltersChange({ status: event.target.value })}
-              aria-label="Filter by status"
-            />
-          </div>
-        }
-      />
-    </div>
+    <RecordedTable
+      className="recorded-category-table"
+      rows={orderedCategories}
+      columns={categoryColumns}
+      getRowId={(category) => category.id}
+      initialPageSize={5}
+      pageSizeOptions={[5, 10, 15, 25]}
+      showFirstLast={false}
+      search={filters.search}
+      onSearchChange={(search) => onFiltersChange((current) => ({ ...current, search }))}
+      searchPlaceholder=""
+      searchLabel="Search categories"
+      filters={advancedFilters}
+      ariaLabel="Categories"
+      minWidth={840}
+      emptyMessage="No categories found."
+    />
   )
 }

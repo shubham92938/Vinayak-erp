@@ -1,3 +1,5 @@
+import { SVA_PRODUCT_DEMO_DATA } from './svaProductDemoData'
+
 // Demo products seeded for the frontend preview.
 // Firm isolation: every product belongs to a firmId.
 export const PRODUCT_DEMO_DATA = [
@@ -583,4 +585,6 @@ export const PRODUCT_DEMO_DATA = [
     createdAt: '2026-05-20T10:00:00',
     updatedAt: '2026-11-16T15:20:00',
   },
+  // ---- Shree Vinayak Agency (catalogue imported from the supplied PDF) ----
+  ...SVA_PRODUCT_DEMO_DATA,
 ]

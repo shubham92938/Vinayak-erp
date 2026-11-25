@@ -12,6 +12,7 @@ import {
 import BalancePage from './features/balance/pages/BalancePage'
 import CategoriesPage from './features/categories/pages/CategoriesPage'
 import CategoryDetailsPage from './features/categories/pages/CategoryDetailsPage'
+import CategoryFormPage from './features/categories/pages/CategoryFormPage'
 import ComponentsPreviewPage from './features/components-preview/pages/ComponentsPreviewPage'
 import CustomersPage from './features/customers/pages/CustomersPage'
 import CustomerDetailsPage from './features/customers/pages/CustomerDetailsPage'
@@ -27,6 +28,7 @@ import NotificationsPage from './features/notifications/pages/NotificationsPage'
 import PaymentInPage from './features/payment-in/pages/PaymentInPage'
 import PaymentOutPage from './features/payment-out/pages/PaymentOutPage'
 import PriceListPage from './features/price-list/pages/PriceListPage'
+import ProductCreatePage from './features/products/pages/ProductCreatePage'
 import ProductDetailsPage from './features/products/pages/ProductDetailsPage'
 import ProductsPage from './features/products/pages/ProductsPage'
 import ProfitLossPage from './features/profit-loss/pages/ProfitLossPage'
@@ -61,8 +63,11 @@ const PAGE_ROUTES = [
   { path: 'users', module: 'Users & Permissions', element: <UsersPage /> },
   { path: 'users/:userId', module: 'Users & Permissions', element: <UserDetailsPage /> },
   { path: 'products', module: 'Products', element: <ProductsPage /> },
+  { path: 'products/create', module: 'Products', element: <ProductCreatePage /> },
   { path: 'products/:productId', module: 'Products', element: <ProductDetailsPage /> },
   { path: 'categories', module: 'Categories', element: <CategoriesPage /> },
+  { path: 'categories/create', module: 'Categories', element: <CategoryFormPage mode="add" /> },
+  { path: 'categories/:categoryId/edit', module: 'Categories', element: <CategoryFormPage mode="edit" /> },
   { path: 'categories/:categoryId', module: 'Categories', element: <CategoryDetailsPage /> },
   { path: 'price-lists', module: 'Price List', element: <PriceListPage /> },
   { path: 'price-list', module: 'Price List', element: <PriceListPage /> },

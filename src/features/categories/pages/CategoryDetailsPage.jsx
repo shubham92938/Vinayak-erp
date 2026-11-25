@@ -39,9 +39,13 @@ export default function CategoryDetailsPage({ categoryId: providedCategoryId }) 
   const handleSave = (categoryData) => {
     if (categoryData.id && canEditCategory) {
       const updated = saveCategory(categoryData.id, categoryData)
-      if (updated) toast.success('Category updated')
+      if (updated) {
+        toast.success('Category updated')
+        setIsEditing(false)
+      }
+      return updated
     }
-    setIsEditing(false)
+    return null
   }
 
   if (!category) {

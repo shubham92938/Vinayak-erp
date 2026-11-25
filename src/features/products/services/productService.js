@@ -18,13 +18,15 @@ export const getProductById = (productId) => {
   return product ? { ...product } : null
 }
 
-export const getProductByCode = (code, firmId) =>
-  products.find(
+export const getProductByCode = (code, firmId) => {
+  const targetFirmId = firmId ?? getActiveFirmId()
+  return products.find(
     (entry) =>
       String(entry.code ?? '').toLocaleLowerCase() ===
         String(code ?? '').toLocaleLowerCase() &&
-      (!firmId || entry.firmId === firmId),
+      (!targetFirmId || entry.firmId === targetFirmId),
   ) ?? null
+}
 
 export function createProduct(productData) {
   const product = {
