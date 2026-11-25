@@ -133,7 +133,10 @@ export default function RecordedSalesOrderForm({ mode = 'order', onClose }) {
       else createSalesOrder(payload)
       toast.success(effectiveMode === 'sale' ? 'Sales order placed' : 'Sales order created')
       onClose?.()
-      navigate(`${routePrefix}/${effectiveMode === 'sale' ? 'sales' : 'sales-orders'}`)
+      const destination = effectiveMode === 'sale'
+        ? 'sales'
+        : searchParams.get('source') === 'orders' ? 'orders' : 'sales-orders'
+      navigate(`${routePrefix}/${destination}`)
     } catch (error) {
       toast.error(error?.message ?? 'Could not save the order')
     } finally {

@@ -1,7 +1,8 @@
 import { X } from 'lucide-react'
-import { useEffect } from 'react'
+import { useEffect, useMemo } from 'react'
 import { useLocation, useNavigate, useParams, useSearchParams } from 'react-router-dom'
 import { getSaleById } from '../services/saleService'
+import { getSalesOrderById } from '../../sales-orders/services/salesOrderService'
 import { formatMoney, formatRecordedDate } from '../components/saleUtils'
 import { getProducts } from '../../products/services/productService'
 import { productImageUrl } from '../../products/utils/productUtils'
@@ -19,19 +20,28 @@ export default function SaleDetailsPage() {
   const { currentFirmId } = useFirmContext()
   const { saleId } = useParams()
   const sale = getSaleById(saleId)
+  const salesOrder = sale ? null : getSalesOrderById(saleId)
+  const record = useMemo(() => sale ?? (salesOrder ? {
+    ...salesOrder,
+    date: salesOrder.orderDate,
+    paid: salesOrder.advance ?? 0,
+    due: Math.max(0, (salesOrder.total ?? 0) - (salesOrder.advance ?? 0)),
+    detailStatus: salesOrder.status,
+  } : null), [sale, salesOrder])
+  const isSalesOrder = Boolean(!sale && salesOrder)
 
   useEffect(() => {
-    if (!sale || searchParams.get('print') !== '1') return undefined
+    if (!record || searchParams.get('print') !== '1') return undefined
     const timer = window.setTimeout(() => window.print(), 0)
     return () => window.clearTimeout(timer)
-  }, [sale, searchParams])
+  }, [record, searchParams])
   const routePrefix = location.pathname.startsWith('/firms/') && currentFirmId
     ? `/firms/${currentFirmId}/workspace`
     : ''
 
-  const goBack = () => navigate(`${routePrefix}/sales`)
+  const goBack = () => navigate(`${routePrefix}/${isSalesOrder ? 'orders' : 'sales'}`)
 
-  if (!sale) {
+  if (!record) {
     return (
       <div className="sales-page">
         <section className="recorded-invoice-details">
@@ -47,31 +57,31 @@ export default function SaleDetailsPage() {
 
   const products = getProducts()
   const totals = {
-    subtotal: Number(sale.subtotal ?? sale.items?.reduce((sum, item) => sum + Number(item.qty ?? 0) * Number(item.price ?? 0), 0) ?? 0),
-    taxTotal: Number(sale.taxTotal ?? 0),
-    discount: Number(sale.discount ?? 0),
-    total: Number(sale.total ?? 0),
+    subtotal: Number(record.subtotal ?? record.items?.reduce((sum, item) => sum + Number(item.qty ?? 0) * Number(item.price ?? 0), 0) ?? 0),
+    taxTotal: Number(record.taxTotal ?? 0),
+    discount: Number(record.discount ?? 0),
+    total: Number(record.total ?? 0),
   }
-  const paid = Number(sale.paid ?? sale.advance ?? 0)
-  const due = Number(sale.due ?? Math.max(0, totals.total - paid))
-  const items = Array.isArray(sale.items) ? sale.items : []
+  const paid = Number(record.paid ?? record.advance ?? 0)
+  const due = Number(record.due ?? Math.max(0, totals.total - paid))
+  const items = Array.isArray(record.items) ? record.items : []
 
   return (
     <div className="sales-page">
       <section className="recorded-invoice-details" aria-labelledby="invoice-details-title">
         <header className="recorded-invoice-details__header">
-          <h1 id="invoice-details-title">Completed Invoice Details</h1>
+          <h1 id="invoice-details-title">{isSalesOrder ? 'Sales Order Details' : 'Completed Invoice Details'}</h1>
           <button type="button" className="recorded-invoice-close" onClick={goBack} aria-label="Close invoice details" title="Close"><X size={16} /></button>
         </header>
 
         <div className="recorded-invoice-details__body">
           <div className="recorded-invoice-meta">
-            <ReadOnlyField label="Invoice Date" value={formatRecordedDate(sale.date)} />
-            <ReadOnlyField label="Dealer" value={sale.dealer ?? sale.customerName} />
-            <ReadOnlyField label="Supplied To" value={sale.suppliedTo ?? sale.customerName} />
-            <ReadOnlyField label="Status" value={sale.detailStatus ?? (sale.status === 'APPROVED' ? 'Completed' : sale.status)} />
-            <ReadOnlyField label="Vehicle Number" value={sale.vehicleNumber} />
-            <ReadOnlyField label="Driver Number" value={sale.driverNumber} />
+            <ReadOnlyField label="Invoice Date" value={formatRecordedDate(record.date)} />
+            <ReadOnlyField label="Dealer" value={record.dealer ?? record.customerName} />
+            <ReadOnlyField label="Supplied To" value={record.suppliedTo ?? record.customerName} />
+            <ReadOnlyField label="Status" value={record.detailStatus ?? (record.status === 'APPROVED' ? 'Completed' : record.status)} />
+            <ReadOnlyField label="Vehicle Number" value={record.vehicleNumber} />
+            <ReadOnlyField label="Driver Number" value={record.driverNumber} />
           </div>
 
           <div className="recorded-invoice-lines-wrap">
@@ -114,7 +124,7 @@ export default function SaleDetailsPage() {
 
           <label className="recorded-invoice-notes">
             <span>Notes</span>
-            <textarea value={detailValue(sale.notes)} readOnly rows="2" aria-label="Invoice notes" />
+            <textarea value={detailValue(record.notes)} readOnly rows="2" aria-label="Invoice notes" />
           </label>
         </div>
       </section>
