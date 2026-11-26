@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
-import { Building2, LogOut, MapPin, Plus, Search, ShieldCheck } from 'lucide-react'
+import { BriefcaseBusiness, CheckCircle2, Clock3, Eye, LockKeyhole, LogOut, MapPin, Plus, Search, UserRound } from 'lucide-react'
+import { Link, useLocation, useNavigate } from 'react-router-dom'
 import BrandLockup from '../components/brand/BrandLockup'
 import ThemeToggle from '../components/theme/ThemeToggle'
 import { Button, Input, useToast } from '../components/ui'
@@ -11,46 +11,58 @@ import { useAuth, useFirmContext } from '../context/hooks'
 import FirmForm from './FirmForm'
 import './HomePage.css'
 
-function FirmCard({ firm, onOpen }) {
+function FirmCard({ firm, onOpen, onViewDetails }) {
   const isInactive = firm.status === 'inactive'
-
-  const handleKeyDown = (event) => {
-    if (event.key !== 'Enter' && event.key !== ' ') return
-    event.preventDefault()
-    if (!isInactive) onOpen(firm)
-  }
+  const statusLabel = isInactive ? 'Inactive' : 'Active'
 
   return (
-    <article
-      className={['firm-card', isInactive && 'firm-card--inactive'].filter(Boolean).join(' ')}
-      role="button"
-      tabIndex={isInactive ? -1 : 0}
-      aria-disabled={isInactive || undefined}
-      aria-label={`${firm.name}, ${firm.businessType}, ${firm.city}`}
-      onClick={() => !isInactive && onOpen(firm)}
-      onKeyDown={handleKeyDown}
-    >
-      <div className="firm-card__topline">
-        <div className="firm-card__icon" aria-hidden="true">{firm.initials}</div>
-        {isInactive && <span className="firm-card__status">Inactive</span>}
+    <article className={['firm-card', isInactive && 'firm-card--inactive'].filter(Boolean).join(' ')}>
+      <div className="firm-card__banner">
+        <div className="firm-card__identity">
+          <span className="firm-card__icon" aria-hidden="true">{firm.initials}</span>
+          <div className="firm-card__identity-copy">
+            <h2 className="firm-card__name">{firm.name}</h2>
+            <p><MapPin size={12} aria-hidden="true" />{firm.city || firm.location || '—'}, {firm.state || 'Madhya Pradesh'}</p>
+          </div>
+        </div>
+        <span className={['firm-card__status', isInactive && 'firm-card__status--inactive'].filter(Boolean).join('')}>
+          <span aria-hidden="true" />{statusLabel}
+        </span>
       </div>
-      <h2 className="firm-card__name">{firm.name}</h2>
+
       <dl className="firm-card__details">
         <div>
-          <dt>Associated</dt>
+          <dt><BriefcaseBusiness size={14} aria-hidden="true" /> Business Type</dt>
+          <dd>{firm.businessType || firm.entity || 'Trading'}</dd>
+        </div>
+        <div>
+          <dt><UserRound size={14} aria-hidden="true" /> Contact Person</dt>
           <dd>{firm.contactPerson || '—'}</dd>
         </div>
         <div>
-          <dt>Business Type</dt>
-          <dd>{firm.businessType || firm.entity || '—'}</dd>
-        </div>
-        <div>
-          <dt>City</dt>
-          <dd><MapPin size={11} aria-hidden="true" />{firm.city || firm.location || '—'}</dd>
+          <dt><Clock3 size={14} aria-hidden="true" /> Last Activity</dt>
+          <dd>{firm.lastActivity || (isInactive ? 'No recent activity' : 'Available now')}</dd>
         </div>
       </dl>
-      <span className="firm-card__more">...view more (6)</span>
-      <span className="firm-card__open">Open workspace <span aria-hidden="true">→</span></span>
+
+      <div className="firm-card__actions">
+        <Button
+          size="sm"
+          leadingIcon={isInactive ? <LockKeyhole size={14} /> : <BriefcaseBusiness size={14} />}
+          disabled={isInactive}
+          onClick={() => onOpen(firm)}
+        >
+          {isInactive ? 'Workspace locked' : 'Open Workspace'}
+        </Button>
+        <Button
+          size="sm"
+          variant="secondary"
+          leadingIcon={<Eye size={14} />}
+          onClick={() => onViewDetails(firm)}
+        >
+          View Details
+        </Button>
+      </div>
     </article>
   )
 }
@@ -88,17 +100,21 @@ export default function HomePage() {
   const handleOpenFirm = (firm) => {
     const firmId = getFirmId(firm)
     if (!firmId) return
-    // Home owns selection so every workspace entry has an explicit context.
     selectFirm(firmId)
     navigate(`/firms/${firmId}/workspace`)
+  }
+
+  const handleViewDetails = (firm) => {
+    const firmId = getFirmId(firm)
+    if (firmId) navigate(`/firms/${firmId}/profile`)
   }
 
   return (
     <div className="firm-home">
       <header className="firm-home__topbar">
-        <a href="/home" className="firm-home__brand" aria-label="Vinayak ERP home">
+        <Link to="/home" className="firm-home__brand" aria-label="Vinayak ERP home">
           <BrandLockup compact size="sm" />
-        </a>
+        </Link>
         <div className="firm-home__userbar">
           <ThemeToggle />
           <span className="firm-home__user">
@@ -115,11 +131,9 @@ export default function HomePage() {
       <main className="firm-home__main">
         <div className="firm-home__heading-row">
           <div>
-            <p className="firm-home__eyebrow"><Building2 size={14} aria-hidden="true" /> Workspace selection</p>
-            <h1>My Firms</h1>
-            <p className="firm-home__description">
-              Choose a firm to open its ERP workspace. Your firm access and permissions determine what you can see.
-            </p>
+            <p className="firm-home__eyebrow"><BriefcaseBusiness size={15} aria-hidden="true" /> Workspace selection</p>
+            <h1>Your Workspaces</h1>
+            <p className="firm-home__description">Manage and access your business firms.</p>
           </div>
           {canCreateFirm(currentUser) && (
             <Button leadingIcon={<Plus size={16} />} onClick={() => setShowCreateForm(true)}>
@@ -133,23 +147,28 @@ export default function HomePage() {
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Search firms"
+            placeholder="Search firms..."
             aria-label="Search firms"
             leadingIcon={<Search size={16} />}
             containerClassName="firm-home__search"
           />
-          <span className="firm-home__count"><ShieldCheck size={14} aria-hidden="true" /> {accessibleFirms.length} accessible {accessibleFirms.length === 1 ? 'firm' : 'firms'}</span>
+          <span className="firm-home__count"><CheckCircle2 size={14} aria-hidden="true" /> Total Firms: {accessibleFirms.length}</span>
         </div>
 
         {visibleFirms.length > 0 ? (
           <div className="firm-card-grid">
             {visibleFirms.map((firm) => (
-              <FirmCard key={getFirmId(firm)} firm={firm} onOpen={handleOpenFirm} />
+              <FirmCard
+                key={getFirmId(firm)}
+                firm={firm}
+                onOpen={handleOpenFirm}
+                onViewDetails={handleViewDetails}
+              />
             ))}
           </div>
         ) : (
           <section className="firm-home__empty" aria-live="polite">
-            <span className="firm-home__empty-icon"><Building2 size={22} aria-hidden="true" /></span>
+            <span className="firm-home__empty-icon"><BriefcaseBusiness size={22} aria-hidden="true" /></span>
             <h2>{accessibleFirms.length === 0 ? 'No firms are available' : 'No firms found'}</h2>
             <p>{accessibleFirms.length === 0 ? 'A Super Admin can create a firm and assign access to you.' : 'Try a different search term.'}</p>
             {canCreateFirm(currentUser) && accessibleFirms.length === 0 && (

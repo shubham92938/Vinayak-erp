@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { NAV_SECTIONS } from '../../../config/navigation'
-import { useAuth } from '../../../context/hooks'
+import { NAV_SECTIONS, getWorkspaceRoutePath } from '../../../config/navigation'
+import { useAuth, useFirmContext } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
 import SidebarGroup from './SidebarGroup'
 import SidebarLink from './SidebarLink'
@@ -13,6 +13,15 @@ function getModuleId(item) {
   return item.label
 }
 
+function getActiveGroupIds(pathname, currentFirmId) {
+  return NAV_SECTIONS.flatMap((section) => section.items)
+    .filter((item) => item.children?.some((child) => {
+      const workspacePath = getWorkspaceRoutePath(currentFirmId, child.to)
+      return pathname === workspacePath || pathname === child.to || pathname.startsWith(`${workspacePath}/`) || pathname.startsWith(`${child.to}/`)
+    }))
+    .map((item) => item.id)
+}
+
 export default function SidebarNav({
   collapsed,
   onNavigate,
@@ -22,9 +31,10 @@ export default function SidebarNav({
 }) {
   const { pathname } = useLocation()
   const { currentUser } = useAuth()
-  const [inventoryOpen, setInventoryOpen] = useState(() =>
-    pathname.includes('/inventory'),
-  )
+  const { currentFirmId } = useFirmContext()
+  const [openGroups, setOpenGroups] = useState(() => new Set())
+  const activeGroups = getActiveGroupIds(pathname, currentFirmId)
+  const visibleOpenGroups = new Set([...openGroups, ...activeGroups])
 
   const visibleSections = useMemo(() => NAV_SECTIONS.map((section) => ({
     ...section,
@@ -36,46 +46,44 @@ export default function SidebarNav({
         )
         return { ...item, children }
       })
-      .filter((item) =>
+      .filter((item) => (
         item.children
           ? item.children.length > 0
-          : hasModulePermission(currentUser, getModuleId(item), 'view'),
-      ),
+          : hasModulePermission(currentUser, getModuleId(item), 'view')
+      )),
   })).filter((section) => section.items.length > 0), [currentUser])
 
-  const handleGroupToggle = () => {
+  const handleGroupToggle = (groupId) => {
     onHideTooltip?.()
 
     if (collapsed) {
       onExpandSidebar?.()
-      setInventoryOpen(true)
+      setOpenGroups((current) => new Set([...current, groupId]))
       return
     }
 
-    setInventoryOpen((current) => !current)
+    setOpenGroups((current) => {
+      const next = new Set(current)
+      if (next.has(groupId)) next.delete(groupId)
+      else next.add(groupId)
+      return next
+    })
   }
 
   return (
-    <nav
-      className="app-sidebar__nav"
-      aria-label="Modules"
-      onScroll={onHideTooltip}
-    >
+    <nav className="app-sidebar__nav" aria-label="Modules" onScroll={onHideTooltip}>
       {visibleSections.map((section) => (
         <div className="app-sidebar__section" key={section.id}>
-          {!collapsed && (
-            <p className="app-sidebar__section-label">{section.label}</p>
-          )}
-
+          {!collapsed && <p className="app-sidebar__section-label">{section.label}</p>}
           <ul className="app-sidebar__list">
-            {section.items.map((item) =>
+            {section.items.map((item) => (
               item.children ? (
                 <SidebarGroup
                   key={item.id}
                   group={item}
                   collapsed={collapsed}
-                  open={inventoryOpen}
-                  onToggle={handleGroupToggle}
+                  open={visibleOpenGroups.has(item.id)}
+                  onToggle={() => handleGroupToggle(item.id)}
                   onNavigate={onNavigate}
                   onShowTooltip={onShowTooltip}
                   onHideTooltip={onHideTooltip}
@@ -89,8 +97,8 @@ export default function SidebarNav({
                   onShowTooltip={onShowTooltip}
                   onHideTooltip={onHideTooltip}
                 />
-              ),
-            )}
+              )
+            ))}
           </ul>
         </div>
       ))}

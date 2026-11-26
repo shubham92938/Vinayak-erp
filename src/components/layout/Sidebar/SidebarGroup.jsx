@@ -16,9 +16,10 @@ export default function SidebarGroup({
   const { pathname } = useLocation()
   const { currentFirm } = useFirmContext()
   const Icon = group.icon
-  const hasActiveChild = group.children.some(
-    (child) => getWorkspaceRoutePath(currentFirm?.id, child.to) === pathname,
-  )
+  const hasActiveChild = group.children.some((child) => {
+    const workspacePath = getWorkspaceRoutePath(currentFirm?.id, child.to)
+    return pathname === workspacePath || pathname === child.to || pathname.startsWith(`${workspacePath}/`) || pathname.startsWith(`${child.to}/`)
+  })
   const isExpanded = !collapsed && open
 
   const showGroupTooltip = (event) => {

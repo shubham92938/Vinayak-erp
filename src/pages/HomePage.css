@@ -466,3 +466,313 @@
     min-height: 204px;
   }
 }
+
+/* --------------------------------------------------------------------------
+   Workspace selection reference surface
+   -------------------------------------------------------------------------- */
+
+.firm-home {
+  min-height: 100vh;
+  color: #0f2134;
+  background:
+    radial-gradient(circle at 9% 0%, rgba(32, 190, 137, 0.13), transparent 24rem),
+    radial-gradient(circle at 100% 24%, rgba(92, 210, 166, 0.1), transparent 26rem),
+    linear-gradient(180deg, #f7fbfa 0%, #f1f7f5 100%);
+}
+
+.firm-home__topbar {
+  min-height: 74px;
+  padding-inline: clamp(18px, 4vw, 54px);
+  background: rgba(255, 255, 255, 0.96);
+  border-bottom-color: #e7efec;
+  box-shadow: 0 4px 18px rgba(16, 42, 67, 0.04);
+}
+
+.firm-home__main {
+  width: min(calc(100% - 64px), 1430px);
+  padding-top: clamp(36px, 5vw, 72px);
+}
+
+.firm-home__eyebrow {
+  color: #148d67;
+  letter-spacing: 0.12em;
+}
+
+.firm-home h1 {
+  color: #10243a;
+  font-size: clamp(32px, 4vw, 48px);
+  letter-spacing: -0.055em;
+}
+
+.firm-home__description {
+  margin-top: 8px;
+  color: #526a72;
+  font-size: 15px;
+}
+
+.firm-home__heading-row > .ui-button {
+  min-height: 45px;
+  color: #fff;
+  background: linear-gradient(135deg, #15956d, #128b68);
+  border-color: #128b68;
+  border-radius: 12px;
+  box-shadow: 0 10px 18px rgba(18, 139, 104, 0.2);
+}
+
+.firm-home__toolbar {
+  min-height: 0;
+  margin-bottom: 18px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  box-shadow: none;
+}
+
+.firm-home__search {
+  width: min(365px, 100%);
+}
+
+.firm-home__toolbar .ui-input {
+  height: 48px;
+  padding-inline: 14px;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #dceae4;
+  border-radius: 14px;
+  box-shadow: 0 4px 12px rgba(16, 42, 67, 0.04);
+  font-size: 13px;
+}
+
+.firm-home__count {
+  color: #244653;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.firm-home__count svg {
+  color: #15956d;
+}
+
+.firm-card-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+}
+
+.firm-card {
+  min-height: 310px;
+  padding: 0;
+  overflow: hidden;
+  background: rgba(255, 255, 255, 0.9);
+  border-color: #dceae4;
+  border-radius: 17px;
+  box-shadow: 0 8px 24px rgba(16, 42, 67, 0.05);
+}
+
+.firm-card:hover,
+.firm-card:focus-visible {
+  border-color: #55b38d;
+  box-shadow: 0 18px 32px rgba(16, 42, 67, 0.1);
+}
+
+.firm-card__banner {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 102px;
+  padding: 22px 24px 18px;
+  background: linear-gradient(135deg, #e6f8ef 0%, #effaf6 54%, #f8fbfa 100%);
+  border-bottom: 1px solid #e0eee8;
+}
+
+.firm-card--inactive .firm-card__banner {
+  background: linear-gradient(135deg, #f1f4f5 0%, #f7f8f8 100%);
+}
+
+.firm-card__identity {
+  display: flex;
+  align-items: center;
+  min-width: 0;
+  gap: 13px;
+}
+
+.firm-card__icon {
+  width: 47px;
+  height: 47px;
+  color: #fff;
+  background: linear-gradient(145deg, #11956b, #0b7d59);
+  border: 0;
+  border-radius: 13px;
+  font-size: 15px;
+  box-shadow: 0 7px 13px rgba(15, 118, 86, 0.18);
+}
+
+.firm-card--inactive .firm-card__icon {
+  background: linear-gradient(145deg, #a9b3b8, #8b979c);
+  box-shadow: none;
+}
+
+.firm-card__identity-copy {
+  min-width: 0;
+}
+
+.firm-card__name {
+  margin: 0 0 6px;
+  color: #12283c;
+  font-size: 16px;
+  font-weight: 780;
+}
+
+.firm-card__identity-copy p {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0;
+  overflow: hidden;
+  color: #526b74;
+  font-size: 11px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.firm-card__identity-copy p svg {
+  flex: 0 0 auto;
+  color: #627b83;
+}
+
+.firm-card__status {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 6px;
+  padding: 6px 10px;
+  color: #188457;
+  background: #d6f7e5;
+  border: 1px solid #bcefd2;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+.firm-card__status > span {
+  width: 8px;
+  height: 8px;
+  background: #18a966;
+  border-radius: 50%;
+}
+
+.firm-card__status--inactive {
+  color: #65737b;
+  background: #e8edef;
+  border-color: #d9e0e2;
+}
+
+.firm-card__status--inactive > span {
+  background: #9ca8ad;
+}
+
+.firm-card__details {
+  gap: 15px;
+  padding: 20px 24px 0;
+}
+
+.firm-card__details > div {
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.firm-card__details dt {
+  display: inline-flex;
+  align-items: center;
+  flex: 0 0 auto;
+  gap: 8px;
+  width: auto;
+  color: #536b74;
+  font-size: 11px;
+}
+
+.firm-card__details dt::after {
+  display: none;
+}
+
+.firm-card__details dt svg {
+  color: #6d7f87;
+}
+
+.firm-card__details dd {
+  color: #273f4a;
+  font-size: 11px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.firm-card__actions {
+  display: grid;
+  grid-template-columns: 1.25fr 1fr;
+  gap: 10px;
+  margin-top: auto;
+  padding: 20px 24px 22px;
+}
+
+.firm-card__actions .ui-button {
+  min-height: 40px;
+  padding-inline: 10px;
+  border-radius: 10px;
+  font-size: 11px;
+  white-space: nowrap;
+}
+
+.firm-card__actions .ui-button--primary {
+  background: #13936c;
+  border-color: #13936c;
+}
+
+.firm-card__actions .ui-button--secondary {
+  color: #4e626c;
+  background: #fff;
+  border-color: #d9e5e3;
+}
+
+.firm-card--inactive .firm-card__actions .ui-button--primary {
+  color: #738087;
+  background: #eef1f2;
+  border-color: #e0e5e6;
+}
+
+.firm-card::after {
+  right: -50px;
+  bottom: -80px;
+  width: 180px;
+  height: 180px;
+  background: radial-gradient(circle, rgba(33, 183, 132, 0.09), transparent 68%);
+}
+
+@media (max-width: 1000px) {
+  .firm-home__main {
+    width: min(calc(100% - 36px), 760px);
+  }
+
+  .firm-card-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 620px) {
+  .firm-home__main {
+    width: calc(100% - 24px);
+  }
+
+  .firm-home__topbar {
+    min-height: 64px;
+  }
+
+  .firm-card-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .firm-card__banner,
+  .firm-card__details,
+  .firm-card__actions {
+    padding-inline: 18px;
+  }
+}
