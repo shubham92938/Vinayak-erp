@@ -1,0 +1,91 @@
+sourceNo,firmName,name,code,category,quantity,unit,buyingPrice,sellingPrice,stockStatus,image
+1,Shree Vinayak Agency,AUTOMATE-TAFLONE TAP,PC100,DRIP,16,nos,12.0,15.0,in-stock,product-images/001-automate-taflone-tap.svg
+2,Shree Vinayak Agency,AUTOMATE -40MM RAIN PIPE HEAVY,PC100,DRIP,8,nos,640.0,700.0,in-stock,product-images/002-automate-40mm-rain-pipe-heavy.svg
+3,Shree Vinayak Agency,AUTOMATE-40 MM RAIN PIPE JOINER,PC100,DRIP,10,nos,18.0,20.0,in-stock,product-images/003-automate-40-mm-rain-pipe-joiner.svg
+4,Shree Vinayak Agency,A- ONE WAY JAIN TYPE,PC100,MINI,30,nos,230.0,250.0,in-stock,product-images/004-a-one-way-jain-type.svg
+5,Shree Vinayak Agency,AUTOMATE -32X40 MM RAIN PIPE COCK,PC100,DRIP,50,nos,20.0,25.0,in-stock,product-images/005-automate-32x40-mm-rain-pipe-cock.svg
+6,Shree Vinayak Agency,J- 75*25 MM FOOT BATAN TWO WAY,PC100,MINI,46,nos,650.0,700.0,in-stock,product-images/006-j-75-25-mm-foot-batan-two-way.svg
+7,Shree Vinayak Agency,A- TWO WAY ADOPTORE JAIN TYPE,PC100,MINI,26,nos,250.0,300.0,in-stock,product-images/007-a-two-way-adoptore-jain-type.svg
+8,Shree Vinayak Agency,"J - 3/4"" RISER PIPE",PC100,MINI,14,nos,150.0,200.0,in-stock,product-images/008-j-3-4-riser-pipe.svg
+9,Shree Vinayak Agency,"AUTOMATE-75*3/4"" PORTEBAL FOOT BUTTUN",PC100,MINI,4,nos,240.0,250.0,in-stock,product-images/009-automate-75-3-4-portebal-foot-buttun.svg
+10,Shree Vinayak Agency,A-COUPLER KP TO TAIL JAIN,PC100,MINI,2,nos,150.0,200.0,in-stock,product-images/010-a-coupler-kp-to-tail-jain.svg
+11,Shree Vinayak Agency,A-COUPLER C TO TAIL JAIN,PC100,MINI,2,nos,200.0,250.0,in-stock,product-images/011-a-coupler-c-to-tail-jain.svg
+12,Shree Vinayak Agency,J-75MM UNI METARLOG TO SM+ CUPLER,PC100,MINI,2,nos,200.0,250.0,in-stock,product-images/012-j-75mm-uni-metarlog-to-sm-cupler.svg
+13,Shree Vinayak Agency,"J- 1"" AIR RELEASE VALVE",PC100,DRIP,2,nos,120.0,150.0,in-stock,product-images/013-j-1-air-release-valve.svg
+14,Shree Vinayak Agency,J-75MM UNION VALVE PVC,PC100,DRIP,1,nos,650.0,750.0,in-stock,product-images/014-j-75mm-union-valve-pvc.svg
+15,Shree Vinayak Agency,J-75MM TEE DAMROO SENTAR MALE,PC100,MINI,2,nos,420.0,450.0,in-stock,product-images/015-j-75mm-tee-damroo-sentar-male.svg
+16,Shree Vinayak Agency,J-75MM PCN F/F,PC100,MINI,2,nos,280.0,300.0,in-stock,product-images/016-j-75mm-pcn-f-f.svg
+17,Shree Vinayak Agency,J-90*75MM REDUCER HDPE,PC100,MINI,1,nos,370.0,450.0,in-stock,product-images/017-j-90-75mm-reducer-hdpe.svg
+18,Shree Vinayak Agency,J-32MM JOINER,PC100,MINI,50,nos,50.0,60.0,in-stock,product-images/018-j-32mm-joiner.svg
+19,Shree Vinayak Agency,J-32MM END CAP,PC100,MINI,140,nos,25.0,30.0,in-stock,product-images/019-j-32mm-end-cap.svg
+20,Shree Vinayak Agency,J-32 MM HEX NIPPLE PVC,PC100,MINI,140,nos,18.0,20.0,in-stock,product-images/020-j-32-mm-hex-nipple-pvc.svg
+21,Shree Vinayak Agency,J- 75 MM HDPE PIPE 4.5 MTR (15 FEET),PC100,MINI SPRINKLER,310,nos,630.0,690.0,in-stock,product-images/021-j-75-mm-hdpe-pipe-4-5-mtr-15-feet.svg
+22,Shree Vinayak Agency,75 MM FTA PN 10,PC100,PVC PIPE & FITTING,2,nos,60.0,80.0,in-stock,product-images/022-75-mm-fta-pn-10.svg
+23,Shree Vinayak Agency,"J-2.5"" SCREEN FILLTER",PC100,MINI,5,nos,2350.0,2500.0,in-stock,product-images/023-j-2-5-screen-fillter.svg
+24,Shree Vinayak Agency,16mm cock,PC100,DRIP,0,nos,5.0,7.0,out-of-stock,product-images/024-16mm-cock.svg
+25,Shree Vinayak Agency,PRESSURE GAUGE,PC100,MINI,1,nos,200.0,250.0,in-stock,product-images/025-pressure-gauge.svg
+26,Shree Vinayak Agency,gromate,PC100,DRIP,125,nos,2.5,4.0,in-stock,product-images/026-gromate.svg
+27,Shree Vinayak Agency,75MM TEE PN 6,PC100,PVC PIPE & FITTING,30,nos,50.0,60.0,in-stock,product-images/027-75mm-tee-pn-6.svg
+28,Shree Vinayak Agency,50MM TEE PN 10,PC100,PVC PIPE & FITTING,30,nos,40.0,50.0,in-stock,product-images/028-50mm-tee-pn-10.svg
+29,Shree Vinayak Agency,75 MM ELBOW PN 4,PC100,PVC PIPE & FITTING,15,nos,35.0,40.0,in-stock,product-images/029-75-mm-elbow-pn-4.svg
+30,Shree Vinayak Agency,110MM PVC TH ELBOW PN 10,PC100,PVC PIPE & FITTING,6,nos,326.0,375.0,in-stock,product-images/030-110mm-pvc-th-elbow-pn-10.svg
+31,Shree Vinayak Agency,J-8MM VINAYL TUBE,PC100,MINI,1303,nos,50.0,60.0,in-stock,product-images/031-j-8mm-vinayl-tube.svg
+32,Shree Vinayak Agency,J - RISER ROAD MINI,PC100,MINI,1302,nos,60.0,70.0,in-stock,product-images/032-j-riser-road-mini.svg
+33,Shree Vinayak Agency,J - MINI SPRINKLER NOZAL 5022 - SDU,PC100,MINI,1304,nos,90.0,100.0,in-stock,product-images/033-j-mini-sprinkler-nozal-5022-sdu.svg
+34,Shree Vinayak Agency,J-75MM HDPE PIPE 3 MTR,PC100,MINI,78,nos,350.0,400.0,in-stock,product-images/034-j-75mm-hdpe-pipe-3-mtr.svg
+35,Shree Vinayak Agency,J- PORTEBLE NOZAL PVC 5035,PC100,MINI,18,nos,200.0,250.0,in-stock,product-images/035-j-porteble-nozal-pvc-5035.svg
+36,Shree Vinayak Agency,40 MM PVC ELBOW,PC100,PVC PIPE & FITTING,10,nos,25.0,30.0,in-stock,product-images/036-40-mm-pvc-elbow.svg
+37,Shree Vinayak Agency,110 MM SOKET PVC 4 KG,PC100,PVC PIPE & FITTING,3,nos,55.0,65.0,in-stock,product-images/037-110-mm-soket-pvc-4-kg.svg
+38,Shree Vinayak Agency,75 MM PVC SOKET 4 KG,PC100,PVC PIPE & FITTING,10,nos,20.0,30.0,in-stock,product-images/038-75-mm-pvc-soket-4-kg.svg
+39,Shree Vinayak Agency,90MM FTA PN 10,PC100,PVC PIPE & FITTING,10,nos,80.0,100.0,in-stock,product-images/039-90mm-fta-pn-10.svg
+40,Shree Vinayak Agency,90 MM MTA PN 10,PC100,PVC PIPE & FITTING,20,nos,80.0,100.0,in-stock,product-images/040-90-mm-mta-pn-10.svg
+41,Shree Vinayak Agency,110X90MM REDUCER PN 10,PC100,PVC PIPE & FITTING,4,nos,110.0,130.0,in-stock,product-images/041-110x90mm-reducer-pn-10.svg
+42,Shree Vinayak Agency,90X75MM REDUCER PN 10,PC100,PVC PIPE & FITTING,10,nos,80.0,90.0,in-stock,product-images/042-90x75mm-reducer-pn-10.svg
+43,Shree Vinayak Agency,75X63 MM REDUCER PN 10,PC100,PVC PIPE & FITTING,12,nos,50.0,60.0,in-stock,product-images/043-75x63-mm-reducer-pn-10.svg
+44,Shree Vinayak Agency,J-PORTEBAL NOZZLE METAL JI3,PC100,MINI,4,nos,750.0,850.0,in-stock,product-images/044-j-portebal-nozzle-metal-ji3.svg
+45,Shree Vinayak Agency,J-40 MM UNION VALVE,PC100,DRIP,2,nos,200.0,220.0,in-stock,product-images/045-j-40-mm-union-valve.svg
+46,Shree Vinayak Agency,J- 63MM UNION VALVE PVC,PC100,PVC PIPE & FITTING,5,nos,380.0,400.0,in-stock,product-images/046-j-63mm-union-valve-pvc.svg
+47,Shree Vinayak Agency,J- TAFLON TAP,PC100,MINI,50,nos,35.0,40.0,in-stock,product-images/047-j-taflon-tap.svg
+48,Shree Vinayak Agency,90MM ELBOW PN 4,PC100,PVC PIPE & FITTING,15,nos,50.0,60.0,in-stock,product-images/048-90mm-elbow-pn-4.svg
+49,Shree Vinayak Agency,75 MM REPAIR COUPLER PVC,PC100,PVC PIPE & FITTING,8,nos,150.0,160.0,in-stock,product-images/049-75-mm-repair-coupler-pvc.svg
+50,Shree Vinayak Agency,63 MM MTA PN 10,PC100,PVC PIPE & FITTING,20,nos,40.0,50.0,in-stock,product-images/050-63-mm-mta-pn-10.svg
+51,Shree Vinayak Agency,63 MM FTA PN 10,PC100,PVC PIPE & FITTING,20,nos,50.0,60.0,in-stock,product-images/051-63-mm-fta-pn-10.svg
+52,Shree Vinayak Agency,90 MM END CAP PN 10,PC100,PVC PIPE & FITTING,15,nos,70.0,80.0,in-stock,product-images/052-90-mm-end-cap-pn-10.svg
+53,Shree Vinayak Agency,63 MM END CAP PN 10,PC100,PVC PIPE & FITTING,20,nos,20.0,25.0,in-stock,product-images/053-63-mm-end-cap-pn-10.svg
+54,Shree Vinayak Agency,75 MM TH ELBOW PN 6,PC100,PVC PIPE & FITTING,35,nos,60.0,80.0,in-stock,product-images/054-75-mm-th-elbow-pn-6.svg
+55,Shree Vinayak Agency,90MM REPAIR COUPLER PVC,PC100,PVC PIPE & FITTING,11,nos,240.0,250.0,in-stock,product-images/055-90mm-repair-coupler-pvc.svg
+56,Shree Vinayak Agency,110MM REPAIR COUPLER PVC,PC100,PVC PIPE & FITTING,4,nos,330.0,350.0,in-stock,product-images/056-110mm-repair-coupler-pvc.svg
+57,Shree Vinayak Agency,50 MM ELBOW PN 10,PC100,PVC PIPE & FITTING,30,nos,40.0,50.0,in-stock,product-images/057-50-mm-elbow-pn-10.svg
+58,Shree Vinayak Agency,50 MM TEE PN 10,PC100,PVC PIPE & FITTING,0,nos,40.0,45.0,out-of-stock,product-images/058-50-mm-tee-pn-10.svg
+59,Shree Vinayak Agency,75MM TEE PN 10,PC100,PVC PIPE & FITTING,0,nos,130.0,150.0,out-of-stock,product-images/059-75mm-tee-pn-10.svg
+60,Shree Vinayak Agency,J-75X25MM FOOT BUTUN SM +,PC100,MINI,86,nos,480.0,500.0,in-stock,product-images/060-j-75x25mm-foot-butun-sm.svg
+61,Shree Vinayak Agency,J-PVC RISER ROAD MINI,PC100,MINI,10,nos,100.0,120.0,in-stock,product-images/061-j-pvc-riser-road-mini.svg
+62,Shree Vinayak Agency,AIR ALOO LAUKAR SEED SIZE,PC100,POTATO SEED,0,nos,1750.0,1850.0,out-of-stock,product-images/062-air-aloo-laukar-seed-size.svg
+63,Shree Vinayak Agency,40 MM DRILER BIT,PC100,DRIP,4,nos,70.0,80.0,in-stock,product-images/063-40-mm-driler-bit.svg
+64,Shree Vinayak Agency,AUTOMATE -16 MM COCK,PC100,DRIP,79,nos,7.0,8.0,in-stock,product-images/064-automate-16-mm-cock.svg
+65,Shree Vinayak Agency,J-16 MM END STOPER,PC100,DRIP,0,nos,2.0,3.0,out-of-stock,product-images/065-j-16-mm-end-stoper.svg
+66,Shree Vinayak Agency,J- DRIPER 8 LPH,PC100,DRIP,400,nos,4.0,5.0,in-stock,product-images/066-j-driper-8-lph.svg
+67,Shree Vinayak Agency,AUTOMATE-16 MM PEPCI COCK YELLOW,PC100,DRIP,36,nos,7.0,8.0,in-stock,product-images/067-automate-16-mm-pepci-cock-yellow.svg
+68,Shree Vinayak Agency,J-16 MM JOINER TURBO,PC100,DRIP,115,nos,4.0,5.0,in-stock,product-images/068-j-16-mm-joiner-turbo.svg
+69,Shree Vinayak Agency,"J 3"" SCREEN FILLTER JAIN",PC100,MINI,8,nos,2900.0,3250.0,in-stock,product-images/069-j-3-screen-fillter-jain.svg
+70,Shree Vinayak Agency,J- 16 MM DRIP LATERAL CLASS 2 400 MTR,PC100,DRIP,0,m,15.0,16.0,out-of-stock,product-images/070-j-16-mm-drip-lateral-class-2-400-mtr.svg
+71,Shree Vinayak Agency,AIR ALOO LADEY ROSETA (LR) SEED SIZE,PC100,POTATO SEED,0,nos,1700.0,1700.0,out-of-stock,product-images/071-air-aloo-ladey-roseta-lr-seed-size.svg
+72,Shree Vinayak Agency,63 MM FLUSH VALVE,PC100,DRIP,20,nos,100.0,120.0,in-stock,product-images/072-63-mm-flush-valve.svg
+73,Shree Vinayak Agency,110X90 MM RED TEE PN 10,PC100,PVC PIPE & FITTING,6,nos,310.0,330.0,in-stock,product-images/073-110x90-mm-red-tee-pn-10.svg
+74,Shree Vinayak Agency,90MM TH END CAP PN 10,PC100,PVC PIPE & FITTING,85,nos,60.0,70.0,in-stock,product-images/074-90mm-th-end-cap-pn-10.svg
+75,Shree Vinayak Agency,J-75 MM HDPE PIPE 6 MTR,PC100,MINI,131,nos,720.0,790.0,in-stock,product-images/075-j-75-mm-hdpe-pipe-6-mtr.svg
+76,Shree Vinayak Agency,J- 32MM BALL VALVE,PC100,MINI,240,nos,150.0,170.0,in-stock,product-images/076-j-32mm-ball-valve.svg
+77,Shree Vinayak Agency,J- 75*32MM SERVICE SEDAL,PC100,MINI,60,nos,100.0,120.0,in-stock,product-images/077-j-75-32mm-service-sedal.svg
+78,Shree Vinayak Agency,J-32MM PLAIN TUBE CLASS 2,PC100,MINI,16200,nos,39.0,40.0,in-stock,product-images/078-j-32mm-plain-tube-class-2.svg
+79,Shree Vinayak Agency,J 427 MINI PART CIRCAL NOZAL,PC100,MINI,375,nos,200.0,250.0,in-stock,product-images/079-j-427-mini-part-circal-nozal.svg
+80,Shree Vinayak Agency,90MM TH TEE PN 10,PC100,PVC PIPE & FITTING,18,nos,230.0,260.0,in-stock,product-images/080-90mm-th-tee-pn-10.svg
+81,Shree Vinayak Agency,75MM TH TEE PN 10,PC100,PVC PIPE & FITTING,28,nos,160.0,190.0,in-stock,product-images/081-75mm-th-tee-pn-10.svg
+82,Shree Vinayak Agency,SOLVENT 1000ML PVC,PC100,PVC PIPE & FITTING,10,nos,630.0,650.0,in-stock,product-images/082-solvent-1000ml-pvc.svg
+83,Shree Vinayak Agency,J- 75 MM HDPE TEE SM+,PC100,MINI,10,nos,370.0,400.0,in-stock,product-images/083-j-75-mm-hdpe-tee-sm.svg
+84,Shree Vinayak Agency,J-75MM HDPE ELBOW SM+,PC100,MINI,10,nos,300.0,350.0,in-stock,product-images/084-j-75mm-hdpe-elbow-sm.svg
+85,Shree Vinayak Agency,J-75MM HDPE MALE TO MALE COUPLER SM+,PC100,MINI,25,nos,180.0,200.0,in-stock,product-images/085-j-75mm-hdpe-male-to-male-coupler-sm.svg
+86,Shree Vinayak Agency,J-75MM HDPE END CAP SM+,PC100,MINI,51,nos,80.0,100.0,in-stock,product-images/086-j-75mm-hdpe-end-cap-sm.svg
+87,Shree Vinayak Agency,J-75MM HDPE FEMALE PCN SM+,PC100,MINI,22,nos,230.0,250.0,in-stock,product-images/087-j-75mm-hdpe-female-pcn-sm.svg
+88,Shree Vinayak Agency,J-8MM SPRAY PIPE 14 KG 300 MTR,PC100,SPRAY PIPE,0,nos,8690.0,8800.0,out-of-stock,product-images/088-j-8mm-spray-pipe-14-kg-300-mtr.svg
+89,Shree Vinayak Agency,J-11MM SPRAY PIPE 14 KG 300 MTR,PC100,SPRAY PIPE,0,nos,10980.0,11150.0,out-of-stock,product-images/089-j-11mm-spray-pipe-14-kg-300-mtr.svg
+90,Shree Vinayak Agency,J-75MM HDPE FEMALE TO FEMALE UNI COUPLER,PC100,MINI,15,nos,250.0,300.0,in-stock,product-images/090-j-75mm-hdpe-female-to-female-uni-coupler.svg
