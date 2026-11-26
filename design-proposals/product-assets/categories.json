@@ -1,0 +1,50 @@
+[
+  {
+    "id": "cat-drip",
+    "firmId": "shree-vinayak-agency",
+    "name": "DRIP",
+    "code": "DRIP",
+    "status": "active",
+    "sourceDate": "2026-11-26"
+  },
+  {
+    "id": "cat-mini",
+    "firmId": "shree-vinayak-agency",
+    "name": "MINI",
+    "code": "MINI",
+    "status": "active",
+    "sourceDate": "2026-11-26"
+  },
+  {
+    "id": "cat-mini-sprinkler",
+    "firmId": "shree-vinayak-agency",
+    "name": "MINI SPRINKLER",
+    "code": "MINI-SPRINKL",
+    "status": "active",
+    "sourceDate": "2026-11-26"
+  },
+  {
+    "id": "cat-pvc-pipe-fitting",
+    "firmId": "shree-vinayak-agency",
+    "name": "PVC PIPE & FITTING",
+    "code": "PVC-PIPE-&-F",
+    "status": "active",
+    "sourceDate": "2026-11-26"
+  },
+  {
+    "id": "cat-potato-seed",
+    "firmId": "shree-vinayak-agency",
+    "name": "POTATO SEED",
+    "code": "POTATO-SEED",
+    "status": "active",
+    "sourceDate": "2026-11-26"
+  },
+  {
+    "id": "cat-spray-pipe",
+    "firmId": "shree-vinayak-agency",
+    "name": "SPRAY PIPE",
+    "code": "SPRAY-PIPE",
+    "status": "active",
+    "sourceDate": "2026-11-26"
+  }
+]

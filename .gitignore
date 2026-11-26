@@ -25,3 +25,9 @@ dist-ssr
 
 # Locally downloaded source assets
 /google_drive/
+
+# Product source attachments and Drive distribution bundle are kept in Drive,
+# while the parsed catalogue data and generated illustrations remain reviewable.
+/design-proposals/product-assets/source-product-list.pdf
+/design-proposals/product-assets/source-price-list.pdf
+/design-proposals/vinayak-erp-product-assets.zip
