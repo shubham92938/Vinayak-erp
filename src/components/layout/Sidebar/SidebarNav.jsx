@@ -7,6 +7,7 @@ import SidebarGroup from './SidebarGroup'
 import SidebarLink from './SidebarLink'
 
 function getModuleId(item) {
+  if (item.module) return item.module
   if (item.id === 'firms') return 'Firms'
   if (item.id === 'users-permissions') return 'Users & Permissions'
   return item.label
@@ -30,8 +31,8 @@ export default function SidebarNav({
     items: section.items
       .map((item) => {
         if (!item.children) return item
-        const children = item.children.filter(() =>
-          hasModulePermission(currentUser, getModuleId(item), 'view'),
+        const children = item.children.filter((child) =>
+          hasModulePermission(currentUser, getModuleId(child), 'view'),
         )
         return { ...item, children }
       })
