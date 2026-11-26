@@ -2,6 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { ToastProvider } from './components/ui'
 import { NAV_ROUTES } from './config/navigation'
 import { AppProvider } from './context/AppContext'
+import { ThemeProvider } from './context/ThemeContext'
 import {
   FirmProfileRoute,
   LegacyWorkspaceRoute,
@@ -198,11 +199,13 @@ function AppRoutes() {
 
 function App() {
   return (
-    <ToastProvider>
-      <AppProvider>
-        <AppRoutes />
-      </AppProvider>
-    </ToastProvider>
+    <ThemeProvider>
+      <ToastProvider>
+        <AppProvider>
+          <AppRoutes />
+        </AppProvider>
+      </ToastProvider>
+    </ThemeProvider>
   )
 }
 

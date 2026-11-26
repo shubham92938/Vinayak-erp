@@ -30,7 +30,7 @@ export default function PriceListPage() {
   return (
     <div className="price-list-page">
       <header className="recorded-page-header">
-        <h1>PriceList</h1>
+        <h1>Price List</h1>
         <div className="recorded-page-header__actions">
           <button type="button" className="recorded-icon-button" onClick={exportCsv} disabled={!canExport} title="Export PDF" aria-label="Export PDF"><FileDown size={14} /></button>
           <button type="button" className="recorded-icon-button" onClick={exportCsv} disabled={!canExport} title="Export Excel" aria-label="Export Excel"><FileSpreadsheet size={14} /></button>

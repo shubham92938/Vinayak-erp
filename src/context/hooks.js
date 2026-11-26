@@ -1,5 +1,6 @@
 import { useContext } from 'react'
 import { AppContext } from './context'
+import { ThemeContext } from './themeContext'
 
 export function useAppContext() {
   const context = useContext(AppContext)
@@ -10,6 +11,12 @@ export function useAppContext() {
 export function useAuth() {
   const { currentUser, isAuthenticated, login, logout } = useAppContext()
   return { currentUser, isAuthenticated, login, logout }
+}
+
+export function useTheme() {
+  const context = useContext(ThemeContext)
+  if (!context) throw new Error('useTheme must be used within ThemeProvider')
+  return context
 }
 
 export function useFirmContext() {

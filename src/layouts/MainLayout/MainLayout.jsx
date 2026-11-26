@@ -13,6 +13,7 @@ import {
   UserRound,
 } from 'lucide-react'
 import BrandLockup from '../../components/brand/BrandLockup'
+import ThemeToggle from '../../components/theme/ThemeToggle'
 import { getWorkspaceRoutePath } from '../../config/navigation'
 import { hasModulePermission } from '../../core/accessControl'
 import { useAuth, useFirmContext } from '../../context/hooks'
@@ -125,7 +126,10 @@ export default function MainLayout() {
           <span className="website-header__firm-dot" aria-hidden="true" />
           <span>Admin is currently viewing the firm: <strong>{currentFirm?.name ?? '—'}</strong></span>
         </div>
-        <UserActions currentUser={currentUser} logout={logout} />
+        <div className="website-header__actions">
+          <ThemeToggle />
+          <UserActions currentUser={currentUser} logout={logout} />
+        </div>
       </header>
 
       <nav className="website-nav" aria-label="Main navigation">

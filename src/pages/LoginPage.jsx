@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { Eye, EyeOff, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
 import { Navigate, useLocation, useNavigate } from 'react-router-dom'
 import BrandLockup from '../components/brand/BrandLockup'
+import ThemeToggle from '../components/theme/ThemeToggle'
 import { useToast } from '../components/ui'
 import { useAuth } from '../context/hooks'
 import './LoginPage.css'
@@ -61,6 +62,7 @@ export default function LoginPage() {
       </section>
 
       <main className="login-card-shell">
+        <ThemeToggle className="login-card-shell__theme-toggle" />
         <div className="login-card">
           <div className="login-card__header">
             <span className="login-card__kicker"><LockKeyhole size={14} aria-hidden="true" /> Secure workspace</span>

@@ -50,6 +50,19 @@
   --color-overlay: rgba(15, 23, 42, 0.58);
   --color-selection: #BAE6FD;
 
+  /* Data visualisation */
+  --chart-primary: #2563EB;
+  --chart-previous: #94A3B8;
+  --chart-revenue: #2563EB;
+  --chart-expense: #D99A24;
+  --chart-collected: #16865B;
+  --chart-pending: #D99A24;
+  --chart-accent: #172B4D;
+  --chart-muted: #CBD5E1;
+  --chart-grid: #E5E9F0;
+  --chart-axis: #64748B;
+  --chart-hover: rgba(241, 245, 249, 0.72);
+
   /* Focus */
   --focus-ring-color: rgba(3, 105, 161, 0.22);
   --focus-ring: 0 0 0 3px var(--focus-ring-color);
@@ -163,6 +176,76 @@
   --z-sidebar: 250;
   --z-modal: 400;
   --z-toast: 500;
+}
+
+/* Dark mode keeps the same brand accents while lifting surfaces, borders and
+   copy to values that remain readable across the whole application. */
+
+[data-theme='dark'] {
+  color-scheme: dark;
+
+  --brand-ink: #E2E8F0;
+  --brand-ink-strong: #F8FAFC;
+  --brand-teal: #2DD4BF;
+  --brand-teal-bright: #5EEAD4;
+  --brand-teal-soft: #123D3B;
+  --brand-coral: #FB8B7E;
+  --brand-gold: #F8C968;
+  --color-navy: #E2E8F0;
+  --color-blue: #60A5FA;
+  --color-background: #0B1220;
+  --color-surface: #111C2D;
+  --color-text-primary: #F1F5F9;
+  --color-text-secondary: #B5C2D1;
+  --color-border: #2A3A50;
+  --color-success: #4ADE80;
+  --color-warning: #FACC15;
+  --color-danger: #FB7185;
+
+  --color-navy-strong: #F8FAFC;
+  --color-blue-hover: #93C5FD;
+  --color-blue-active: #BFDBFE;
+  --color-blue-soft: #152B48;
+  --color-blue-border: #2D5B86;
+  --color-surface-subtle: #162235;
+  --color-surface-muted: #1C2B40;
+  --color-surface-hover: #20334B;
+  --color-border-strong: #40556F;
+  --color-text-tertiary: #8FA2B8;
+  --color-text-inverse: #07111F;
+  --color-success-soft: #123A2A;
+  --color-success-border: #226B49;
+  --color-success-strong: #86EFAC;
+  --color-warning-soft: #443815;
+  --color-warning-border: #806A1C;
+  --color-warning-strong: #FDE68A;
+  --color-danger-soft: #451D2A;
+  --color-danger-border: #82364A;
+  --color-danger-strong: #FDA4AF;
+  --color-danger-active: #FECDD3;
+  --color-overlay: rgba(2, 6, 23, 0.76);
+  --color-selection: #245B75;
+
+  --chart-primary: #60A5FA;
+  --chart-previous: #94A3B8;
+  --chart-revenue: #60A5FA;
+  --chart-expense: #F8C968;
+  --chart-collected: #4ADE80;
+  --chart-pending: #F8C968;
+  --chart-accent: #E2E8F0;
+  --chart-muted: #40556F;
+  --chart-grid: #2A3A50;
+  --chart-axis: #AFC0D2;
+  --chart-hover: rgba(32, 51, 75, 0.82);
+
+  --focus-ring-color: rgba(94, 234, 212, 0.3);
+  --focus-ring-danger: 0 0 0 3px rgba(251, 113, 133, 0.25);
+
+  --shadow-xs: 0 1px 2px rgba(0, 0, 0, 0.22);
+  --shadow-sm: 0 2px 6px rgba(0, 0, 0, 0.25), 0 1px 2px rgba(0, 0, 0, 0.18);
+  --shadow-md: 0 8px 22px -5px rgba(0, 0, 0, 0.38), 0 2px 5px -2px rgba(0, 0, 0, 0.24);
+  --shadow-lg: 0 18px 44px -12px rgba(0, 0, 0, 0.52), 0 5px 12px -4px rgba(0, 0, 0, 0.3);
+  --shadow-xl: 0 30px 72px -20px rgba(0, 0, 0, 0.62), 0 10px 24px -8px rgba(0, 0, 0, 0.38);
 }
 
 /*
