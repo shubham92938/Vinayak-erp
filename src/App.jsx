@@ -2,7 +2,7 @@ import { Navigate, Route, Routes } from 'react-router-dom'
 import { ToastProvider } from './components/ui'
 import { NAV_ROUTES } from './config/navigation'
 import { AppProvider } from './context/AppContext'
-import { ThemeProvider } from './context/ThemeContext'
+import { ThemeProvider } from './context/ThemeContext.jsx'
 import {
   FirmProfileRoute,
   LegacyWorkspaceRoute,
