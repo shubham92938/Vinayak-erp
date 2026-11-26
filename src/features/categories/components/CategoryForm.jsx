@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { X } from 'lucide-react'
 import { Button, Modal, useToast } from '../../../components/ui'
 import {
@@ -24,6 +24,7 @@ function deriveCategoryCode(name) {
 
 export default function CategoryForm({ mode, category, onClose, onSubmit, standalone = false }) {
   const toast = useToast()
+  const formId = useId()
   const isCreating = mode === 'add'
   const isEditing = mode === 'edit' && Boolean(category)
 
@@ -128,7 +129,7 @@ export default function CategoryForm({ mode, category, onClose, onSubmit, standa
             <X size={16} />
           </button>
         </header>
-        <form onSubmit={handleSubmit} noValidate>
+        <form id={formId} onSubmit={handleSubmit} noValidate>
           <label className="recorded-category-form__field">
             <span>Name <b>*</b></span>
             <input value={form.name} onChange={updateField('name')} placeholder="Enter name" autoFocus />
@@ -165,13 +166,13 @@ export default function CategoryForm({ mode, category, onClose, onSubmit, standa
           <Button type="button" variant="secondary" onClick={onClose} disabled={isSubmitting}>
             Cancel
           </Button>
-          <Button type="submit" variant="primary" disabled={isSubmitting}>
+          <Button type="submit" form={formId} variant="primary" disabled={isSubmitting}>
             {isSubmitting ? 'Saving…' : isCreating ? 'Create category' : 'Save changes'}
           </Button>
         </FormActions>
       }
     >
-      <form className="categories-form" onSubmit={handleSubmit} noValidate>
+      <form id={formId} className="categories-form" onSubmit={handleSubmit} noValidate>
         {Object.keys(errors).length > 0 && (
           <div className="categories-form-error" role="alert">
             {Object.values(errors)[0]}
