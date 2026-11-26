@@ -13,14 +13,11 @@ import {
   nextNumber,
   nextId,
 } from './store'
-import { SVA_SALES_DEMO_DATA } from '../features/sales/data/svaSalesDemoData'
-
 export const mockSales = [
   { id: 'SAL-01', number: 'INV-20261045', type: 'Invoice', customerId: 'CUST-001', customerName: 'Globe Cart Papers & Stationery', date: '2026-11-01T09:30:00', items: [{ productId: 'prod-01', name: 'Apple iPhone 15 Pro Max', qty: 6, unit: 'pcs', price: 37990, taxPct: 18, discount: 0 }], discount: 0, subtotal: 227940, taxTotal: 40912.2, total: 268852, advance: 0, paid: 268852, due: 0, status: 'Paid' },
   { id: 'SAL-02', number: 'INV-20261052', type: 'Invoice', customerId: 'CUST-005', customerName: 'HardwarePlus', date: '2026-11-03T14:10:00', items: [{ productId: 'prod-02', name: 'Samsung Galaxy S24 Ultra', qty: 3, unit: 'pcs', price: 349900, taxPct: 18, discount: 0 }], discount: 0, subtotal: 1049700, taxTotal: 188946, total: 1238646, advance: 0, paid: 0, due: 1238646, status: 'Outstanding' },
   { id: 'SAL-03', number: 'INV-20261061', type: 'Invoice', customerId: 'CUST-002', customerName: 'H&M Cotton T-Shirt Group', date: '2026-11-05T11:20:00', items: [{ productId: 'prod-07', name: 'Nike Dri-FIT T-Shirt', qty: 40, unit: 'pcs', price: 810, taxPct: 18, discount: 0 }], discount: 0, subtotal: 32400, taxTotal: 5832, total: 38232, advance: 0, paid: 38232, due: 0, status: 'Paid' },
   { id: 'SAL-04', number: 'INV-20261057', type: 'Invoice', customerId: 'CUST-009', customerName: 'Commercial Automata Pvt Ltd', date: '2026-11-04T15:55:00', items: [{ productId: 'prod-01', name: 'Apple iPhone 15 Pro Max', qty: 1, unit: 'pcs', price: 37990, taxPct: 18, discount: 0 }], discount: 0, subtotal: 37990, taxTotal: 6838.2, total: 44828, advance: 2000, paid: 2000, due: 42828, status: 'Outstanding' },
-  ...SVA_SALES_DEMO_DATA,
 ]
 
 export const mockChallans = [

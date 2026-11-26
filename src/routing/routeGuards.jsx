@@ -1,6 +1,5 @@
 import { useEffect } from 'react'
 import { Navigate, Outlet, useLocation, useParams } from 'react-router-dom'
-import { RECORDED_FIRM_ID } from '../config/firms'
 import { canAccessFirm, canViewFirmDetails, hasModulePermission } from '../core/accessControl'
 import { getFirmById } from '../core/firmStore'
 import { useAuth, useFirmContext } from '../context/hooks'
@@ -77,8 +76,7 @@ export function LegacyWorkspaceRoute() {
   const { currentUser } = useAuth()
   const { currentFirmId, accessibleFirms, selectFirm } = useFirmContext()
   const location = useLocation()
-  const recordedFirm = accessibleFirms.find((firm) => firm.id === RECORDED_FIRM_ID)
-  const fallbackFirm = recordedFirm ?? accessibleFirms[0] ?? null
+  const fallbackFirm = accessibleFirms[0] ?? null
 
   useEffect(() => {
     if (currentUser && !currentFirmId && fallbackFirm) {

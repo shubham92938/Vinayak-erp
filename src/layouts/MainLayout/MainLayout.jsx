@@ -5,7 +5,6 @@ import {
   ChevronDown,
   FileSpreadsheet,
   FileText,
-  Home,
   LogOut,
   Package,
   ReceiptIndianRupee,
@@ -20,7 +19,6 @@ import { useAuth, useFirmContext } from '../../context/hooks'
 import './MainLayout.css'
 
 const NAVIGATION = [
-  { label: 'Home', path: '/dashboard', icon: Home },
   { label: 'Dashboard', path: '/dashboard', icon: BarChart3 },
   { label: 'Firms', path: '/home', external: true, icon: Building2 },
   {
@@ -98,12 +96,15 @@ export default function MainLayout() {
   const { currentFirm } = useFirmContext()
   const location = useLocation()
 
-  const visibleNavigation = NAVIGATION.filter((item) => {
-    if (!item.module) return true
-    if (item.items) {
-      return item.items.some((child) => !child.module || hasModulePermission(currentUser, child.module, 'view'))
+  const visibleNavigation = NAVIGATION.flatMap((item) => {
+    if (!item.items) {
+      return !item.module || hasModulePermission(currentUser, item.module, 'view') ? [item] : []
     }
-    return hasModulePermission(currentUser, item.module, 'view')
+
+    const visibleChildren = item.items.filter(
+      (child) => !child.module || hasModulePermission(currentUser, child.module, 'view'),
+    )
+    return visibleChildren.length > 0 ? [{ ...item, items: visibleChildren }] : []
   })
 
   return (

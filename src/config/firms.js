@@ -73,37 +73,9 @@ export const SAMPLE_FIRMS = [
     status: 'active',
     createdAt: '2026-08-06T09:00:00.000Z',
   },
-  {
-    id: 'shree-vinayak-agency',
-    firmId: 'shree-vinayak-agency',
-    name: 'Shree Vinayak Agency',
-    initials: 'SVA',
-    businessType: 'Firm',
-    entity: 'Firm',
-    contactPerson: 'Akshay Patidar',
-    phone: '8989938999',
-    email: '',
-    address: 'Shop No. 136, Agar Road',
-    city: 'Ujjain',
-    location: 'Ujjain',
-    state: 'Madhya Pradesh',
-    pinCode: '456001',
-    gstNumber: '',
-    gst: '',
-    panNumber: '',
-    pan: '',
-    status: 'active',
-    createdAt: '2026-11-25T06:30:23.000Z',
-  },
 ]
 
 export const DEFAULT_FIRM_ID = SAMPLE_FIRMS[0].id
-
-// The supplied Products/Categories recording was captured in this firm. Keep
-// the normal default firm unchanged for the rest of the ERP, but use this ID
-// when opening the recording-style legacy routes without an explicit workspace
-// URL or firm selection.
-export const RECORDED_FIRM_ID = 'shree-vinayak-agency'
 
 export function getFirmId(firm) {
   return firm?.firmId ?? firm?.id ?? null

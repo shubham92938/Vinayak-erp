@@ -8,6 +8,11 @@
   margin-inline: auto;
 }
 
+.products-page .recorded-table__search-input input {
+  width: min(280px, 42vw);
+  min-width: 135px;
+}
+
 /* Header */
 
 .products-header {

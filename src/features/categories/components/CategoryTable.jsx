@@ -17,6 +17,7 @@ function RecordedCategoryAction({ icon: Icon, label, tone, onClick, disabled }) 
       title={label}
     >
       <Icon size={14} strokeWidth={1.8} />
+      <span>{tone === 'delete' ? 'Remove' : 'Edit'}</span>
     </button>
   )
 }
@@ -79,7 +80,7 @@ export default function CategoryTable({
     {
       key: 'actions',
       label: 'ACTION',
-      width: '112px',
+      width: '132px',
       align: 'center',
       render: (category) => (
         <span className="recorded-category-actions">
@@ -92,7 +93,7 @@ export default function CategoryTable({
           />
           <RecordedCategoryAction
             icon={Trash2}
-            label={`Delete ${category.name}`}
+            label={`Remove ${category.name}`}
             tone="delete"
             onClick={() => onRowDelete(category.id)}
             disabled={!canDelete}
@@ -142,8 +143,9 @@ export default function CategoryTable({
       showFirstLast={false}
       search={filters.search}
       onSearchChange={(search) => onFiltersChange((current) => ({ ...current, search }))}
-      searchPlaceholder=""
-      searchLabel="Search categories"
+      getSearchText={(category) => [category.name, category.code, category.description]}
+      searchPlaceholder="Name, code or description"
+      searchLabel="Search categories by name, code or description"
       filters={advancedFilters}
       ariaLabel="Categories"
       minWidth={840}

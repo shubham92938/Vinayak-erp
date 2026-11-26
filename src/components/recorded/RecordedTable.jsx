@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { ChevronLeft, ChevronRight, ChevronsLeft, ChevronsRight, Search } from 'lucide-react'
+import { searchMatches } from '../../utils/search'
 import './recordedTable.css'
 
 const DEFAULT_PAGE_SIZES = [5, 10, 15, 25]
@@ -55,6 +56,7 @@ export default function RecordedTable({
   searchPlaceholder = 'Search',
   searchLabel = 'Search records',
   searchTitle = 'Search:',
+  getSearchText,
   filters,
   actions,
   filterRow,
@@ -71,16 +73,17 @@ export default function RecordedTable({
     const query = String(search ?? '').trim().toLowerCase()
     return rows.filter((row) => {
       if (query) {
-        const searchableText = Object.entries(row ?? {})
-          .filter(([key, value]) => key !== 'image' && typeof value !== 'object')
-          .map(([, value]) => String(value ?? ''))
-          .join(' ')
-          .toLowerCase()
-        if (!searchableText.includes(query)) return false
+        const searchableText = getSearchText
+          ? getSearchText(row)
+          : Object.entries(row ?? {})
+            .filter(([key, value]) => key !== 'image' && typeof value !== 'object')
+            .map(([, value]) => String(value ?? ''))
+            .join(' ')
+        if (!searchMatches(query, searchableText)) return false
       }
       return typeof filterRow === 'function' ? filterRow(row) : true
     })
-  }, [filterRow, rows, search])
+  }, [filterRow, getSearchText, rows, search])
 
   const totalPages = Math.max(1, Math.ceil(filteredRows.length / pageSize))
   const safePage = Math.min(page, totalPages)
