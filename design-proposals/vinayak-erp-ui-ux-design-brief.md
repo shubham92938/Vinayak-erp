@@ -45,26 +45,40 @@ This is **not** a request to invent a different product or replace the ERP infor
 
 ## 2. Design direction from the client
 
-The client shared two visual references. They liked the **format and composition**, not the exact branding or content.
+The client has now placed **exactly four design images** in the Google Drive folder named `Erp `. These four images are the only visual design references for this brief and for the eventual in-place UI modernization. Do not introduce additional reference images, moodboards, stock imagery, or alternate visual directions without explicit approval.
 
-### Format to take as inspiration
+### The four approved design references
+
+| Reference | Drive file | Intended coverage |
+|---|---|---|
+| 1 | [`file_00000000c2c481fa8482b2f1d981b828.png`](https://drive.google.com/file/d/1R52qbUwbHMatLeQp7zvoddUZOs5hPtfA/view?usp=drivesdk) | My Firms / workspace selection |
+| 2 | [`file_000000008c6481faaf5eb341a2affbcb.png`](https://drive.google.com/file/d/14piad7k3B0GjJFoqDiPOEJG97tRJgupR/view?usp=drivesdk) | Firm workspace dashboard |
+| 3 | [`file_0000000038b081fabb4976c28767b848.png`](https://drive.google.com/file/d/1I7vwznbsr2SyZhYOIaU1R6lpQ6Ie9lC3/view?usp=drivesdk) | Products catalogue and cards |
+| 4 | [`file_00000000ef0081fa8bcfdb96c9a55bc7.png`](https://drive.google.com/file/d/1UnIi33WzLu2WHYzj7ag62z4ynZAjCQGk/view?usp=drivesdk) | End-to-end screen coverage, responsive example, and shared states |
+
+Reference folder: [Erp ](https://drive.google.com/drive/folders/15WZsS0z5qhGth2CKwtiwhgz5dyYCkt_2)
+
+Use these four images to understand the intended shell, spacing, card hierarchy, navigation density, green-led visual language, product-card treatment, and responsive/state coverage. The references guide the implementation; they do not authorize removing existing modules, changing business rules, or replacing permission-aware navigation.
+
+### Format and visual language to carry into Vinayak ERP
 
 - Rounded modular dashboard panels
 - Soft, friendly card shapes
-- Compact pill-style navigation and category tabs
+- Compact navigation and category tabs
 - Clear visual grouping of related metrics
 - Large headline area with supporting modules beneath
 - A contextual profile/firm panel on the right where useful
 - Product cards with a clear visual hierarchy
-- Pastel surfaces used as a way to distinguish content groups
+- Restrained pastel surfaces used to distinguish content groups
 - Strong whitespace and approachable typography
 
-### Do not copy
+### Do not add or copy beyond the four references
 
-- Jewellery, education, banking, or unrelated industry content
-- Reference logos, names, people, avatars, copy, or exact layouts
-- Any visual that makes Vinayak ERP look like a banking or jewellery product
-- Any new navigation model that hides existing modules
+- Do not use `image-1.png`, `image-2.png`, the MP4, or any other uploaded screenshot as an additional design reference.
+- Do not use the 90 generated catalogue illustrations as extra design/moodboard images; they remain product data assets only.
+- Do not add jewellery, education, banking, or unrelated industry content.
+- Do not copy names, people, avatars, copy, or unrelated brand elements from any reference.
+- Do not introduce a new navigation model that hides existing modules.
 
 ### Desired Vinayak ERP character
 
@@ -711,7 +725,7 @@ The original source PDFs and ZIP bundle are stored in Google Drive:
 
 [Vinayak ERP Product Assets - 2026-11-26](https://drive.google.com/drive/folders/1umZXJ5r0DQjmgzu2J2xFQbbAVOXCu5JK)
 
-Important: these product assets are prepared for design/data review. The current application’s product demo dataset remains separate until an explicit implementation/import step is approved.
+Important: these product assets are prepared for design/data review. The current application’s product demo dataset remains separate until an explicit implementation/import step is approved. For design references, use only the four PNGs listed in Section 2; the 90 generated illustrations must not expand the approved design-image set.
 
 ---
 
