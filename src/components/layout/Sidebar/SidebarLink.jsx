@@ -1,4 +1,4 @@
-import { NavLink } from 'react-router-dom'
+import { NavLink, useLocation } from 'react-router-dom'
 import { getWorkspaceRoutePath } from '../../../config/navigation'
 import { useFirmContext } from '../../../context/hooks'
 
@@ -11,13 +11,15 @@ export default function SidebarLink({
   onHideTooltip,
 }) {
   const Icon = item.icon
+  const { pathname } = useLocation()
   const { currentFirm } = useFirmContext()
   const to = getWorkspaceRoutePath(currentFirm?.id, item.to)
+  const workspaceRoot = currentFirm?.id ? `/firms/${currentFirm.id}/workspace` : null
+  const isDashboardRoot = item.to === '/dashboard' && pathname === workspaceRoot
+  const isCurrent = isDashboardRoot || pathname === to || pathname === item.to || pathname.startsWith(`${to}/`) || pathname.startsWith(`${item.to}/`)
 
   const showLinkTooltip = (event) => {
-    if (collapsed) {
-      onShowTooltip?.(item.label, event.currentTarget)
-    }
+    if (collapsed) onShowTooltip?.(item.label, event.currentTarget)
   }
 
   return (
@@ -34,15 +36,12 @@ export default function SidebarLink({
         onFocus={showLinkTooltip}
         onBlur={onHideTooltip}
         aria-label={item.label}
-        className={({ isActive }) =>
-          [
-            'app-sidebar__link',
-            compact && 'app-sidebar__link--compact',
-            isActive && 'is-active',
-          ]
-            .filter(Boolean)
-            .join(' ')
-        }
+        className={[
+          'app-sidebar__link',
+          compact && 'app-sidebar__link--compact',
+          isCurrent && 'is-active',
+        ].filter(Boolean).join(' ')}
+        aria-current={isCurrent ? 'page' : undefined}
       >
         {compact ? (
           <span className="app-sidebar__bullet" aria-hidden="true" />
@@ -54,9 +53,7 @@ export default function SidebarLink({
           )
         )}
 
-        {!collapsed && (
-          <span className="app-sidebar__link-label">{item.label}</span>
-        )}
+        {!collapsed && <span className="app-sidebar__link-label">{item.label}</span>}
       </NavLink>
     </li>
   )

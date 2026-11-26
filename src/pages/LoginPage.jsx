@@ -44,7 +44,7 @@ export default function LoginPage() {
 
   return (
     <div className="login-page">
-      <section className="login-page__showcase" aria-label="Vinayak Group">
+      <section className="login-page__showcase" aria-label="Vinayak ERP">
         <div className="login-page__brand"><BrandLockup tone="light" size="lg" /></div>
         <div className="login-page__showcase-copy">
           <span className="login-page__showcase-kicker"><Sparkles size={14} aria-hidden="true" /> Operations, made clearer</span>
@@ -56,7 +56,7 @@ export default function LoginPage() {
           </ul>
         </div>
         <div className="login-page__showcase-footer">
-          <span>VINAYAK GROUP</span>
+          <span>VINAYAK ERP</span>
           <span>ERP PLATFORM · 2026</span>
         </div>
       </section>
