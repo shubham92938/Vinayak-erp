@@ -63,7 +63,7 @@ export default function SalesPage() {
         onFiltersChange={setFilters}
         onRowView={(id) => navigate(`${routePrefix}/orders/details/${id}`)}
         onRowCancel={(id) => setConfirmState({ id })}
-        onRowPrint={(id) => navigate(`${routePrefix}/orders/details/${id}?print=1`)}
+        onRowPrint={(id) => navigate(`${routePrefix}/orders/details/${id}/download`)}
         onDownloadCsv={exportCsv}
         canCancel={canCancelSales}
         canExport={canExportSales}

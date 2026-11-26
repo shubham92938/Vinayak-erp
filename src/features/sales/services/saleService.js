@@ -1,12 +1,12 @@
 /**
  * Sales service — wraps the central sales store.
  */
-import { mockSales, getSales, getSalesFiltered, getSaleById, getPayments } from '../../../core/salesStore'
+import { mockSales, getSales, getSalesFiltered, getSaleById, getPayments, updateSale } from '../../../core/salesStore'
 import { getProducts } from '../../products/services/productService'
 import { DEFAULT_FIRM_ID } from '../../../config/firms'
 import { getActiveFirmId } from '../../../core/firmContextStore'
 
-export { getSales, getSalesFiltered, getSaleById, getPayments }
+export { getSales, getSalesFiltered, getSaleById, getPayments, updateSale }
 export { mockSales }
 
 export function getProductsForSale() {
