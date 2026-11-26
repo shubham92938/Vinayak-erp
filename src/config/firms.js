@@ -1,81 +1,26 @@
 /**
- * Seed firms used by the frontend demo.
+ * Firms represented by the supplied ERP records.
  *
- * The array is intentionally kept as the shared in-memory collection so the
- * existing feature services and the firm-management services all reference
- * the same records. A real API can replace firmStore.js without changing the
- * pages that consume it.
+ * The application keeps these records in memory until an API is connected. Do
+ * not add placeholder firms here: this list is the source of truth for the
+ * imported business data.
  */
+export const SVA_FIRM_ID = 'shree-vinayak-agency'
+
 export const SAMPLE_FIRMS = [
   {
-    id: 'vinayak-associates',
-    firmId: 'vinayak-associates',
-    name: 'Vinayak Associates',
-    initials: 'VA',
-    businessType: 'Private Limited',
-    entity: 'Private Limited',
-    contactPerson: 'Aarav Mehta',
-    phone: '+91-20-5555-0100',
-    email: 'office@vinayak-associates.in',
-    address: '104, Centrally Located Building',
-    city: 'Pune',
-    location: 'Pune',
-    state: 'Maharashtra',
-    pinCode: '411001',
-    gstNumber: '27AABCV1234A1Z5',
-    gst: '27AABCV1234A1Z5',
-    panNumber: 'AABCV1234A',
-    pan: 'AABCV1234A',
+    id: SVA_FIRM_ID,
+    firmId: SVA_FIRM_ID,
+    name: 'Shree Vinayak Agency',
+    phone: '8989938999',
+    address: 'Shop No. 136, Agar Road',
+    city: 'Ujjain',
+    pinCode: '456001',
     status: 'active',
-    createdAt: '2026-08-01T09:00:00.000Z',
-  },
-  {
-    id: 'vinayak-traders',
-    firmId: 'vinayak-traders',
-    name: 'Vinayak Traders',
-    initials: 'VT',
-    businessType: 'Partnership',
-    entity: 'Partnership',
-    contactPerson: 'Kiran Joshi',
-    phone: '+91-22-2555-0200',
-    email: 'office@vinayak-traders.in',
-    address: '17/A, Second Floor',
-    city: 'Mumbai',
-    location: 'Mumbai',
-    state: 'Maharashtra',
-    pinCode: '400001',
-    gstNumber: '27AACCV5678B1Z4',
-    gst: '27AACCV5678B1Z4',
-    panNumber: 'AACCV5678B',
-    pan: 'AACCV5678B',
-    status: 'active',
-    createdAt: '2026-08-05T09:00:00.000Z',
-  },
-  {
-    id: 'vinayak-logistics',
-    firmId: 'vinayak-logistics',
-    name: 'Vinayak Logistics',
-    initials: 'VL',
-    businessType: 'LLP',
-    entity: 'LLP',
-    contactPerson: 'Vinayak Logistics Admin',
-    phone: '+91-253-555-0300',
-    email: 'office@vinayak-logistics.in',
-    address: 'Research Wing, 2nd Floor',
-    city: 'Nashik',
-    location: 'Nashik',
-    state: 'Maharashtra',
-    pinCode: '422001',
-    gstNumber: '27AAECV9012C1Z3',
-    gst: '27AAECV9012C1Z3',
-    panNumber: 'AAECV9012C',
-    pan: 'AAECV9012C',
-    status: 'active',
-    createdAt: '2026-08-06T09:00:00.000Z',
   },
 ]
 
-export const DEFAULT_FIRM_ID = SAMPLE_FIRMS[0].id
+export const DEFAULT_FIRM_ID = SVA_FIRM_ID
 
 export function getFirmId(firm) {
   return firm?.firmId ?? firm?.id ?? null

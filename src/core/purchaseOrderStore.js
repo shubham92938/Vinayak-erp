@@ -7,11 +7,7 @@ import { DEFAULT_FIRM_ID } from '../config/firms'
 import { getActiveFirmId } from './firmContextStore'
 import { nextNumber } from './numbers'
 
-export const mockPurchaseOrders = [
-  { id: 'POO-20261101', number: 'PO-20261101', vendorName: 'HardwarePlus', orderDate: '2026-10-30T09:00:00', expectedDelivery: '2026-11-12', items: [{ productId: 'prod-02', name: 'Samsung Galaxy S24 Ultra', qty: 5, unit: 'pcs', price: 349900, taxPct: 18, discount: 0 }], discount: 0, subtotal: 1749500, taxTotal: 314850, total: 2064350, status: 'Received' },
-  { id: 'POO-20261102', number: 'PO-20261102', vendorName: 'Nemotron Traders', orderDate: '2026-11-01T08:00:00', expectedDelivery: '2026-11-10', items: [{ productId: 'prod-07', name: 'Nike Dri-FIT T-Shirt', qty: 100, unit: 'pcs', price: 810, taxPct: 18, discount: 0 }], discount: 0, subtotal: 81000, taxTotal: 14580, total: 95580, status: 'Approved' },
-  { id: 'POO-20261103', number: 'PO-20261103', vendorName: 'Vinayak Associates Hardware', orderDate: '2026-11-05T14:30:00', expectedDelivery: '2026-11-20', items: [{ productId: 'prod-25', name: 'Moisture Meter', qty: 10, unit: 'pcs', price: 6990, taxPct: 18, discount: 0 }], discount: 0, subtotal: 69900, taxTotal: 12582, total: 82482, status: 'Partially Received' },
-]
+export const mockPurchaseOrders = []
 
 function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID

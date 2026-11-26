@@ -1,9 +1,8 @@
 import { useMemo, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom'
-import { ArrowLeft, Edit, Power } from 'lucide-react'
-import { Badge, Button, Card, CardBody, useToast } from '../../../components/ui'
-import { useAuth } from '../../../context/hooks'
-import { hasModulePermission } from '../../../core/accessControl'
+import { useLocation, useNavigate, useParams } from 'react-router-dom'
+import { ArrowLeft, Edit, Power, Trash2 } from 'lucide-react'
+import { Badge, Button, Card, CardBody, ConfirmDialog, useToast } from '../../../components/ui'
+import { useFirmContext } from '../../../context/hooks'
 import { getCategoriesWithProductCounts } from '../../categories/services/categoryService'
 import { getFirmLabel } from '../../users/utils/userUtils'
 import { formatDate, formatPrice } from '../utils/productUtils'
@@ -36,10 +35,13 @@ const PRICE_TYPE_VARIANTS = {
 export default function ProductDetailsPage() {
   const { productId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const toast = useToast()
-  const { currentUser } = useAuth()
-  const canEditProduct = hasModulePermission(currentUser, 'Products', 'edit')
-  const { getProductById, saveProduct, toggleProductStatus } = useProducts()
+  const { currentFirmId } = useFirmContext()
+  const routePrefix = location.pathname.startsWith('/firms/') && currentFirmId
+    ? `/firms/${currentFirmId}/workspace`
+    : ''
+  const { getProductById, saveProduct, canEditProduct, deleteProduct, toggleProductStatus } = useProducts()
   const categories = useMemo(() => getCategoriesWithProductCounts(), [])
   const categoriesById = useMemo(
     () => Object.fromEntries(categories.map((category) => [category.id, category])),
@@ -47,15 +49,18 @@ export default function ProductDetailsPage() {
   )
 
   const product = getProductById(productId)
+  const canEditProductRecord = product ? canEditProduct(product.id, 'edit') : false
+  const canDeleteProductRecord = product ? canEditProduct(product.id, 'delete') : false
   const stockHistory = STOCK_HISTORY_DEMO_DATA.filter((entry) => entry.productId === productId)
   const priceHistory = PRICE_HISTORY_DEMO_DATA.filter((entry) => entry.productId === productId)
   const hasHistory = stockHistory.length > 0 || priceHistory.length > 0
 
   const [tab, setTab] = useState(TABS[0])
   const [isEditing, setIsEditing] = useState(false)
+  const [showDeleteConfirm, setShowDeleteConfirm] = useState(false)
 
   const handleSaveProduct = (productData) => {
-    if (product?.id && canEditProduct) {
+    if (product?.id && canEditProductRecord) {
       const updated = saveProduct(product.id, productData)
       if (updated) {
         toast.success('Product updated')
@@ -67,16 +72,27 @@ export default function ProductDetailsPage() {
   }
 
   const handleToggleStatus = () => {
-    if (!canEditProduct || !product) return
+    if (!canEditProductRecord || !product) return
     const updated = toggleProductStatus(product.id)
     if (updated) toast.success('Product status updated')
+  }
+
+  const handleDelete = () => {
+    if (!canDeleteProductRecord || !product) return
+    const deleted = deleteProduct(product.id)
+    if (!deleted) {
+      toast.error('The product could not be deleted')
+      return
+    }
+    toast.success('Product deleted')
+    navigate(`${routePrefix}/products`)
   }
 
   if (!product) {
     return (
       <div className="products-page">
         <div className="products-details-empty">
-          <Button variant="secondary" size="sm" leadingIcon={<ArrowLeft size={14} />} onClick={() => navigate('/products')}>
+          <Button variant="secondary" size="sm" leadingIcon={<ArrowLeft size={14} />} onClick={() => navigate(`${routePrefix}/products`)}>
             Back to Products
           </Button>
           <h2>Product not found</h2>
@@ -92,12 +108,12 @@ export default function ProductDetailsPage() {
         <div>
           <h1>{product.name}</h1>
           <p>
-            <button type="button" onClick={() => navigate('/products')}>Products</button>
+            <button type="button" onClick={() => navigate(`${routePrefix}/products`)}>Products</button>
             <span aria-hidden="true">›</span>
             <span>{product.id}</span>
           </p>
         </div>
-        {canEditProduct && (
+        {canEditProductRecord && (
           <div className="recorded-product-details__actions">
             <Button variant="secondary" size="sm" onClick={handleToggleStatus} leadingIcon={<Power size={13} />}>
               {product.status === 'active' ? 'Deactivate' : 'Activate'}
@@ -105,6 +121,11 @@ export default function ProductDetailsPage() {
             <Button size="sm" onClick={() => setIsEditing(true)} leadingIcon={<Edit size={13} />}>
               Edit Product
             </Button>
+            {canDeleteProductRecord && (
+              <Button variant="danger" size="sm" onClick={() => setShowDeleteConfirm(true)} leadingIcon={<Trash2 size={13} />}>
+                Delete Product
+              </Button>
+            )}
           </div>
         )}
       </header>
@@ -200,7 +221,7 @@ export default function ProductDetailsPage() {
       )}
 
       <div className="recorded-product-details__footer-actions">
-        <Button variant="secondary" onClick={() => navigate('/products')} leadingIcon={<ArrowLeft size={14} />}>
+        <Button variant="secondary" onClick={() => navigate(`${routePrefix}/products`)} leadingIcon={<ArrowLeft size={14} />}>
           Back
         </Button>
       </div>
@@ -214,6 +235,17 @@ export default function ProductDetailsPage() {
           onSubmit={handleSaveProduct}
         />
       )}
+
+      <ConfirmDialog
+        open={showDeleteConfirm}
+        onClose={() => setShowDeleteConfirm(false)}
+        onConfirm={handleDelete}
+        title="Delete product?"
+        description={`${product.name} will be removed from the product list. This action cannot be undone.`}
+        confirmLabel="Delete Product"
+        cancelLabel="Cancel"
+        tone="danger"
+      />
     </div>
   )
 }

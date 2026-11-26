@@ -2,7 +2,7 @@
  * Dashboard service layer.
  *
  * The UI only depends on the shape returned by `fetchDashboardData`.
- * Today that shape is assembled from clearly-labelled demo records. When an
+ * Today that shape is assembled from the imported record collections. When an
  * API is available, replace the internals of this file: keep the returned
  * shape and no dashboard component needs to change.
  */
@@ -477,7 +477,7 @@ export async function fetchDashboardData({
     meta: {
       label: DEMO_DATA_LABEL,
       notice: DEMO_DATA_NOTICE,
-      source: 'local-demo',
+      source: 'imported-records',
     },
     scope: {
       startDate,

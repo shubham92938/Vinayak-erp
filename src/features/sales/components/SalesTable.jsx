@@ -1,7 +1,6 @@
 /* eslint-disable react-refresh/only-export-components */
 import { Eye, FileDown, Printer, Trash2 } from 'lucide-react'
 import { RecordedTable } from '../../../components/recorded'
-import { getCustomers } from '../../../core/store'
 import { getSaleTotals } from '../services/saleService'
 import { formatMoney, formatRecordedDate } from './saleUtils'
 
@@ -49,8 +48,6 @@ export default function SalesTable({
   canCancel = true,
   canExport = true,
 }) {
-  const customers = getCustomers()
-  const customerById = Object.fromEntries(customers.map((customer) => [customer.id, customer]))
   const columns = [
     {
       key: 'serial',
@@ -134,8 +131,7 @@ export default function SalesTable({
         </>
       )}
       filterRow={(sale) => {
-        const customer = customerById[sale.customerId]
-        const buyerType = sale.buyerType ?? (customer?.customerType === 'DEALER' || customer?.type === 'Dealer' ? 'Dealer' : 'Customer')
+        const buyerType = sale.buyerType ?? ''
         const paymentMode = sale.paymentMode ?? 'N/A'
         return (filters.paymentMode === 'all' || paymentMode === filters.paymentMode) &&
           (filters.buyerType === 'all' || buyerType === filters.buyerType) &&

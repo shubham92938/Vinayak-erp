@@ -1,8 +1,14 @@
 import { useEffect } from 'react'
-import { formatMoney, formatDate } from './saleUtils'
-import { getFirmLabel } from './saleUtils'
+import { getFirmById } from '../../../core/firmStore'
+import { formatMoney, formatDate, getFirmLabel } from './saleUtils'
 
 export default function PrintChallan({ challan }) {
+  const firm = getFirmById(challan?.firmId)
+  const billFrom = challan?.printDetails?.billFrom ?? firm ?? {}
+  const firmAddress = [billFrom.address, billFrom.city, billFrom.state, billFrom.pinCode]
+    .filter(Boolean)
+    .join(', ')
+
   useEffect(() => {
     window.print()
   }, [challan])
@@ -11,8 +17,8 @@ export default function PrintChallan({ challan }) {
     <div className="sales-print">
       <div className="sales-print__header">
         <div>
-          <h1>Vinayak Associates</h1>
-          <p>Maharashtra</p>
+          <h1>{billFrom.name ?? firm?.name ?? '—'}</h1>
+          <p>{firmAddress || '—'}</p>
         </div>
         <div className="sales-print__right">
           <h2>DELIVERY CHALAN</h2>
@@ -24,7 +30,7 @@ export default function PrintChallan({ challan }) {
       <div className="sales-print__address">
         <strong>Customer:</strong> {challan.customerName}
         <br />
-        <strong>Firm:</strong> {getFirmLabel()}
+        <strong>Firm:</strong> {getFirmLabel(challan?.firmId)}
       </div>
 
       <table className="sales-print__table">

@@ -1,7 +1,7 @@
 import { useMemo } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { useToast } from '../../../components/ui'
-import { useAuth } from '../../../context/hooks'
+import { useAuth, useFirmContext } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
 import { getCategoriesWithProductCounts } from '../../categories/services/categoryService'
 import ProductForm from '../components/ProductForm'
@@ -15,8 +15,13 @@ import '../styles/products.css'
  */
 export default function ProductCreatePage() {
   const navigate = useNavigate()
+  const location = useLocation()
   const toast = useToast()
   const { currentUser } = useAuth()
+  const { currentFirmId } = useFirmContext()
+  const routePrefix = location.pathname.startsWith('/firms/') && currentFirmId
+    ? `/firms/${currentFirmId}/workspace`
+    : ''
   const canCreateProducts = hasModulePermission(currentUser, 'Products', 'create')
   const categories = useMemo(() => getCategoriesWithProductCounts(), [])
   const { createProduct } = useProducts()
@@ -50,7 +55,7 @@ export default function ProductCreatePage() {
       <ProductForm
         mode="add"
         categories={categories}
-        onClose={() => navigate('/products')}
+        onClose={() => navigate(`${routePrefix}/products`)}
         onSubmit={handleSubmit}
       />
     </div>

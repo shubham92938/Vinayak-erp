@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { Button, Card, CardBody, Select, useToast } from '../../../components/ui'
 import { FormActions, FormField, FormGrid, FormInput, FormSection } from '../../../components/forms'
 import { mockFinancialSettings } from '../../../core/store'
-import { useFirmContext } from '../../../context/hooks'
+import { useAuth, useFirmContext } from '../../../context/hooks'
 import '../styles/settings.css'
 
 const SETTINGS_TABS = ['General', 'Firm', 'Financial', 'Inventory', 'Document', 'Profile']
@@ -44,7 +44,7 @@ export default function SettingsPage() {
 }
 
 const GENERAL_FORM = {
-  businessName: 'Vinayak Associates',
+  businessName: '',
   website: '',
   defaultLanguage: 'English',
   dateFormat: 'dd/MM/yyyy',
@@ -72,7 +72,7 @@ function GeneralSection() {
               <FormInput value={form.businessName} onChange={(event) => setForm((current) => ({ ...current, businessName: event.target.value }))} />
             </FormField>
             <FormField label="Website">
-              <FormInput type="url" placeholder="https://vinayakassociates.in" value={form.website} onChange={(event) => setForm((current) => ({ ...current, website: event.target.value }))} />
+              <FormInput type="url" placeholder="https://your-business.example" value={form.website} onChange={(event) => setForm((current) => ({ ...current, website: event.target.value }))} />
             </FormField>
             <FormField label="Language">
               <Select value="en-IN" onChange={(event) => setForm((current) => ({ ...current, defaultLanguage: event.target.value }))} options={[{ value: 'en-IN', label: 'English (India)' }, { value: 'hi-IN', label: 'Hindi' }]} />
@@ -228,6 +228,7 @@ function DocumentSection() {
 
 function ProfileSection() {
   const toast = useToast()
+  const { currentUser } = useAuth()
 
   return (
     <SettingsCard title="Profile" subtitle="Edit your account details">
@@ -235,14 +236,14 @@ function ProfileSection() {
         <FormSection>
           <FormGrid>
             <FormField label="Full Name">
-              <FormInput defaultValue="Vinayak Associates Admin" aria-label="Full name" />
+              <FormInput defaultValue={currentUser?.name ?? ''} aria-label="Full name" />
             </FormField>
             <FormField label="Role">
-              <FormInput defaultValue="Super Admin" aria-label="Role" readOnly />
+              <FormInput defaultValue={currentUser?.role ?? ''} aria-label="Role" readOnly />
             </FormField>
           </FormGrid>
           <FormField label="Email">
-            <FormInput type="email" defaultValue="admin@vinayakassociates.in" aria-label="Email" />
+            <FormInput type="email" defaultValue={currentUser?.email ?? ''} aria-label="Email" />
           </FormField>
           <FormActions>
             <Button type="submit" variant="primary">Save Profile</Button>

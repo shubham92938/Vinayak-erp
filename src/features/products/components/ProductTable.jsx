@@ -1,4 +1,4 @@
-import { Edit3, Eye } from 'lucide-react'
+import { Edit3, Eye, Trash2 } from 'lucide-react'
 import { RecordedTable } from '../../../components/recorded'
 import { getFirmLabel } from '../../users/utils/userUtils'
 import { formatPrice, getStockStatus, productImageUrl } from '../utils/productUtils'
@@ -21,7 +21,9 @@ export default function ProductTable({
   categories,
   onRowView,
   onRowEdit,
+  onRowDelete,
   canEdit = true,
+  canDelete = true,
 }) {
   const categoriesById = Object.fromEntries(categories.map((category) => [category.id, category]))
 
@@ -97,18 +99,26 @@ export default function ProductTable({
     {
       key: 'actions',
       label: 'Actions',
-      width: '64px',
+      width: '104px',
       align: 'center',
-      render: (product) => (
-        <span className="recorded-row-actions">
-          <button type="button" className="recorded-row-actions__button" onClick={() => onRowView(product.id)} aria-label={`View ${product.name}`} title="View Product">
-            <Eye size={13} />
-          </button>
-          <button type="button" className="recorded-row-actions__button recorded-row-actions__button--edit" onClick={() => onRowEdit(product.id)} disabled={!canEdit} aria-label={`Edit ${product.name}`} title="Edit Product">
-            <Edit3 size={13} />
-          </button>
-        </span>
-      ),
+      render: (product) => {
+        const canEditRow = typeof canEdit === 'function' ? canEdit(product) : canEdit
+        const canDeleteRow = typeof canDelete === 'function' ? canDelete(product) : canDelete
+
+        return (
+          <span className="recorded-row-actions">
+            <button type="button" className="recorded-row-actions__button" onClick={() => onRowView(product.id)} aria-label={`View ${product.name}`} title="View Product">
+              <Eye size={13} />
+            </button>
+            <button type="button" className="recorded-row-actions__button recorded-row-actions__button--edit" onClick={() => onRowEdit(product.id)} disabled={!canEditRow} aria-label={`Edit ${product.name}`} title="Edit Product">
+              <Edit3 size={13} />
+            </button>
+            <button type="button" className="recorded-row-actions__button recorded-row-actions__button--danger" onClick={() => onRowDelete?.(product.id)} disabled={!canDeleteRow} aria-label={`Delete ${product.name}`} title="Delete Product">
+              <Trash2 size={13} />
+            </button>
+          </span>
+        )
+      },
     },
   ]
 

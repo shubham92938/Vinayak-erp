@@ -54,11 +54,16 @@ function computeTotals(items, discount) {
 }
 
 export function getSaleTotals(sale) {
-  if (Number.isFinite(Number(sale?.subtotal)) && Number.isFinite(Number(sale?.total))) {
+  const sourceTotal = Number(sale?.total)
+  if (Number.isFinite(sourceTotal)) {
+    const items = Array.isArray(sale?.items) ? sale.items : []
+    const subtotal = Number.isFinite(Number(sale?.subtotal))
+      ? Number(sale.subtotal)
+      : items.reduce((sum, item) => sum + Number(item.qty ?? 0) * Number(item.price ?? 0), 0)
     return {
-      subtotal: Number(sale.subtotal),
-      taxTotal: Number(sale.taxTotal ?? 0),
-      total: Number(sale.total),
+      subtotal,
+      taxTotal: Number(sale?.taxTotal ?? 0),
+      total: sourceTotal,
     }
   }
   return computeTotals(sale?.items ?? [], sale?.discount ?? 0)

@@ -7,10 +7,7 @@ import { DEFAULT_FIRM_ID } from '../config/firms'
 import { getActiveFirmId } from './firmContextStore'
 import { nextNumber } from './numbers'
 
-export const mockPurchases = [
-  { id: 'PO-20261023', number: 'PO-20261023', vendorName: 'Nemotron Traders', vendorInvoiceNumber: 'NEMO/88812', purchaseDate: '2026-10-26T10:10:00', items: [{ productId: 'prod-03', name: 'OnePlus 12', qty: 5, unit: 'pcs', price: 169900, taxPct: 18, discount: 0 }], discount: 0, subtotal: 849500, taxTotal: 152910, total: 1002410, advance: 0, paid: 0, due: 1002410, status: 'Outstanding' },
-  { id: 'PO-20261027', number: 'PO-20261027', vendorName: 'HardwarePlus', vendorInvoiceNumber: 'HW/7742', purchaseDate: '2026-10-28T16:05:00', items: [{ productId: 'prod-04', name: 'Dell Inspiron 3540 Laptop', qty: 5, unit: 'pcs', price: 99900, taxPct: 18, discount: 0 }], discount: 0, subtotal: 499500, taxTotal: 89910, total: 589410, advance: 18000, paid: 18000, due: 571410, status: 'Partially Paid' },
-]
+export const mockPurchases = []
 
 function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID
