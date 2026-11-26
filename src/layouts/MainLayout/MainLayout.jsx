@@ -57,10 +57,18 @@ function routeFor(currentFirm, item, pathname = '') {
 
 function isActive(pathname, item, currentFirm) {
   const target = routeFor(currentFirm, item, pathname)
-  if (item.path === '/dashboard') {
-    return pathname === target || pathname === `${target}/`
+  const normalizedPath = pathname.replace(/\/+$/, '') || '/'
+
+  if (item.external && item.path === '/home') {
+    return normalizedPath === '/home' || normalizedPath === `/firms/${currentFirm?.id}/profile`
   }
-  return pathname === target || pathname.startsWith(`${target}/`)
+
+  if (item.path === '/dashboard') {
+    const workspaceRoot = currentFirm?.id ? `/firms/${currentFirm.id}/workspace` : '/dashboard'
+    return normalizedPath === target || normalizedPath === workspaceRoot
+  }
+
+  return normalizedPath === target || normalizedPath.startsWith(`${target}/`)
 }
 
 function WebsiteLogo() {
@@ -137,6 +145,7 @@ export default function MainLayout() {
                     key={item.label}
                     to={itemPath}
                     className={['website-nav__link', active && 'is-active'].filter(Boolean).join(' ')}
+                    aria-current={active ? 'page' : undefined}
                   >
                     {ItemIcon && <ItemIcon className="website-nav__icon" size={13} aria-hidden="true" />}
                     <span>{item.label}</span>
@@ -153,7 +162,12 @@ export default function MainLayout() {
                   </summary>
                   <div className="website-nav__menu">
                     {visibleChildren.map((child) => (
-                      <Link key={child.label} to={routeFor(currentFirm, child, location.pathname)} className={isActive(location.pathname, child, currentFirm) ? 'is-active' : ''}>
+                      <Link
+                        key={child.label}
+                        to={routeFor(currentFirm, child, location.pathname)}
+                        className={isActive(location.pathname, child, currentFirm) ? 'is-active' : ''}
+                        aria-current={isActive(location.pathname, child, currentFirm) ? 'page' : undefined}
+                      >
                         {child.label}
                       </Link>
                     ))}
