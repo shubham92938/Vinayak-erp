@@ -2,6 +2,7 @@ import { getActiveFirmId } from '../../../core/firmContextStore'
 import { CATEGORY_DEMO_DATA } from '../data/categoryDemoData'
 import { getAllProducts, getProducts } from '../../products/services/productService'
 import { getFirmLabel } from '../../users/utils/userUtils'
+import { searchMatches } from '../../../utils/search'
 
 export const CATEGORY_STATUSES = [
   { value: 'active', label: 'Active' },
@@ -20,10 +21,7 @@ export function filterCategories(categories, filters = {}) {
         category.description,
         getFirmLabel(category.firmId),
       ]
-        .filter(Boolean)
-        .map((value) => String(value).toLocaleLowerCase())
-        .join(' ')
-      if (!haystack.includes(query)) return false
+      if (!searchMatches(query, haystack)) return false
     }
 
     if (firmId && firmId !== 'all' && category.firmId !== firmId) return false

@@ -5,6 +5,7 @@ import { Button, ConfirmDialog, Modal, useToast } from '../../../components/ui'
 import { useAuth } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
 import { getProducts } from '../../products/services/productService'
+import CategoryForm from '../components/CategoryForm'
 import CategoryTable from '../components/CategoryTable'
 import { useCategories } from '../hooks/useCategories'
 import '../styles/categories.css'
@@ -20,9 +21,11 @@ export default function CategoriesPage() {
     categories,
     filters,
     setFilters,
+    createCategory,
     deleteCategory,
   } = useCategories()
   const [confirmState, setConfirmState] = useState(null)
+  const [showCreateForm, setShowCreateForm] = useState(false)
 
   const handleDelete = (categoryId) => {
     if (!canDeleteCategories) return
@@ -35,23 +38,35 @@ export default function CategoriesPage() {
     setConfirmState({ category: categories.find((entry) => entry.id === categoryId) })
   }
 
+  const handleCreate = (categoryData) => {
+    if (!canCreateCategories) return null
+    const created = createCategory(categoryData)
+    if (!created) {
+      toast.error('The category could not be created')
+      return null
+    }
+    return created
+  }
+
   const showAdvancedFilters = currentUser?.role === 'super_admin'
 
   return (
     <div className="categories-page recorded-categories-page">
       <section className="recorded-category-surface">
         <header className="recorded-category-header">
-          <h1>Categories</h1>
+          <div>
+            <h1>Categories</h1>
+            <p className="recorded-category-header__hint">Create, edit, or remove categories without leaving this list.</p>
+          </div>
           {canCreateCategories && (
-            <button
+            <Button
               type="button"
-              className="recorded-category-add"
-              onClick={() => navigate('/categories/create')}
-              aria-label="Create category"
-              title="Create category"
+              size="sm"
+              leadingIcon={<Plus size={15} />}
+              onClick={() => setShowCreateForm(true)}
             >
-              <Plus size={18} strokeWidth={1.6} />
-            </button>
+              Create Category
+            </Button>
           )}
         </header>
 
@@ -65,6 +80,14 @@ export default function CategoriesPage() {
           canDelete={canDeleteCategories}
           showAdvancedFilters={showAdvancedFilters}
         />
+
+        {showCreateForm && (
+          <CategoryForm
+            mode="add"
+            onClose={() => setShowCreateForm(false)}
+            onSubmit={handleCreate}
+          />
+        )}
       </section>
 
       <ConfirmDialog
@@ -79,9 +102,9 @@ export default function CategoriesPage() {
           handleDelete(confirmState.category.id)
           setConfirmState(null)
         }}
-        title="Delete category?"
+        title="Remove category?"
         description={`${confirmState?.category?.name ?? ''} will be removed from the category list.`}
-        confirmLabel="Delete Category"
+        confirmLabel="Remove Category"
         cancelLabel="Cancel"
         tone="danger"
       />

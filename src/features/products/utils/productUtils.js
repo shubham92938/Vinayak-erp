@@ -1,4 +1,5 @@
 import { getFirmLabel } from '../../users/utils/userUtils'
+import { searchMatches } from '../../../utils/search'
 
 export { getFirmLabel }
 
@@ -103,6 +104,10 @@ function getSearchHaystack(product, categoriesById, firmsById) {
   return [
     product.name,
     product.code,
+    product.description,
+    product.brand,
+    product.sku,
+    product.barcode,
     category?.name,
     category?.code,
     firm?.name,
@@ -126,7 +131,7 @@ export function filterProducts(
   return products.filter((product) => {
     if (query) {
       const haystack = getSearchHaystack(product, categoriesById, firmsById)
-      if (!haystack.includes(query)) return false
+      if (!searchMatches(query, haystack)) return false
     }
 
     if (firmId && firmId !== 'all' && product.firmId !== firmId) return false

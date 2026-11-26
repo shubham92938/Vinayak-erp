@@ -21,8 +21,7 @@ export const NAV_SECTIONS = [
     id: 'overview',
     label: 'Overview',
     items: [
-      { id: 'home', label: 'Home', to: '/dashboard', icon: Building2 },
-      { id: 'dashboard', label: 'Dashboard', to: '/dashboard', icon: Building2 },
+      { id: 'dashboard', label: 'Dashboard', to: '/dashboard', icon: BarChart3 },
       { id: 'firms', label: 'Firms', to: '/firms', icon: Building2 },
     ],
   },

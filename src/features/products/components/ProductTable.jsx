@@ -123,8 +123,17 @@ export default function ProductTable({
       showFirstLast={false}
       search={filters.search}
       onSearchChange={(search) => onFiltersChange((current) => ({ ...current, search }))}
-      searchPlaceholder="Search"
-      searchLabel="Search products"
+      getSearchText={(product) => [
+        product.name,
+        product.code,
+        product.description,
+        product.unit,
+        categoriesById[product.categoryId]?.name,
+        categoriesById[product.categoryId]?.code,
+        getFirmLabel(product.firmId),
+      ]}
+      searchPlaceholder="Name, code, category or keyword"
+      searchLabel="Search products by name, code, category or keyword"
       filters={(
         <label>
           <span>Category:</span>

@@ -201,10 +201,10 @@ export default function FirmForm({ mode = 'create', firm = null, onClose, onSubm
         <FormSection title="Firm Information" description="These details appear on the firm card and in My Firm.">
           <FormGrid>
             <FormField label="Firm Name" error={errors.name} required>
-              <FormInput value={form.name} onChange={updateFirmField('name')} placeholder="Shree Vinayak Agency" />
+              <FormInput value={form.name} onChange={updateFirmField('name')} placeholder="e.g. Vinayak Enterprises" />
             </FormField>
             <FormField label="Unique Firm ID" error={errors.firmId} hint={isEditing ? 'Firm IDs identify data ownership and cannot be changed to an existing ID.' : 'Lowercase letters, numbers and hyphens.'} required>
-              <FormInput value={form.firmId} onChange={updateFirmField('firmId')} placeholder="shree-vinayak-agency" disabled={isEditing} />
+              <FormInput value={form.firmId} onChange={updateFirmField('firmId')} placeholder="vinayak-enterprises" disabled={isEditing} />
             </FormField>
             <FormField label="Business Type" error={errors.businessType} required>
               <FormSelect value={form.businessType} onChange={updateFirmField('businessType')} options={BUSINESS_TYPES} placeholder="Select business type" />

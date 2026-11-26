@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useId, useState } from 'react'
 import { Button, Modal, useToast } from '../../../components/ui'
 import { FormActions, FormField, FormGrid, FormInput, FormSelect } from '../../../components/forms'
 import { createCustomer, saveCustomer } from '../../../core/store'
@@ -36,6 +36,7 @@ const initialForm = (customer) => ({
 
 export default function CustomerForm({ customer, onClose, onSave }) {
   const toast = useToast()
+  const formId = useId()
   const { currentUser } = useAuth()
   const { currentFirmId } = useFirmContext()
   const isEditing = Boolean(customer && customer.id)
@@ -147,13 +148,13 @@ export default function CustomerForm({ customer, onClose, onSave }) {
       footer={
         <FormActions>
           <Button type="button" variant="secondary" onClick={onClose} disabled={isSubmitting}>Cancel</Button>
-          <Button type="submit" variant="primary" disabled={isSubmitting}>
+          <Button type="submit" form={formId} variant="primary" disabled={isSubmitting}>
             {isSubmitting ? 'Saving…' : isEditing ? 'Save customer' : 'Create customer'}
           </Button>
         </FormActions>
       }
     >
-      <form className="customers-form" onSubmit={handleSubmit} noValidate>
+      <form id={formId} className="customers-form" onSubmit={handleSubmit} noValidate>
         {Object.keys(errors).length > 0 && (
           <div className="customers-form-error" role="alert">{Object.values(errors)[0]}</div>
         )}
