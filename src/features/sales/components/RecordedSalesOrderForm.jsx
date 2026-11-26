@@ -2,10 +2,12 @@ import { useMemo, useState } from 'react'
 import { ArrowLeft, Minus, Plus, ShoppingCart, Trash2 } from 'lucide-react'
 import { useLocation, useNavigate, useSearchParams } from 'react-router-dom'
 import { useToast } from '../../../components/ui'
+import { hasModulePermission } from '../../../core/accessControl'
 import { getCustomers } from '../../../core/store'
 import { createSale } from '../../../core/salesStore'
 import { createSalesOrder } from '../../../core/salesOrdersStore'
-import { useFirmContext } from '../../../context/hooks'
+import { useAuth, useFirmContext } from '../../../context/hooks'
+import CustomerForm from '../../customers/components/CustomerForm'
 import { getCategories } from '../../categories/services/categoryService'
 import { getProducts } from '../../products/services/productService'
 import { productImageUrl } from '../../products/utils/productUtils'
@@ -23,9 +25,13 @@ export default function RecordedSalesOrderForm({ mode = 'order', onClose }) {
   const location = useLocation()
   const [searchParams] = useSearchParams()
   const toast = useToast()
+  const { currentUser } = useAuth()
   const { currentFirmId } = useFirmContext()
   const effectiveMode = searchParams.get('source') === 'orders' ? 'order' : mode
+  const [, setCustomerVersion] = useState(0)
+  const [showCustomerForm, setShowCustomerForm] = useState(false)
   const customers = getCustomers()
+  const canCreateCustomer = hasModulePermission(currentUser, 'Customers', 'create')
   const products = useMemo(() => [...getProducts()].reverse(), [])
   const categories = useMemo(
     () => getCategories().sort((first, second) => (first.recordedOrder ?? 999) - (second.recordedOrder ?? 999)),
@@ -67,6 +73,22 @@ export default function RecordedSalesOrderForm({ mode = 'order', onClose }) {
     : ''
 
   const setField = (field, value) => setForm((current) => ({ ...current, [field]: value }))
+
+  const handleCustomerSaved = (customer) => {
+    setCustomerVersion((version) => version + 1)
+    setField('customerId', customer.id)
+    setField('type', customer.customerType === 'Dealer' ? 'Dealer' : 'Customer')
+    setShowCustomerForm(false)
+  }
+
+  const handleCustomerChange = (customerId) => {
+    const customer = customers.find((entry) => entry.id === customerId)
+    setForm((current) => ({
+      ...current,
+      customerId,
+      type: customer?.customerType === 'Dealer' || customer?.customerType === 'DEALER' || customer?.customerType === 'dealer' ? 'Dealer' : customer ? 'Customer' : '',
+    }))
+  }
 
   const addProduct = (product) => {
     setItems((current) => {
@@ -117,15 +139,16 @@ export default function RecordedSalesOrderForm({ mode = 'order', onClose }) {
       discount,
       date: form.date,
       notes: form.notes,
-      type: form.type,
+      type: form.orderType,
       reference: form.reference,
       paymentType: form.paymentType,
       paymentMode: form.paymentType,
       invoiceType: form.invoiceType,
       vehicleNumber: form.vehicleNumber,
       driverNumber: form.driverNumber,
+      buyerType: form.type,
       orderType: form.orderType,
-      saleType: form.orderType,
+      saleType: form.type === 'Dealer' ? 'Dealer' : 'Retail',
     }
 
     try {
@@ -155,9 +178,15 @@ export default function RecordedSalesOrderForm({ mode = 'order', onClose }) {
         <section className="recorded-order-card">
           <div className="recorded-order-grid recorded-order-grid--top">
             <Field label="Date" required><input type="date" value={form.date} onChange={(event) => setField('date', event.target.value)} /></Field>
-            <Field label="Type" required><select value={form.type} onChange={(event) => setField('type', event.target.value)}><option value="">--Select--</option><option>Invoice</option><option>Challan</option></select></Field>
-            <Field label="Customer" required><select value={form.customerId} onChange={(event) => setField('customerId', event.target.value)}><option value="">Select an option</option>{customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}</select></Field>
-            <Field label="Order Type" required><select value={form.orderType} onChange={(event) => setField('orderType', event.target.value)}><option value="">--Select--</option><option>Retail</option><option>Wholesale</option><option>Dealer</option></select></Field>
+            <Field label="Type" required><select value={form.type} onChange={(event) => setField('type', event.target.value)}><option value="">--Select--</option><option>Customer</option><option>Dealer</option></select></Field>
+            <Field
+              label="Customer"
+              required
+              action={canCreateCustomer ? <button type="button" className="recorded-add-customer-button" onClick={() => setShowCustomerForm(true)} aria-label="Add new customer" title="Add new customer"><Plus size={11} /></button> : null}
+            >
+              <select value={form.customerId} onChange={(event) => handleCustomerChange(event.target.value)}><option value="">Select an option</option>{customers.map((customer) => <option key={customer.id} value={customer.id}>{customer.name}</option>)}</select>
+            </Field>
+            <Field label="Order Type" required><select value={form.orderType} onChange={(event) => setField('orderType', event.target.value)}><option value="">--Select--</option><option>Invoice</option><option>Challan</option></select></Field>
           </div>
 
           <div className="recorded-order-items">
@@ -214,10 +243,22 @@ export default function RecordedSalesOrderForm({ mode = 'order', onClose }) {
           {filteredProducts.length === 0 && <p className="recorded-products-list__empty">No products found.</p>}
         </div>
       </section>
+
+      {showCustomerForm && (
+        <CustomerForm
+          onClose={() => setShowCustomerForm(false)}
+          onSave={handleCustomerSaved}
+        />
+      )}
     </div>
   )
 }
 
-function Field({ label, children, required, className = '' }) {
-  return <label className={['recorded-order-field', className].filter(Boolean).join(' ')}><span>{label}{required && <b> *</b>}</span>{children}</label>
+function Field({ label, children, required, action, className = '' }) {
+  return (
+    <label className={['recorded-order-field', className].filter(Boolean).join(' ')}>
+      <span className="recorded-order-field__label">{label}{required && <b> *</b>}</span>
+      {action ? <span className="recorded-order-field__control">{children}{action}</span> : children}
+    </label>
+  )
 }

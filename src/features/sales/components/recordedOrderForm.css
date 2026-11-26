@@ -72,6 +72,40 @@
   color: #d45757;
 }
 
+.recorded-order-field__label {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.recorded-order-field__control {
+  display: flex;
+  align-items: center;
+  gap: 5px;
+}
+
+.recorded-order-field__control > select {
+  flex: 1;
+  min-width: 0;
+}
+
+.recorded-add-customer-button {
+  display: inline-grid;
+  place-items: center;
+  flex: 0 0 auto;
+  width: 23px;
+  height: 23px;
+  padding: 0;
+  color: #fff;
+  background: #21a45a;
+  border: 1px solid #168448;
+  border-radius: 50%;
+  cursor: pointer;
+
+.recorded-add-customer-button:hover {
+  background: #168448;
+}
+
 .recorded-order-field input,
 .recorded-order-field select,
 .recorded-order-field textarea,

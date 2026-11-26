@@ -758,3 +758,342 @@
     gap: 9px;
   }
 }
+
+/* Editable print/download view shown by the Sales list printer action. */
+.sales-print-page-shell {
+  min-height: 70vh;
+  padding: 16px 10px 34px;
+  background: #f5f7fa;
+}
+
+.sales-print-page {
+  width: 100%;
+  max-width: 626px;
+  margin-inline: auto;
+  padding: 14px;
+  color: #36474d;
+  background: #fff;
+  border-radius: 7px;
+  box-shadow: 0 4px 18px rgba(25, 47, 57, 0.12);
+  font-size: 8px;
+}
+
+.sales-print-page__back {
+  display: inline-flex;
+  align-items: center;
+  gap: 3px;
+  padding: 0;
+  color: #4e6fae;
+  background: transparent;
+  border: 0;
+  font: inherit;
+  font-size: 8px;
+  text-decoration: underline;
+  cursor: pointer;
+}
+
+.sales-print-page__back:hover {
+  color: #153f83;
+}
+
+.sales-print-page__brand {
+  display: flex;
+  justify-content: center;
+  margin-top: 2px;
+}
+
+.sales-print-page__brand .brand-lockup {
+  transform: scale(0.75);
+  transform-origin: center;
+}
+
+.sales-print-page__firm-line {
+  margin: -2px 0 7px;
+  color: #67777c;
+  font-size: 7px;
+  text-align: center;
+}
+
+.sales-print-page__document-title {
+  margin: 0;
+  color: #d52e2e;
+  font-size: 12px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.sales-print-page__date {
+  margin: 7px 0 10px;
+  color: #314950;
+  font-size: 9px;
+  font-weight: 600;
+  text-align: center;
+}
+
+.sales-print-page > hr {
+  margin: 0 0 10px;
+  border: 0;
+  border-top: 1px solid #d9dfe2;
+}
+
+.sales-print-page__parties {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-bottom: 10px;
+}
+
+.sales-print-page__party {
+  overflow: hidden;
+  border: 1px solid #d7dde0;
+  border-radius: 5px;
+}
+
+.sales-print-page__party h2 {
+  margin: 0;
+  padding: 7px 7px 5px;
+  color: #dc3434;
+  border-bottom: 1px solid #d7dde0;
+  font-size: 8px;
+  font-weight: 700;
+}
+
+.sales-print-page__party > label {
+  display: grid;
+  grid-template-columns: 50px minmax(0, 1fr);
+  align-items: center;
+  min-height: 22px;
+  padding: 0 7px;
+  border-bottom: 1px solid #d7dde0;
+}
+
+.sales-print-page__party > label:last-child {
+  border-bottom: 0;
+}
+
+.sales-print-page__party strong {
+  color: #253d45;
+  font-size: 7px;
+}
+
+.sales-print-page__editable-wrap {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.sales-print-page__editable-wrap input,
+.sales-print-page__notes textarea {
+  width: 100%;
+  min-width: 0;
+  padding: 2px 3px;
+  color: #41545a;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  font: inherit;
+  font-size: 7px;
+  outline: 0;
+}
+
+.sales-print-page__editable-wrap input {
+  text-align: center;
+  text-overflow: ellipsis;
+}
+
+.sales-print-page__editable-wrap input:hover,
+.sales-print-page__editable-wrap input:focus,
+.sales-print-page__notes textarea:hover,
+.sales-print-page__notes textarea:focus {
+  background: #f5f9ff;
+  border-color: #b4c9e6;
+}
+
+.sales-print-page__editable-wrap small {
+  font-size: 7px;
+}
+
+.sales-print-page__table-wrap {
+  overflow-x: auto;
+  border: 1px solid #d7dde0;
+}
+
+.sales-print-page__items {
+  width: 100%;
+  min-width: 570px;
+  border-collapse: collapse;
+  font-size: 7px;
+}
+
+.sales-print-page__items th,
+.sales-print-page__items td {
+  padding: 5px 4px;
+  border-right: 1px solid #d7dde0;
+  border-bottom: 1px solid #d7dde0;
+  text-align: center;
+  white-space: nowrap;
+}
+
+.sales-print-page__items th:last-child,
+.sales-print-page__items td:last-child {
+  border-right: 0;
+}
+
+.sales-print-page__items th {
+  color: #31474e;
+  background: #f3f5f6;
+  font-weight: 700;
+}
+
+.sales-print-page__items td:nth-child(2) {
+  min-width: 170px;
+  text-align: left;
+}
+
+.sales-print-page__items td:nth-child(2) input {
+  text-align: left;
+}
+
+.sales-print-page__empty-row {
+  height: 42px;
+  color: #8b999d;
+}
+
+.sales-print-page__summary-area {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 330px;
+  gap: 14px;
+  align-items: start;
+  margin-top: 10px;
+}
+
+.sales-print-page__signature {
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  min-height: 69px;
+  padding-bottom: 5px;
+  border: 1px dashed #a9b2b5;
+  border-radius: 14px;
+  color: #253b41;
+  font-size: 7px;
+  font-weight: 700;
+}
+
+.sales-print-page__summary {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 8px;
+}
+
+.sales-print-page__summary th,
+.sales-print-page__summary td {
+  padding: 5px 7px;
+  border: 1px solid #cfd5d8;
+}
+
+.sales-print-page__summary th {
+  width: 58%;
+  color: #2f474e;
+  background: #f1f1f1;
+  text-align: right;
+}
+
+.sales-print-page__summary td {
+  text-align: right;
+}
+
+.sales-print-page__notes {
+  display: block;
+  margin-top: 13px;
+  padding: 7px;
+  border: 1px solid #d7dde0;
+  border-radius: 5px;
+}
+
+.sales-print-page__notes strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 8px;
+}
+
+.sales-print-page__notes textarea {
+  display: block;
+  min-height: 23px;
+  padding: 0;
+  resize: vertical;
+}
+
+.sales-print-page__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 42px;
+  margin-top: 12px;
+}
+
+.sales-print-page__saved {
+  color: #299454;
+  font-size: 8px;
+}
+
+.sales-print-page--empty {
+  min-height: 160px;
+}
+
+.sales-print-page--empty h1 {
+  margin: 30px 0 6px;
+  font-size: 16px;
+}
+
+.sales-print-page--empty p {
+  margin: 0;
+  color: #687b81;
+}
+
+@media (max-width: 680px) {
+  .sales-print-page__summary-area {
+    grid-template-columns: 1fr;
+  }
+
+  .sales-print-page__parties {
+    gap: 7px;
+  }
+}
+
+@media print {
+  body {
+    background: #fff;
+  }
+
+  .website-header,
+  .website-nav,
+  .website-context,
+  .sales-print-page__back,
+  .sales-print-page__controls {
+    display: none !important;
+  }
+
+  .website-content {
+    padding: 0 !important;
+  }
+
+  .sales-print-page-shell {
+    min-height: 0;
+    padding: 0;
+    background: #fff;
+  }
+
+  .sales-print-page {
+    max-width: none;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+
+  .sales-print-page__editable-wrap input,
+  .sales-print-page__notes textarea {
+    border-color: transparent;
+  }
+}

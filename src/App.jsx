@@ -41,6 +41,7 @@ import QuotationDetailsPage from './features/quotations/pages/QuotationDetailsPa
 import QuotationsPage from './features/quotations/pages/QuotationsPage'
 import ReportsPage from './features/reports/pages/ReportsPage'
 import SaleDetailsPage from './features/sales/pages/SaleDetailsPage'
+import SalePrintPage from './features/sales/pages/SalePrintPage'
 import SalesPage from './features/sales/pages/SalesPage'
 import RecordedSalesOrderForm from './features/sales/components/RecordedSalesOrderForm'
 import SalesOrderDetailsPage from './features/sales-orders/pages/SalesOrderDetailsPage'
@@ -85,6 +86,7 @@ const PAGE_ROUTES = [
   // create screen for the Sales and Sales Orders navigation entry points.
   { path: 'orders/create', module: 'Sales', element: <RecordedSalesOrderForm mode="sale" /> },
   { path: 'orders', module: 'Sales Orders', element: <SalesOrdersPage /> },
+  { path: 'orders/details/:saleId/download', module: 'Sales', element: <SalePrintPage /> },
   { path: 'orders/details/:saleId', module: 'Sales', element: <SaleDetailsPage /> },
   { path: 'sales-orders', module: 'Sales Orders', element: <SalesOrdersPage /> },
   { path: 'sales-orders/new', module: 'Sales Orders', element: <RecordedSalesOrderForm mode="order" /> },
