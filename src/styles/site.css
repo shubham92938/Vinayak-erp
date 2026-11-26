@@ -1,0 +1,1361 @@
+/*
+ * Vinayak ERP — application-wide CSS repair layer
+ *
+ * The feature styles intentionally stay close to their workflows. This final
+ * layer gives every route the same page frame, surface rhythm, control sizing,
+ * table treatment, focus state, and responsive behavior. It is loaded after
+ * the feature and recording styles so old module-specific declarations cannot
+ * make one screen feel unrelated to the rest of the product.
+ */
+
+:root {
+  --site-content-width: 1400px;
+  --site-gutter: clamp(16px, 2.4vw, 34px);
+  --site-control-height: 40px;
+  --site-card-radius: 16px;
+  --site-table-radius: 14px;
+  --site-section-gap: clamp(18px, 2.2vw, 28px);
+  --site-nav-background: #202c6b;
+  --site-nav-foreground: #f8fafc;
+}
+
+[data-theme='dark'] {
+  --site-nav-background: #111c3e;
+  --site-nav-foreground: #f1f5f9;
+}
+
+html {
+  min-width: 320px;
+  overflow-x: hidden;
+  background: var(--color-background);
+}
+
+body {
+  min-width: 320px;
+  overflow-x: hidden;
+  color: var(--color-text-primary);
+  background: var(--color-background);
+  transition: color var(--duration-slow) var(--ease-standard), background-color var(--duration-slow) var(--ease-standard);
+}
+
+#root {
+  min-width: 0;
+  min-height: 100vh;
+}
+
+::selection {
+  color: var(--color-text-inverse);
+  background: var(--color-selection);
+}
+
+/* --------------------------------------------------------------------------
+   Shared page frame
+   -------------------------------------------------------------------------- */
+
+:is(
+  .balance-page,
+  .categories-page,
+  .customers-page,
+  .expenses-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .payment-out-page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .settings-page,
+  .transactions-page,
+  .users-page,
+  .page,
+  .not-found,
+  .search-page,
+  .components-preview,
+  .recorded-dashboard,
+  .recorded-order-page,
+  .recorded-purchase-page
+) {
+  width: 100%;
+  max-width: var(--site-content-width);
+  margin-inline: auto;
+}
+
+.website-content {
+  width: min(calc(100% - 48px), var(--site-content-width));
+  max-width: none;
+  min-height: calc(100vh - 104px);
+  margin-inline: auto;
+  padding: var(--site-section-gap) 0 56px;
+}
+
+.page-container {
+  max-width: var(--site-content-width);
+  padding-inline: var(--site-gutter);
+}
+
+/* Keep the legacy module pages from becoming cramped or excessively wide. */
+:is(
+  .balance-page,
+  .categories-page,
+  .customers-page,
+  .expenses-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .payment-out-page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .settings-page,
+  .transactions-page,
+  .users-page
+) {
+  padding-inline: 0;
+}
+
+/* --------------------------------------------------------------------------
+   Consistent module headers
+   -------------------------------------------------------------------------- */
+
+:is(
+  .balance-header,
+  .categories-header,
+  .customers-header,
+  .expenses-header,
+  .fund-transfers-header,
+  .inventory-header,
+  .notifications-header,
+  .payment-in-header,
+  .payment-out-header,
+  .products-header,
+  .profit-loss-header,
+  .purchase-orders-header,
+  .purchases-header,
+  .quotations-header,
+  .reports-header,
+  .sales-header,
+  .sales-orders-header,
+  .settings-header,
+  .transactions-header,
+  .users-header
+) {
+  gap: var(--space-5);
+  padding: var(--space-5) var(--space-6);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--site-card-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+:is(
+  .balance-header__top,
+  .categories-header__top,
+  .customers-header__top,
+  .expenses-header__top,
+  .fund-transfers-header__top,
+  .inventory-header__top,
+  .notifications-header__top,
+  .payment-in-header__top,
+  .payment-out-header__top,
+  .products-header__top,
+  .profit-loss-header__top,
+  .purchase-orders-header__top,
+  .purchases-header__top,
+  .quotations-header__top,
+  .reports-header__top,
+  .sales-header__top,
+  .sales-orders-header__top,
+  .settings-header__top,
+  .transactions-header__top,
+  .users-header__top
+) {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--space-6);
+}
+
+[class*='-header__eyebrow'] {
+  color: var(--brand-teal) !important;
+  font-size: var(--font-size-2xs);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-caps);
+}
+
+[class*='-header__title'] {
+  margin-top: var(--space-1-5);
+  color: var(--color-text-primary) !important;
+  font-size: clamp(var(--font-size-lg), 1.8vw, var(--font-size-2xl));
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+[class*='-header__description'] {
+  max-width: 760px;
+  margin-top: var(--space-2);
+  color: var(--color-text-secondary) !important;
+  line-height: var(--line-height-relaxed);
+}
+
+[class*='-header__actions'] {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+  flex-shrink: 0;
+}
+
+/* The compact recorded title bars are still intentionally denser than the
+   module headers, but they share the same border, radius and contrast rules. */
+
+.recorded-page-header,
+.recorded-category-header,
+.recorded-order-page__titlebar,
+.recorded-purchase-page__titlebar {
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border: 1px solid var(--color-border);
+  border-radius: var(--site-card-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+.recorded-page-header {
+  min-height: 68px;
+  margin-bottom: var(--space-4);
+  padding: var(--space-4) var(--space-5);
+}
+
+.recorded-page-header h1,
+.recorded-category-header h1,
+.recorded-order-page__titlebar h1,
+.recorded-purchase-page__titlebar h1 {
+  color: var(--color-text-primary) !important;
+  font-size: var(--font-size-xl);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: var(--letter-spacing-tight);
+}
+
+.recorded-page-header__actions {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--space-2);
+}
+
+/* --------------------------------------------------------------------------
+   Surfaces, cards and empty states
+   -------------------------------------------------------------------------- */
+
+:is(
+  .ui-card,
+  .data-table,
+  .surface,
+  .recorded-table,
+  .recorded-order-card,
+  .recorded-purchase-form,
+  .recorded-product-form,
+  .recorded-category-surface,
+  .recorded-category-form,
+  .purchase-orders-card,
+  .balance-card,
+  .sales-detail-card,
+  .customers-detail-card,
+  .product-details-card,
+  .products-details-card,
+  .firm-profile__card
+) {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  border-radius: var(--site-card-radius);
+  box-shadow: var(--shadow-sm);
+}
+
+:is(
+  .ui-card__footer,
+  .data-table__pagination,
+  .recorded-table__footer,
+  .recorded-table__toolbar,
+  .recorded-category-form__footer
+) {
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+}
+
+:is(
+  .data-table__empty,
+  .recorded-table__empty,
+  .products-empty,
+  .products-details-empty,
+  .categories-empty,
+  .customers-empty,
+  .firm-home__empty,
+  .search-page__state
+) {
+  color: var(--color-text-secondary);
+}
+
+:is(
+  .ui-card__title,
+  .ui-card__description,
+  .ui-card__body,
+  .data-table__heading,
+  .data-table__description,
+  .recorded-order-page,
+  .recorded-purchase-page
+) {
+  color: var(--color-text-primary);
+}
+
+/* --------------------------------------------------------------------------
+   Controls and focus states
+   -------------------------------------------------------------------------- */
+
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) input:not([type='checkbox']):not([type='radio']):not([type='file']),
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) select,
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) textarea {
+  color: var(--color-text-primary);
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) input:not([type='checkbox']):not([type='radio']):not([type='file']),
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) select {
+  min-height: var(--site-control-height);
+}
+
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) input:hover:not(:disabled):not([type='checkbox']):not([type='radio']):not([type='file']),
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) select:hover:not(:disabled),
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) textarea:hover:not(:disabled) {
+  border-color: var(--color-border-strong);
+}
+
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) input:focus-visible:not([type='checkbox']):not([type='radio']):not([type='file']),
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) select:focus-visible,
+:is(
+  .website-content,
+  .firm-home,
+  .login-page,
+  .ds-shell
+) textarea:focus-visible {
+  outline: none;
+  border-color: var(--brand-teal) !important;
+  box-shadow: 0 0 0 3px var(--focus-ring-color) !important;
+}
+
+input[type='checkbox'],
+input[type='radio'] {
+  accent-color: var(--brand-teal);
+}
+
+::placeholder {
+  color: var(--color-text-tertiary);
+  opacity: 1;
+}
+
+/* Keep native controls readable when their parent is one of the compact
+   recording forms. */
+
+.recorded-table__search-input,
+.recorded-table__search-input input,
+.recorded-order-field__control,
+.recorded-order-field__control select,
+.recorded-purchase-type select {
+  min-height: 36px;
+}
+
+.recorded-table__search-input,
+.recorded-table__search-input input {
+  color: var(--color-text-primary);
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+}
+
+/* --------------------------------------------------------------------------
+   Tables and list rhythm
+   -------------------------------------------------------------------------- */
+
+:is(
+  .recorded-table,
+  .data-table,
+  .customers-table,
+  .users-table,
+  .categories-table,
+  .balance-table,
+  .sales-detail-table,
+  .purchase-orders-detail-table,
+  .profit-loss-table,
+  .transactions-table,
+  .customers-history__table,
+  .recorded-invoice-lines-wrap
+) {
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: var(--site-table-radius);
+}
+
+:is(
+  .recorded-table__table,
+  .data-table__table,
+  .customers-table table,
+  .users-table table,
+  .categories-table table,
+  .balance-table,
+  .sales-detail-table,
+  .purchase-orders-detail-table,
+  .profit-loss-table,
+  .transactions-table,
+  .customers-history__table,
+  .recorded-invoice-lines
+) {
+  width: 100%;
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+}
+
+:is(
+  .recorded-table__table th,
+  .data-table__table th,
+  .customers-table th,
+  .users-table th,
+  .categories-table th,
+  .balance-table th,
+  .sales-detail-table th,
+  .purchase-orders-detail-table th,
+  .profit-loss-table th,
+  .transactions-table th,
+  .customers-history__table th,
+  .recorded-invoice-lines th
+) {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+  font-weight: var(--font-weight-bold);
+  letter-spacing: 0.045em;
+}
+
+:is(
+  .recorded-table__table td,
+  .data-table__table td,
+  .customers-table td,
+  .users-table td,
+  .categories-table td,
+  .balance-table td,
+  .sales-detail-table td,
+  .purchase-orders-detail-table td,
+  .profit-loss-table td,
+  .transactions-table td,
+  .customers-history__table td,
+  .recorded-invoice-lines td
+) {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+:is(
+  .recorded-table__table tbody tr,
+  .data-table__table tbody tr,
+  .customers-table tbody tr,
+  .users-table tbody tr,
+  .categories-table tbody tr,
+  .balance-table tbody tr,
+  .sales-detail-table tbody tr,
+  .purchase-orders-detail-table tbody tr,
+  .profit-loss-table tbody tr,
+  .transactions-table tbody tr
+):hover {
+  background: color-mix(in srgb, var(--brand-teal) 6%, var(--color-surface));
+}
+
+.recorded-table__scroll,
+.data-table__scroll,
+.recorded-invoice-lines-wrap {
+  scrollbar-color: var(--color-border-strong) transparent;
+}
+
+/* --------------------------------------------------------------------------
+   Recording-driven order and purchase layouts
+   -------------------------------------------------------------------------- */
+
+.recorded-order-card,
+.recorded-purchase-form,
+.recorded-product-form {
+  padding: clamp(16px, 2vw, 24px);
+}
+
+.recorded-order-grid,
+.recorded-purchase-grid {
+  gap: var(--space-4);
+}
+
+.recorded-order-items,
+.recorded-purchase-items,
+.recorded-products-list__table {
+  border-color: var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.recorded-order-items__head,
+.recorded-purchase-items__head,
+.recorded-products-list__head {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+}
+
+.recorded-order-items__row,
+.recorded-purchase-items__row,
+.recorded-products-list__row {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.recorded-order-items__row:last-child,
+.recorded-purchase-items__row:last-child,
+.recorded-products-list__row:last-child {
+  border-bottom: 0;
+}
+
+.recorded-primary-button,
+.recorded-add-row,
+.recorded-category-form__submit {
+  min-height: 40px;
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-bold);
+  box-shadow: var(--shadow-xs);
+}
+
+.recorded-delete-button,
+.recorded-cart-button,
+.recorded-icon-button,
+.recorded-row-actions__button {
+  border-radius: var(--radius-sm);
+}
+
+/* --------------------------------------------------------------------------
+   Workspace chrome
+   -------------------------------------------------------------------------- */
+
+.website-shell {
+  min-height: 100vh;
+  color: var(--color-text-primary);
+  background:
+    radial-gradient(circle at 88% 0%, color-mix(in srgb, var(--brand-teal) 10%, transparent), transparent 28rem),
+    var(--color-background);
+}
+
+.website-header {
+  min-height: 64px;
+  padding-inline: max(var(--site-gutter), calc((100% - var(--site-content-width)) / 2));
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  border-bottom-color: var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.website-header__tools {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+}
+
+.website-header__actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  flex: 0 0 auto;
+}
+
+.website-header__firm {
+  color: var(--brand-teal);
+  background: var(--brand-teal-soft);
+  border-color: color-mix(in srgb, var(--brand-teal) 34%, var(--color-border));
+}
+
+.website-header__firm strong {
+  color: var(--color-text-primary);
+}
+
+.website-nav {
+  color: var(--site-nav-foreground);
+  background: var(--site-nav-background);
+  border-bottom-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.website-nav__items {
+  width: min(100%, var(--site-content-width));
+  margin-inline: auto;
+  padding-inline: var(--site-gutter);
+}
+
+.website-nav__link,
+.website-nav__dropdown > summary {
+  min-height: 45px;
+  color: var(--site-nav-foreground);
+  border-radius: var(--radius-sm);
+  font-weight: var(--font-weight-semibold);
+}
+
+.website-nav__link:hover,
+.website-nav__link.is-active,
+.website-nav__dropdown > summary:hover,
+.website-nav__dropdown[open] > summary,
+.website-nav__dropdown.is-active > summary {
+  color: var(--site-nav-foreground);
+  background: color-mix(in srgb, var(--brand-teal) 16%, transparent);
+}
+
+.website-nav__menu {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-lg);
+}
+
+.website-nav__menu a {
+  color: var(--color-text-secondary);
+}
+
+.website-nav__menu a:hover,
+.website-nav__menu a.is-active {
+  color: var(--brand-teal);
+  background: var(--brand-teal-soft);
+}
+
+/* --------------------------------------------------------------------------
+   Firm selection and login surfaces
+   -------------------------------------------------------------------------- */
+
+.firm-home {
+  color: var(--color-text-primary);
+  background:
+    radial-gradient(circle at 12% 0%, color-mix(in srgb, var(--brand-teal) 12%, transparent), transparent 25rem),
+    var(--color-background);
+}
+
+.firm-home__topbar {
+  min-height: 64px;
+  padding-inline: max(var(--site-gutter), calc((100% - var(--site-content-width)) / 2));
+  background: color-mix(in srgb, var(--color-surface) 94%, transparent);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-xs);
+}
+
+.firm-home__main {
+  width: min(calc(100% - 48px), var(--site-content-width));
+  padding-block: clamp(28px, 5vw, 64px) 72px;
+}
+
+.firm-home__toolbar,
+.firm-card,
+.firm-home__empty {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.firm-card:hover,
+.firm-card:focus-visible {
+  border-color: var(--brand-teal);
+  box-shadow: var(--shadow-md);
+}
+
+.firm-home h1,
+.firm-card__name,
+.firm-card__open,
+.firm-home__empty h2 {
+  color: var(--color-text-primary);
+}
+
+.firm-home__description,
+.firm-home__count,
+.firm-card__details dt,
+.firm-card__details dd,
+.firm-home__empty p {
+  color: var(--color-text-secondary);
+}
+
+.login-card-shell {
+  background: var(--color-background);
+}
+
+.login-card {
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-xl);
+}
+
+/* --------------------------------------------------------------------------
+   Responsive repair
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 960px) {
+  .website-content {
+    width: min(calc(100% - 32px), var(--site-content-width));
+  }
+
+  :is(
+    .balance-header__top,
+    .categories-header__top,
+    .customers-header__top,
+    .expenses-header__top,
+    .fund-transfers-header__top,
+    .inventory-header__top,
+    .notifications-header__top,
+    .payment-in-header__top,
+    .payment-out-header__top,
+    .products-header__top,
+    .profit-loss-header__top,
+    .purchase-orders-header__top,
+    .purchases-header__top,
+    .quotations-header__top,
+    .reports-header__top,
+    .sales-header__top,
+    .sales-orders-header__top,
+    .settings-header__top,
+    .transactions-header__top,
+    .users-header__top
+  ) {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  [class*='-header__actions'] {
+    justify-content: flex-start;
+  }
+
+  .recorded-order-page,
+  .recorded-purchase-page {
+    max-width: 100%;
+  }
+}
+
+@media (max-width: 700px) {
+  .website-content,
+  .firm-home__main {
+    width: calc(100% - 24px);
+  }
+
+  .website-header {
+    min-height: 58px;
+    padding-inline: 12px;
+  }
+
+  .website-header__tools {
+    gap: 4px;
+  }
+
+  .website-header__firm {
+    max-width: 42vw;
+    padding-inline: 9px;
+    font-size: 9px;
+  }
+
+  .website-header__actions {
+    gap: 4px;
+  }
+
+  .website-nav__items {
+    width: max-content;
+    margin: 0;
+    padding-inline: 6px;
+  }
+
+  :is(
+    .balance-header,
+    .categories-header,
+    .customers-header,
+    .expenses-header,
+    .fund-transfers-header,
+    .inventory-header,
+    .notifications-header,
+    .payment-in-header,
+    .payment-out-header,
+    .products-header,
+    .profit-loss-header,
+    .purchase-orders-header,
+    .purchases-header,
+    .quotations-header,
+    .reports-header,
+    .sales-header,
+    .sales-orders-header,
+    .settings-header,
+    .transactions-header,
+    .users-header
+  ) {
+    padding: var(--space-4);
+  }
+
+  [class*='-header__actions'] > .ui-button,
+  [class*='-header__actions'] > button {
+    flex: 1 1 auto;
+  }
+
+  .recorded-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .recorded-page-header__actions {
+    width: 100%;
+  }
+
+  .recorded-page-header__actions > .ui-button,
+  .recorded-page-header__actions > button {
+    flex: 1 1 0;
+  }
+
+  .recorded-table__toolbar {
+    align-items: stretch;
+    flex-wrap: wrap;
+  }
+
+  .recorded-table__filters {
+    order: 3;
+    flex-basis: 100%;
+  }
+
+  .recorded-table__search,
+  .recorded-table__search-input,
+  .recorded-table__search-input input {
+    width: 100%;
+  }
+
+  .recorded-table__search {
+    flex: 1 1 220px;
+  }
+
+  .recorded-order-card,
+  .recorded-purchase-form,
+  .recorded-product-form {
+    padding: var(--space-4);
+  }
+
+  .recorded-order-grid,
+  .recorded-purchase-grid,
+  .recorded-purchase-grid--external,
+  .recorded-purchase-grid--external-foot {
+    grid-template-columns: 1fr;
+  }
+
+  .recorded-order-field.is-wide {
+    grid-column: auto;
+  }
+
+  .firm-home__toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .firm-home__search {
+    width: 100%;
+  }
+
+  .firm-home__count {
+    align-self: flex-end;
+  }
+}
+
+@media (max-width: 480px) {
+  .website-content,
+  .firm-home__main {
+    width: calc(100% - 20px);
+  }
+
+  .website-header__firm {
+    display: none;
+  }
+
+  .website-header__brand .brand-lockup__tagline {
+    display: none;
+  }
+
+  [class*='-header__actions'] {
+    width: 100%;
+  }
+
+  .recorded-table__entries,
+  .recorded-table__search {
+    width: 100%;
+    margin-left: 0;
+  }
+
+  .recorded-table__footer {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: var(--space-3);
+  }
+
+  .recorded-table__pagination {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Legacy recording controls and document surfaces
+
+   The older workflow screens use deliberately compact markup. Keep their
+   density, but route their colors, borders and focus states through the same
+   tokens used by the newer pages.
+   -------------------------------------------------------------------------- */
+
+.recorded-category-surface,
+.recorded-category-form,
+.recorded-invoice-details,
+.sales-print-page,
+.recorded-purchase-form,
+.recorded-order-card,
+.recorded-product-form {
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.recorded-category-header,
+.recorded-category-form__header,
+.recorded-invoice-details__header,
+.recorded-purchase-page__titlebar,
+.recorded-order-page__titlebar,
+.recorded-product-form__titlebar {
+  color: var(--color-text-primary);
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+}
+
+.recorded-category-header h1,
+.recorded-category-form__header h1,
+.recorded-invoice-details__header h1,
+.recorded-purchase-page__titlebar h1,
+.recorded-order-page__titlebar h1,
+.recorded-product-form__titlebar h1,
+.recorded-product-details__intro h1,
+.recorded-products-list h2,
+.recorded-product-details__card-title {
+  color: var(--color-text-primary);
+}
+
+.recorded-category-header__hint,
+.recorded-invoice-field > span,
+.recorded-invoice-notes > span,
+.recorded-order-field > span,
+.recorded-purchase-page,
+.recorded-product-form__label,
+.recorded-form-field > span,
+.recorded-product-form__section-title,
+.recorded-product-details__intro p,
+.recorded-product-details__card-title,
+.recorded-products-list__empty,
+.recorded-order-items__empty,
+.recorded-purchase-summary,
+.recorded-purchase-items__row,
+.recorded-order-items__row {
+  color: var(--color-text-secondary);
+}
+
+.recorded-category-table .recorded-table__toolbar,
+.recorded-category-table .recorded-table__footer,
+.recorded-category-table .recorded-table__table th,
+.recorded-purchase-items__head,
+.recorded-order-items__head,
+.recorded-products-list__head,
+.recorded-invoice-lines th,
+.recorded-product-details__table th {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+}
+
+.recorded-category-table .recorded-table__table,
+.recorded-invoice-lines,
+.recorded-product-details__table,
+.recorded-purchase-items__row,
+.recorded-order-items__row,
+.recorded-products-list__row {
+  color: var(--color-text-secondary);
+}
+
+.recorded-category-table .recorded-table__table td,
+.recorded-category-table .recorded-table__table th,
+.recorded-invoice-lines td,
+.recorded-invoice-lines th,
+.recorded-product-details__table td,
+.recorded-product-details__table th,
+.recorded-purchase-items__head,
+.recorded-purchase-items__row,
+.recorded-order-items__head,
+.recorded-order-items__row,
+.recorded-products-list__head,
+.recorded-products-list__row {
+  border-color: var(--color-border);
+}
+
+.recorded-category-table .recorded-table__table tbody tr:hover,
+.recorded-invoice-lines tbody tr:hover,
+.recorded-purchase-items__row:hover,
+.recorded-order-items__row:hover,
+.recorded-products-list__row:hover {
+  background: var(--color-surface-hover);
+}
+
+.recorded-category-table.recorded-table {
+  border: 0;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.recorded-category-table .recorded-table__entries select,
+.recorded-category-table .recorded-table__search-input,
+.recorded-category-table .recorded-table__search input,
+.recorded-category-filters select,
+.recorded-category-form__field input,
+.recorded-category-form__field textarea,
+.recorded-purchase-type select,
+.recorded-purchase-items__row input,
+.recorded-purchase-items__row select,
+.recorded-order-field input,
+.recorded-order-field select,
+.recorded-order-field textarea,
+.recorded-order-items__row input,
+.recorded-order-totals input,
+.recorded-products-list__filters input,
+.recorded-products-list__filters select,
+.recorded-form-field input,
+.recorded-form-field select,
+.recorded-form-field textarea,
+.recorded-invoice-field input,
+.recorded-invoice-notes textarea {
+  color: var(--color-text-primary);
+  background: var(--color-surface);
+  border-color: var(--color-border-strong);
+}
+
+.recorded-category-table .recorded-table__entries select,
+.recorded-category-table .recorded-table__search-input,
+.recorded-category-table .recorded-table__search input,
+.recorded-category-filters select,
+.recorded-category-form__field input,
+.recorded-category-form__field textarea,
+.recorded-purchase-type select,
+.recorded-purchase-items__row input,
+.recorded-purchase-items__row select,
+.recorded-order-field input,
+.recorded-order-field select,
+.recorded-order-field textarea,
+.recorded-order-items__row input,
+.recorded-order-totals input,
+.recorded-products-list__filters input,
+.recorded-products-list__filters select,
+.recorded-form-field input,
+.recorded-form-field select,
+.recorded-form-field textarea {
+  min-height: 29px;
+}
+
+.recorded-invoice-field input {
+  min-height: 38px;
+  height: 38px;
+}
+
+.recorded-invoice-notes textarea {
+  min-height: 38px;
+}
+
+.recorded-category-table .recorded-table__search-input input {
+  min-height: 24px;
+  height: 24px;
+  background: transparent;
+}
+
+.recorded-category-form__field input:focus,
+.recorded-category-form__field textarea:focus,
+.recorded-purchase-type select:focus,
+.recorded-purchase-items__row input:focus,
+.recorded-purchase-items__row select:focus,
+.recorded-order-field input:focus,
+.recorded-order-field select:focus,
+.recorded-order-field textarea:focus,
+.recorded-order-items__row input:focus,
+.recorded-products-list__filters input:focus,
+.recorded-products-list__filters select:focus,
+.recorded-form-field input:focus,
+.recorded-form-field select:focus,
+.recorded-form-field textarea:focus,
+.recorded-invoice-field input:focus,
+.recorded-invoice-notes textarea:focus {
+  outline: none;
+  border-color: var(--brand-teal) !important;
+  box-shadow: var(--focus-ring) !important;
+}
+
+.recorded-category-action,
+.recorded-purchase-new-product button,
+.recorded-cart-button,
+.recorded-row-actions__button,
+.recorded-delete-button,
+.recorded-quantity-control button,
+.recorded-icon-button {
+  color: var(--brand-teal);
+  background: var(--brand-teal-soft);
+  border-color: color-mix(in srgb, var(--brand-teal) 30%, var(--color-border));
+}
+
+.recorded-category-action--delete,
+.recorded-row-actions__button--danger,
+.recorded-delete-button,
+.recorded-danger-button {
+  color: var(--color-danger-strong);
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger-border);
+}
+
+.recorded-category-action:hover:not(:disabled),
+.recorded-purchase-new-product button:hover,
+.recorded-cart-button:hover,
+.recorded-row-actions__button:hover:not(:disabled),
+.recorded-delete-button:hover,
+.recorded-quantity-control button:hover:not(:disabled),
+.recorded-icon-button:hover:not(:disabled) {
+  color: var(--color-text-inverse);
+  background: var(--brand-teal);
+  border-color: var(--brand-teal);
+}
+
+.recorded-category-action--delete:hover:not(:disabled),
+.recorded-row-actions__button--danger:hover:not(:disabled),
+.recorded-delete-button:hover {
+  color: var(--color-text-inverse);
+  background: var(--color-danger);
+  border-color: var(--color-danger);
+}
+
+.recorded-primary-button,
+.recorded-category-form__submit,
+.recorded-order-submit .ui-button,
+.recorded-purchase-submit .ui-button {
+  color: var(--color-text-inverse);
+  background: var(--color-blue);
+  border-color: var(--color-blue);
+}
+
+.recorded-primary-button:hover:not(:disabled),
+.recorded-category-form__submit:hover:not(:disabled),
+.recorded-order-submit .ui-button:hover:not(:disabled),
+.recorded-purchase-submit .ui-button:hover:not(:disabled) {
+  background: var(--color-blue-hover);
+  border-color: var(--color-blue-hover);
+}
+
+.recorded-status,
+.recorded-stock,
+.recorded-detail-stock {
+  color: var(--color-text-inverse);
+  background: var(--color-success);
+}
+
+.recorded-status--approved,
+.recorded-stock--low-stock,
+.recorded-detail-stock--low-stock {
+  color: var(--color-warning-strong);
+  background: var(--color-warning-soft);
+}
+
+.recorded-stock--out-of-stock,
+.recorded-detail-stock--out-of-stock {
+  color: var(--color-danger-strong);
+  background: var(--color-danger-soft);
+}
+
+.recorded-product__quantity b {
+  color: var(--color-success-strong);
+  background: var(--color-success-soft);
+}
+
+.recorded-product__quantity small {
+  color: var(--color-danger-strong);
+  background: var(--color-danger-soft);
+}
+
+.recorded-product__image,
+.recorded-product__no-photo,
+.recorded-order-product-image,
+.recorded-product-details__image-frame,
+.recorded-product-form__photo-preview {
+  color: var(--color-text-tertiary);
+  background: var(--color-surface-muted);
+  border-color: var(--color-border);
+}
+
+.recorded-file-input {
+  color: var(--color-text-secondary);
+  border-color: var(--color-border);
+}
+
+.recorded-file-input span {
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+}
+
+.recorded-product-details .ui-card {
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-sm);
+}
+
+.recorded-invoice-details,
+.sales-print-page {
+  border: 1px solid var(--color-border);
+  border-radius: var(--site-card-radius);
+}
+
+.recorded-invoice-details__body {
+  background: var(--color-surface);
+}
+
+.recorded-invoice-lines-wrap,
+.sales-print-page__table-wrap,
+.sales-print-page__party,
+.sales-print-page__notes,
+.sales-print-page__summary-area,
+.sales-print-page__summary {
+  border-color: var(--color-border);
+}
+
+.recorded-invoice-lines tfoot td,
+.sales-print-page__items th,
+.sales-print-page__summary th {
+  color: var(--color-text-secondary);
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+}
+
+.recorded-invoice-lines tfoot td,
+.recorded-invoice-lines td,
+.sales-print-page__items td,
+.sales-print-page__summary td,
+.sales-print-page__party strong,
+.sales-print-page__date,
+.sales-print-page__firm-line,
+.sales-print-page__saved,
+.sales-print-page__empty-row,
+.sales-print-page--empty p {
+  color: var(--color-text-secondary);
+}
+
+.sales-print-page-shell {
+  background: var(--color-background);
+}
+
+.sales-print-page__document-title,
+.sales-print-page__party h2 {
+  color: var(--brand-coral);
+}
+
+.sales-print-page__editable-wrap input,
+.sales-print-page__notes textarea {
+  min-height: 0;
+  color: var(--color-text-primary);
+  background: transparent;
+  border-color: transparent;
+}
+
+.sales-print-page__editable-wrap input:hover,
+.sales-print-page__editable-wrap input:focus,
+.sales-print-page__notes textarea:hover,
+.sales-print-page__notes textarea:focus {
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border-strong);
+  box-shadow: var(--focus-ring);
+}
+
+@media print {
+  body,
+  .sales-print-page-shell,
+  .sales-print-page,
+  .recorded-invoice-details {
+    color: #1f2937;
+    background: #fff;
+  }
+
+  .sales-print-page,
+  .recorded-invoice-details {
+    border-color: #d1d5db;
+    box-shadow: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+  }
+}

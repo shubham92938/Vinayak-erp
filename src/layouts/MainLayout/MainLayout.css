@@ -67,6 +67,7 @@
   box-shadow: 0 0 0 3px rgba(20, 184, 166, 0.1);
 }
 
+.website-header__tools,
 .website-header__actions {
   display: flex;
   align-items: center;

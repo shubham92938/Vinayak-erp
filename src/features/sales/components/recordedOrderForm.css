@@ -101,6 +101,7 @@
   border: 1px solid #168448;
   border-radius: 50%;
   cursor: pointer;
+}
 
 .recorded-add-customer-button:hover {
   background: #168448;
