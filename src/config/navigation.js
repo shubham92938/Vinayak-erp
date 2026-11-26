@@ -13,62 +13,124 @@ import {
   UserRound,
 } from 'lucide-react'
 
-// This is the navigation visible in the recorded Vinayak Group website. The
-// deeper modules remain routable for existing permission tests, but are not
-// advertised as first-class navigation until the remaining recordings arrive.
+// Keep every implemented module discoverable from the workspace navigation.
+// The route table remains the single source of truth for direct links and
+// breadcrumbs, while grouped children expose the deeper workflow screens.
 export const NAV_SECTIONS = [
   {
     id: 'overview',
     label: 'Overview',
     items: [
-      { id: 'dashboard', label: 'Dashboard', to: '/dashboard', icon: BarChart3 },
-      { id: 'firms', label: 'Firms', to: '/firms', icon: Building2 },
+      { id: 'dashboard', label: 'Dashboard', to: '/dashboard', icon: BarChart3, module: 'Dashboard' },
+      { id: 'firms', label: 'Firms', to: '/firms', icon: Building2, module: 'Firms' },
     ],
   },
   {
     id: 'users',
     label: 'Users',
-    items: [{ id: 'users-permissions', label: 'Users', to: '/users', icon: ShieldCheck }],
+    items: [{ id: 'users-permissions', label: 'Users', to: '/users', icon: ShieldCheck, module: 'Users & Permissions' }],
   },
   {
     id: 'products',
     label: 'Products',
     items: [
-      { id: 'products', label: 'Products', to: '/products', icon: Package },
-      { id: 'categories', label: 'Categories', to: '/categories', icon: Tags },
-      { id: 'price-list', label: 'Price List', to: '/price-lists', icon: ReceiptIndianRupee },
+      { id: 'products', label: 'Products', to: '/products', icon: Package, module: 'Products' },
+      { id: 'categories', label: 'Categories', to: '/categories', icon: Tags, module: 'Categories' },
+      { id: 'price-list', label: 'Price List', to: '/price-lists', icon: ReceiptIndianRupee, module: 'Price List' },
     ],
+  },
+  {
+    id: 'customers',
+    label: 'Customers',
+    items: [{ id: 'customers', label: 'Customers', to: '/customers', icon: UserRound, module: 'Customers' }],
+  },
+  {
+    id: 'inventory',
+    label: 'Inventory',
+    items: [{
+      id: 'inventory-management',
+      label: 'Inventory',
+      icon: Package,
+      module: 'Inventory',
+      children: [
+        { id: 'inventory-overview', label: 'Overview', to: '/inventory', icon: Package, module: 'Inventory' },
+        { id: 'stock-in', label: 'Stock In', to: '/inventory/stock-in', icon: Package, module: 'Inventory' },
+        { id: 'stock-out', label: 'Stock Out', to: '/inventory/stock-out', icon: Package, module: 'Inventory' },
+        { id: 'stock-adjustments', label: 'Adjustments', to: '/inventory/adjustments', icon: Package, module: 'Inventory' },
+        { id: 'stock-transfers', label: 'Transfers', to: '/inventory/transfers', icon: Package, module: 'Inventory' },
+      ],
+    }],
   },
   {
     id: 'sales-management',
     label: 'Sales Management',
-    items: [
-      { id: 'sales', label: 'Sales', to: '/sales', icon: ShoppingCart },
-      { id: 'sales-orders', label: 'Sales Orders', to: '/orders', icon: ClipboardList },
-    ],
+    items: [{
+      id: 'sales-management',
+      label: 'Sales Management',
+      icon: ShoppingCart,
+      module: 'Sales',
+      children: [
+        { id: 'sales', label: 'Sales', to: '/sales', icon: ShoppingCart, module: 'Sales' },
+        { id: 'sales-orders', label: 'Sales Orders', to: '/orders', icon: ClipboardList, module: 'Sales Orders' },
+      ],
+    }],
   },
   {
     id: 'purchase-management',
     label: 'Purchase Management',
-    items: [
-      { id: 'purchases', label: 'Purchases', to: '/purchases', icon: ShoppingBag },
-      { id: 'purchase-orders', label: 'Purchase Orders', to: '/purchase-orders', icon: FileText },
-    ],
+    items: [{
+      id: 'purchase-management',
+      label: 'Purchase Management',
+      icon: ShoppingBag,
+      module: 'Purchases',
+      children: [
+        { id: 'purchases', label: 'Purchases', to: '/purchases', icon: ShoppingBag, module: 'Purchases' },
+        { id: 'purchase-orders', label: 'Purchase Orders', to: '/purchase-orders', icon: FileText, module: 'Purchase Orders' },
+      ],
+    }],
   },
   {
     id: 'quotations',
     label: 'Quotations',
-    items: [{ id: 'quotations', label: 'Quotations', to: '/quotations', icon: FileSpreadsheet }],
+    items: [{ id: 'quotations', label: 'Quotations', to: '/quotations', icon: FileSpreadsheet, module: 'Quotations' }],
   },
   {
-    id: 'transactions',
-    label: 'Transaction',
-    items: [{ id: 'transactions', label: 'Transactions', to: '/transactions', icon: ReceiptIndianRupee }],
+    id: 'finance',
+    label: 'Finance',
+    items: [{
+      id: 'finance-management',
+      label: 'Finance',
+      icon: ReceiptIndianRupee,
+      module: 'Transactions',
+      children: [
+        { id: 'transactions', label: 'Transactions', to: '/transactions', icon: ReceiptIndianRupee, module: 'Transactions' },
+        { id: 'balance', label: 'Balance', to: '/balance', icon: ReceiptIndianRupee, module: 'Balance' },
+        { id: 'payment-in', label: 'Payment In', to: '/payment-in', icon: ReceiptIndianRupee, module: 'Payment In' },
+        { id: 'payment-out', label: 'Payment Out', to: '/payment-out', icon: ReceiptIndianRupee, module: 'Payment Out' },
+        { id: 'fund-transfers', label: 'Fund Transfers', to: '/fund-transfers', icon: ReceiptIndianRupee, module: 'Fund Transfers' },
+        { id: 'expenses', label: 'Expenses', to: '/expenses', icon: ReceiptIndianRupee, module: 'Expenses' },
+        { id: 'profit-loss', label: 'Profit & Loss', to: '/profit-loss', icon: ReceiptIndianRupee, module: 'Profit & Loss' },
+      ],
+    }],
   },
   {
     id: 'reports',
     label: 'Reports',
-    items: [{ id: 'reports', label: 'Reports', to: '/reports', icon: BarChart3 }],
+    items: [{ id: 'reports', label: 'Reports', to: '/reports', icon: BarChart3, module: 'Reports' }],
+  },
+  {
+    id: 'system',
+    label: 'System',
+    items: [{
+      id: 'system-management',
+      label: 'System',
+      icon: FileText,
+      module: 'Settings',
+      children: [
+        { id: 'notifications', label: 'Notifications', to: '/notifications', icon: FileText, module: 'Notifications' },
+        { id: 'settings', label: 'Settings', to: '/settings', icon: FileText, module: 'Settings' },
+      ],
+    }],
   },
 ]
 

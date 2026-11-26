@@ -34,6 +34,16 @@ const NAVIGATION = [
       { label: 'Price List', path: '/price-lists', module: 'Price List' },
     ],
   },
+  { label: 'Customers', path: '/customers', module: 'Customers', icon: UserRound },
+  {
+    label: 'Inventory', module: 'Inventory', icon: Package, items: [
+      { label: 'Inventory Overview', path: '/inventory', module: 'Inventory' },
+      { label: 'Stock In', path: '/inventory/stock-in', module: 'Inventory' },
+      { label: 'Stock Out', path: '/inventory/stock-out', module: 'Inventory' },
+      { label: 'Adjustments', path: '/inventory/adjustments', module: 'Inventory' },
+      { label: 'Transfers', path: '/inventory/transfers', module: 'Inventory' },
+    ],
+  },
   {
     label: 'Sales Management', module: 'Sales', icon: ShoppingCart, items: [
       { label: 'Sales', path: '/sales', module: 'Sales' },
@@ -47,8 +57,24 @@ const NAVIGATION = [
     ],
   },
   { label: 'Quotations', path: '/quotations', module: 'Quotations', icon: FileSpreadsheet },
-  { label: 'Transaction', path: '/transactions', module: 'Transactions', icon: ReceiptIndianRupee },
+  {
+    label: 'Finance', icon: ReceiptIndianRupee, items: [
+      { label: 'Transactions', path: '/transactions', module: 'Transactions' },
+      { label: 'Balance', path: '/balance', module: 'Balance' },
+      { label: 'Payment In', path: '/payment-in', module: 'Payment In' },
+      { label: 'Payment Out', path: '/payment-out', module: 'Payment Out' },
+      { label: 'Fund Transfers', path: '/fund-transfers', module: 'Fund Transfers' },
+      { label: 'Expenses', path: '/expenses', module: 'Expenses' },
+      { label: 'Profit & Loss', path: '/profit-loss', module: 'Profit & Loss' },
+    ],
+  },
   { label: 'Reports', path: '/reports', module: 'Reports', icon: FileText },
+  {
+    label: 'System', icon: FileText, items: [
+      { label: 'Notifications', path: '/notifications', module: 'Notifications' },
+      { label: 'Settings', path: '/settings', module: 'Settings' },
+    ],
+  },
 ]
 
 function routeFor(currentFirm, item, pathname = '') {
