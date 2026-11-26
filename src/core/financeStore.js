@@ -104,11 +104,7 @@ function inActiveFirm(record) {
    Quotations
    -------------------------------------------------------------------------- */
 
-export const mockQuotations = [
-  { id: 'Q-20261101', number: 'QUOT-20261101', customerId: 'CUST-001', customerName: 'Globe Cart Papers & Stationery', date: '2026-10-28T09:15:00', expiryDate: '2026-11-08', items: [{ productId: 'prod-01', name: 'Apple iPhone 15 Pro Max', qty: 8, unit: 'pcs', price: 37990, taxPct: 18, discount: 0 }], discount: 0, subtotal: 303920, taxTotal: 54705, total: 358625, status: 'Sent' },
-  { id: 'Q-20261102', number: 'QUOT-20261102', customerId: 'CUST-003', customerName: 'Reliance Retail', date: '2026-10-30T14:00:00', expiryDate: '2026-11-15', items: [{ productId: 'prod-03', name: 'OnePlus 12', qty: 3, unit: 'pcs', price: 199900, taxPct: 18, discount: 0 }], discount: 0, subtotal: 599700, taxTotal: 107946, total: 707646, status: 'Accepted' },
-  { id: 'Q-20261103', number: 'QUOT-20261103', customerId: 'CUST-002', customerName: 'H&M Cotton T-Shirt Group', date: '2026-11-02T16:00:00', expiryDate: '2026-11-25', items: [{ productId: 'prod-07', name: 'Nike Dri-FIT T-Shirt', qty: 25, unit: 'pcs', price: 810, taxPct: 18, discount: 300 }], discount: 300, subtotal: 20250, taxTotal: 3400.5, total: 23541, status: 'Draft' },
-]
+export const mockQuotations = []
 
 mockQuotations.forEach((quote) => {
   quote.firmId = inferFirmId(quote)
@@ -229,9 +225,7 @@ export function recordPaymentInFinance(data) {
    Payment Out
    -------------------------------------------------------------------------- */
 
-export const mockPaymentsOut = [
-  { id: 'PAYO-01', vendorName: 'Nemotron Traders', purchaseId: 'PO-20261023', date: '2026-10-30T12:00:00', amount: 500000, mode: 'Bank Transfer', accountId: 'acc-bank-1', status: 'Paid', notes: 'Initial payment on PO-20261023' },
-]
+export const mockPaymentsOut = []
 
 mockPaymentsOut.forEach((payment) => {
   payment.firmId = centralPurchases.find((purchase) =>

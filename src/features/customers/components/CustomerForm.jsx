@@ -163,7 +163,7 @@ export default function CustomerForm({ customer, onClose, onSave }) {
           <FormField label="Customer Name" error={errors.name} required>
             {/* placeholder */}
             {null}
-            <FormInput value={form.name} onChange={updateField('name')} placeholder="e.g. Globe Cart Papers & Stationery" />
+            <FormInput value={form.name} onChange={updateField('name')} placeholder="Customer name" />
           </FormField>
           <FormField label="Customer Code" error={errors.code} required hint="Unique identifier (unique per firm)">
             <FormInput value={form.code} onChange={updateField('code')} placeholder="e.g. VAA-01" />
@@ -217,7 +217,7 @@ export default function CustomerForm({ customer, onClose, onSave }) {
 
         <FormGrid>
           <FormField label="City" error={errors.city}>
-            <FormInput value={form.city} onChange={updateField('city')} placeholder="Mumbai" />
+            <FormInput value={form.city} onChange={updateField('city')} placeholder="City" />
           </FormField>
           <FormField label="State" hint="State of the customer">
             <FormInput value={form.state} onChange={updateField('state')} placeholder="Maharashtra" />

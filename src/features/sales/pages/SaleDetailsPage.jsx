@@ -77,8 +77,8 @@ export default function SaleDetailsPage() {
         <div className="recorded-invoice-details__body">
           <div className="recorded-invoice-meta">
             <ReadOnlyField label="Invoice Date" value={formatRecordedDate(record.date)} />
-            <ReadOnlyField label="Dealer" value={record.dealer ?? record.customerName} />
-            <ReadOnlyField label="Supplied To" value={record.suppliedTo ?? record.customerName} />
+            <ReadOnlyField label="Dealer" value={record.dealer} />
+            <ReadOnlyField label="Supplied To" value={record.suppliedTo} />
             <ReadOnlyField label="Status" value={record.detailStatus ?? (record.status === 'APPROVED' ? 'Completed' : record.status)} />
             <ReadOnlyField label="Vehicle Number" value={record.vehicleNumber} />
             <ReadOnlyField label="Driver Number" value={record.driverNumber} />

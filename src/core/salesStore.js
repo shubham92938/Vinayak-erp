@@ -13,21 +13,19 @@ import {
   nextNumber,
   nextId,
 } from './store'
-export const mockSales = [
-  { id: 'SAL-01', number: 'INV-20261045', type: 'Invoice', customerId: 'CUST-001', customerName: 'Globe Cart Papers & Stationery', date: '2026-11-01T09:30:00', items: [{ productId: 'prod-01', name: 'Apple iPhone 15 Pro Max', qty: 6, unit: 'pcs', price: 37990, taxPct: 18, discount: 0 }], discount: 0, subtotal: 227940, taxTotal: 40912.2, total: 268852, advance: 0, paid: 268852, due: 0, status: 'Paid' },
-  { id: 'SAL-02', number: 'INV-20261052', type: 'Invoice', customerId: 'CUST-005', customerName: 'HardwarePlus', date: '2026-11-03T14:10:00', items: [{ productId: 'prod-02', name: 'Samsung Galaxy S24 Ultra', qty: 3, unit: 'pcs', price: 349900, taxPct: 18, discount: 0 }], discount: 0, subtotal: 1049700, taxTotal: 188946, total: 1238646, advance: 0, paid: 0, due: 1238646, status: 'Outstanding' },
-  { id: 'SAL-03', number: 'INV-20261061', type: 'Invoice', customerId: 'CUST-002', customerName: 'H&M Cotton T-Shirt Group', date: '2026-11-05T11:20:00', items: [{ productId: 'prod-07', name: 'Nike Dri-FIT T-Shirt', qty: 40, unit: 'pcs', price: 810, taxPct: 18, discount: 0 }], discount: 0, subtotal: 32400, taxTotal: 5832, total: 38232, advance: 0, paid: 38232, due: 0, status: 'Paid' },
-  { id: 'SAL-04', number: 'INV-20261057', type: 'Invoice', customerId: 'CUST-009', customerName: 'Commercial Automata Pvt Ltd', date: '2026-11-04T15:55:00', items: [{ productId: 'prod-01', name: 'Apple iPhone 15 Pro Max', qty: 1, unit: 'pcs', price: 37990, taxPct: 18, discount: 0 }], discount: 0, subtotal: 37990, taxTotal: 6838.2, total: 44828, advance: 2000, paid: 2000, due: 42828, status: 'Outstanding' },
-]
+import { SVA_SALES_DATA } from '../features/sales/data/svaSalesData'
 
-export const mockChallans = [
-  { id: 'CHL-20261101', number: 'CHAL-20261101', date: '2026-11-02T10:00:00', customerId: 'CUST-001', customerName: 'Globe Cart Papers & Stationery', items: [{ productId: 'prod-01', name: 'Apple iPhone 15 Pro Max', qty: 2, unit: 'pcs', price: 37990, taxPct: 18, discount: 0 }], discount: 0, subtotal: 75980, taxTotal: 13676.4, total: 89656.4, status: 'Delivered' },
-]
+// Sales imported from Sale_25Nov26_01_58_SVA.pdf. Other screens start empty
+// until records are created through the application; no placeholder sales are
+// mixed into the supplied report.
+export const mockSales = SVA_SALES_DATA.map((sale) => ({
+  ...sale,
+  items: sale.items.map((item) => ({ ...item })),
+}))
 
-export const mockPayments = [
-  { id: 'PAYI-01', invoiceId: 'SAL-04', customerId: 'CUST-009', date: '2026-11-04T16:00:00', amount: 2000, mode: 'Bank Transfer', accountId: 'acc-bank-2', status: 'Paid', notes: 'Advance on INV-20261057' },
-  { id: 'PAYI-02', invoiceId: 'SAL-02', customerId: 'CUST-005', date: '2026-11-04T18:05:00', amount: 617000, mode: 'Cash', accountId: 'acc-bank-3', status: 'Paid', notes: 'Partial payment on INV-20261052' },
-]
+export const mockChallans = []
+
+export const mockPayments = []
 
 function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID

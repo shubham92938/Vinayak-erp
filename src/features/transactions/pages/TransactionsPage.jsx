@@ -5,7 +5,7 @@ import { useAuth } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
 import { DataTable } from '../../../components/data-table'
 import { downloadCsv } from '../../../utils/csv'
-import { getTransactions, formatMoney, formatDate } from '../../../core/store'
+import { getAccounts, getTransactions, formatMoney, formatDate } from '../../../core/store'
 
 import { DateRangeFilter } from '../../../components/filters'
 
@@ -32,15 +32,9 @@ const TYPE_FILTERS = [
   { value: 'payment-out', label: 'Payment Out' },
 ]
 
-const ACCOUNT_LABELS = {
-  'acc-cash-1': 'Cash in Hand',
-  'acc-bank-1': 'Vinayak Associates Current',
-  'acc-bank-2': 'Vinayak Associates Savings',
-  'acc-bank-3': 'Vinayak Traders Account',
-}
-
 export default function TransactionsPage() {
   const { currentUser } = useAuth()
+  const accountLabels = Object.fromEntries(getAccounts().map((account) => [account.id, account.name]))
   const canExportTransactions = hasModulePermission(currentUser, 'Transactions', 'export')
   const [filters, setFilters] = useState({ search: '', type: 'all', fromDate: '', toDate: '' })
   const transactions = getTransactions().filter((txn) => {
@@ -66,7 +60,7 @@ export default function TransactionsPage() {
         date: txn.date,
         id: txn.id,
         type: txn.type,
-        accountId: ACCOUNT_LABELS[txn.accountId] ?? txn.accountId,
+        accountId: accountLabels[txn.accountId] ?? txn.accountId,
         description: txn.description,
         debit: txn.type === 'payment-out' ? Math.abs(txn.amount) : 0,
         credit: txn.type !== 'payment-out' && txn.amount > 0 ? txn.amount : 0,
@@ -84,7 +78,7 @@ export default function TransactionsPage() {
           <div className="transactions-header__text">
             <p className="transactions-header__eyebrow"><span aria-hidden="true">#</span> Transactions</p>
             <h1 className="transactions-header__title">Transactions</h1>
-            <p className="transactions-header__description">Account movement history with balances. Demo data.</p>
+            <p className="transactions-header__description">Account movement history with balances from recorded transactions.</p>
           </div>
           <div className="transactions-header__actions">
             <Button variant="secondary" onClick={exportCsv} disabled={!canExportTransactions}>Export CSV</Button>

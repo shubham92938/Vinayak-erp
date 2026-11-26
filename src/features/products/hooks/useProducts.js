@@ -94,6 +94,7 @@ export function useProducts({ categoriesById = {}, firmsById = {} } = {}) {
     setFilters,
     saveProduct,
     createProduct,
+    canEditProduct,
     deleteProduct,
     toggleProductStatus,
     duplicateProduct,

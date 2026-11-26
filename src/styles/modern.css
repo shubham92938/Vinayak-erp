@@ -382,6 +382,12 @@ body {
   border-color: #f2dfb0;
 }
 
+.recorded-row-actions__button--danger {
+  color: #b54740;
+  background: #ffefed;
+  border-color: #f2d0cc;
+}
+
 .recorded-row-actions__button:hover:not(:disabled) {
   color: #fff;
   background: #0f766e;
@@ -393,6 +399,12 @@ body {
   color: #fff;
   background: #b7791f;
   border-color: #b7791f;
+}
+
+.recorded-row-actions__button--danger:hover:not(:disabled) {
+  color: #fff;
+  background: #b54740;
+  border-color: #b54740;
 }
 
 /* Recording-driven forms and carts -------------------------------------- */

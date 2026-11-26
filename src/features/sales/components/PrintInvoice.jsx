@@ -1,9 +1,14 @@
 import { useEffect, useRef } from 'react'
-import { formatMoney, formatDate } from './saleUtils'
-import { getFirmLabel } from './saleUtils'
+import { getFirmById } from '../../../core/firmStore'
+import { formatMoney, formatDate, getFirmLabel } from './saleUtils'
 
 export default function PrintInvoice({ sale, totals }) {
   const containerRef = useRef(null)
+  const firm = getFirmById(sale?.firmId)
+  const billFrom = sale?.printDetails?.billFrom ?? firm ?? {}
+  const firmAddress = [billFrom.address, billFrom.city, billFrom.state, billFrom.pinCode]
+    .filter(Boolean)
+    .join(', ')
 
   useEffect(() => {
     window.print()
@@ -13,8 +18,8 @@ export default function PrintInvoice({ sale, totals }) {
     <div className="sales-print" ref={containerRef}>
       <div className="sales-print__header">
         <div>
-          <h1>Vinayak Associates</h1>
-          <p>Maharashtra</p>
+          <h1>{billFrom.name ?? firm?.name ?? '—'}</h1>
+          <p>{firmAddress || '—'}</p>
         </div>
         <div className="sales-print__right">
           <h2>INVOICE</h2>
@@ -26,7 +31,7 @@ export default function PrintInvoice({ sale, totals }) {
       <div className="sales-print__address">
         <strong>Customer:</strong> {sale.customerName} ({sale.customer?.code ?? ''})
         <br />
-        <strong>Billing Firm:</strong> {getFirmLabel()}
+        <strong>Billing Firm:</strong> {getFirmLabel(sale?.firmId)}
         {sale.notes ? <> <br /><em>{sale.notes}</em></> : null}
       </div>
 

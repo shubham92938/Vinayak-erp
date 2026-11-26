@@ -60,6 +60,7 @@ function buildDraft(sale, customer, firm) {
     notes: stored.notes ?? sale.notes ?? '',
     paid: Number(stored.paid ?? sale.paid ?? sale.advance ?? 0),
     discount: Number(stored.discount ?? sale.discount ?? 0),
+    sourceTotal: Number(sale.total ?? 0),
   }
 }
 
@@ -86,15 +87,17 @@ export default function SalePrintPage() {
   }, [draft?.documentLabel])
 
   const totals = useMemo(() => {
+    const hasProductLines = (draft?.items?.length ?? 0) > 0
     const subtotal = draft?.items.reduce((sum, item) => sum + Number(item.qty || 0) * Number(item.price || 0), 0) ?? 0
     const tax = draft?.items.reduce((sum, item) => {
       const line = Number(item.qty || 0) * Number(item.price || 0)
       return sum + (line * Number(item.taxPct || 0)) / 100
     }, 0) ?? 0
     const discount = Math.max(0, Number(draft?.discount || 0))
-    const total = Math.max(0, subtotal + tax - discount)
+    const calculatedTotal = Math.max(0, subtotal + tax - discount)
+    const total = hasProductLines ? calculatedTotal : Math.max(0, Number(draft?.sourceTotal || 0))
     const paid = Math.max(0, Number(draft?.paid || 0))
-    return { subtotal, tax, discount, total, paid, due: Math.max(0, total - paid) }
+    return { subtotal, tax, discount, total, paid, due: Math.max(0, total - paid), hasProductLines }
   }, [draft])
 
   const updateField = (field, value) => {

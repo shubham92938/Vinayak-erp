@@ -6,68 +6,7 @@ import { DEFAULT_FIRM_ID } from '../config/firms'
 import { getActiveFirmId } from './firmContextStore'
 import { nextNumber } from './numbers'
 
-export const mockSalesOrders = [
-  {
-    id: 'SO-20261101',
-    number: 'SO-20261101',
-    customerId: 'CUST-001',
-    customerName: 'Globe Cart Papers & Stationery',
-    orderDate: '2026-11-01T09:00:00',
-    expectedDelivery: '2026-11-08',
-    items: [{ productId: 'prod-03', name: 'OnePlus 12', qty: 5, unit: 'pcs', price: 199900, taxPct: 18, discount: 0 }],
-    discount: 0,
-    subtotal: 999500,
-    taxTotal: 179910,
-    total: 1179410,
-    fulfilledQty: 5,
-    status: 'Completed',
-  },
-  {
-    id: 'SO-20261102',
-    number: 'SO-20261102',
-    customerId: 'CUST-002',
-    customerName: 'H&M Cotton T-Shirt Group',
-    orderDate: '2026-11-04T08:00:00',
-    expectedDelivery: '2026-11-10',
-    items: [{ productId: 'prod-07', name: 'Nike Dri-FIT T-Shirt', qty: 30, unit: 'pcs', price: 810, taxPct: 18, discount: 0 }],
-    discount: 0,
-    subtotal: 24300,
-    taxTotal: 4374,
-    total: 28674,
-    fulfilledQty: 10,
-    status: 'Partially Fulfilled',
-  },
-  {
-    id: 'SO-20261103',
-    number: 'SO-20261103',
-    customerId: 'CUST-005',
-    customerName: 'HardwarePlus',
-    orderDate: '2026-10-30T15:00:00',
-    expectedDelivery: '2026-11-12',
-    items: [{ productId: 'prod-02', name: 'Samsung Galaxy S24 Ultra', qty: 3, unit: 'pcs', price: 349900, taxPct: 18, discount: 0 }],
-    discount: 0,
-    subtotal: 1049700,
-    taxTotal: 188946,
-    total: 1238646,
-    fulfilledQty: 0,
-    status: 'Pending',
-  },
-  {
-    id: 'SO-20261104',
-    number: 'SO-20261104',
-    customerId: 'CUST-009',
-    customerName: 'Commercial Automata Pvt Ltd',
-    orderDate: '2026-11-06T14:30:00',
-    expectedDelivery: '2026-11-15',
-    items: [{ productId: 'prod-25', name: 'Moisture Meter', qty: 10, unit: 'pcs', price: 6990, taxPct: 18, discount: 0 }],
-    discount: 0,
-    subtotal: 69900,
-    taxTotal: 12582,
-    total: 82482,
-    fulfilledQty: 4,
-    status: 'Processing',
-  },
-]
+export const mockSalesOrders = []
 
 function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID

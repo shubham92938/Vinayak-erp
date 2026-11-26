@@ -63,11 +63,22 @@ function buildModulePermissions(permissionMap) {
   )
 }
 
+const FIRM_ADMIN_MANAGED_MODULE_PERMISSIONS = Object.fromEntries(
+  USER_PERMISSIONS.map((permission) => [
+    permission,
+    ['view', 'create', 'edit', 'delete', 'export'].includes(permission),
+  ]),
+)
+
 export const ROLE_DEFAULT_PERMISSIONS = {
   super_admin: buildModulePermissions(
     Object.fromEntries(USER_PERMISSIONS.map((permission) => [permission, true])),
   ),
-  firm_admin: buildModulePermissions({ view: true }),
+  firm_admin: {
+    ...buildModulePermissions({ view: true }),
+    Products: FIRM_ADMIN_MANAGED_MODULE_PERMISSIONS,
+    Categories: FIRM_ADMIN_MANAGED_MODULE_PERMISSIONS,
+  },
   manager: buildModulePermissions({ view: true, edit: true, create: true }),
   accountant: buildModulePermissions({ view: true, export: true, approve: true }),
   sales_staff: buildModulePermissions({ view: true, export: true }),
