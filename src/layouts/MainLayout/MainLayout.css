@@ -217,6 +217,7 @@
 .website-nav__link:hover,
 .website-nav__link.is-active,
 .website-nav__dropdown > summary:hover,
+.website-nav__dropdown[open] > summary,
 .website-nav__dropdown.is-active > summary {
   color: #fff;
   background: rgba(255, 255, 255, 0.07);
@@ -493,6 +494,7 @@
 .website-nav__link:hover,
 .website-nav__link.is-active,
 .website-nav__dropdown > summary:hover,
+.website-nav__dropdown[open] > summary,
 .website-nav__dropdown.is-active > summary {
   color: #fff;
   background: rgba(255, 255, 255, 0.08);
@@ -558,5 +560,23 @@
   .website-content {
     width: calc(100% - 20px);
     padding-top: 14px;
+  }
+}
+
+@media (max-width: 1080px) {
+  .website-nav__scroll {
+    overflow: visible;
+  }
+
+  .website-nav__items {
+    min-width: 0;
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
+}
+
+@media (min-width: 1081px) {
+  .website-nav__scroll {
+    overflow: visible;
   }
 }
