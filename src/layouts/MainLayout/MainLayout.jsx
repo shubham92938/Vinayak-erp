@@ -126,7 +126,7 @@ export default function MainLayout() {
           <span className="website-header__firm-dot" aria-hidden="true" />
           <span>Admin is currently viewing the firm: <strong>{currentFirm?.name ?? '—'}</strong></span>
         </div>
-        <div className="website-header__actions">
+        <div className="website-header__tools">
           <ThemeToggle />
           <UserActions currentUser={currentUser} logout={logout} />
         </div>
