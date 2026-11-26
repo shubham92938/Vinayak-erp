@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { Building2, LogOut, MapPin, Plus, Search, ShieldCheck } from 'lucide-react'
 import BrandLockup from '../components/brand/BrandLockup'
+import ThemeToggle from '../components/theme/ThemeToggle'
 import { Button, Input, useToast } from '../components/ui'
 import { getFirmId } from '../config/firms'
 import { canCreateFirm } from '../core/accessControl'
@@ -99,6 +100,7 @@ export default function HomePage() {
           <BrandLockup compact size="sm" />
         </a>
         <div className="firm-home__userbar">
+          <ThemeToggle />
           <span className="firm-home__user">
             <span className="firm-home__user-avatar">{currentUser?.name?.slice(0, 2).toUpperCase() ?? 'U'}</span>
             <span>

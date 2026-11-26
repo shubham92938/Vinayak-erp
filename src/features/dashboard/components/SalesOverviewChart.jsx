@@ -68,7 +68,7 @@ export default function SalesOverviewChart({
           />
           <Tooltip
             content={<ChartTooltip />}
-            cursor={{ stroke: '#CBD5E1', strokeDasharray: '4 4' }}
+            cursor={{ stroke: 'var(--chart-grid)', strokeDasharray: '4 4' }}
           />
           <Legend
             iconType="circle"

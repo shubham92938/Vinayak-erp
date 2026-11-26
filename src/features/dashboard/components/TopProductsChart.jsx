@@ -74,7 +74,7 @@ export default function TopProductsChart({ products = [] }) {
             tickFormatter={truncateProductName}
           />
           <Tooltip
-            cursor={{ fill: 'rgba(241, 245, 249, 0.72)' }}
+            cursor={{ fill: 'var(--chart-hover)' }}
             content={
               <ChartTooltip
                 valueFormatter={(value) => formatCurrency(value)}
@@ -98,7 +98,7 @@ export default function TopProductsChart({ products = [] }) {
               position="right"
               formatter={formatCompactCurrency}
               style={{
-                fill: '#64748B',
+                fill: 'var(--chart-axis)',
                 fontSize: 10,
                 fontVariantNumeric: 'tabular-nums',
               }}

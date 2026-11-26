@@ -72,7 +72,7 @@ export default function FirmPerformanceChart({
           />
           <Tooltip
             content={<ChartTooltip />}
-            cursor={{ fill: 'rgba(241, 245, 249, 0.72)' }}
+            cursor={{ fill: 'var(--chart-hover)' }}
           />
           <Legend
             iconType="circle"

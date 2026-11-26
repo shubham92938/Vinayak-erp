@@ -36,3 +36,9 @@ Source: the five MP4 recordings in the connected Google Drive `Webdesign` folder
 ## Deferred until the next recordings
 
 The recordings only establish the first-half navigation and workflows above. Other existing modules and any deeper behavior not visible in these captures should not be treated as the final main-website design; they remain available behind the existing permission guards for later review.
+
+## Remaining-section pass — 2026-11-26
+
+The available `2026-11-26 12-21-32.mp4` overview (6:49) was reviewed again before the theme work. Its later sections confirm the same compact website shell across Firms, Users/Roles, Customers, Products, Categories, Price List, Sales, Sales Orders, Purchases, and the Internal/External Purchase Order form. The purchase form shows firm/product rows, tax and totals for internal purchases, plus buyer, bill, payment, advance, notes, and new-product handoff fields for external purchases.
+
+The recording's visible master rows remain presentation reference only. The runtime still preserves the source-reviewed baseline: one Shree Vinayak Agency firm, 23 approved sales rows, and empty unverified product, category, customer, purchase, and order masters. The recording does not authorize importing the other visible names, products, customers, or purchase rows.

@@ -50,21 +50,21 @@ export const INVENTORY_STATUS_OPTIONS = [
 ]
 
 export const CHART_COLORS = {
-  primary: '#2563EB',
-  previous: '#94A3B8',
-  revenue: '#2563EB',
-  expense: '#D99A24',
-  collected: '#16865B',
-  pending: '#D99A24',
-  accent: '#172B4D',
-  mutedBar: '#CBD5E1',
-  grid: '#E5E9F0',
-  axis: '#94A3B8',
+  primary: 'var(--chart-primary)',
+  previous: 'var(--chart-previous)',
+  revenue: 'var(--chart-revenue)',
+  expense: 'var(--chart-expense)',
+  collected: 'var(--chart-collected)',
+  pending: 'var(--chart-pending)',
+  accent: 'var(--chart-accent)',
+  mutedBar: 'var(--chart-muted)',
+  grid: 'var(--chart-grid)',
+  axis: 'var(--chart-axis)',
 }
 
 export const CHART_AXIS_TICK = {
-  fill: '#64748B',
+  fill: 'var(--chart-axis)',
   fontSize: 11,
 }
 
-export const CHART_GRID_STROKE = '#E5E9F0'
+export const CHART_GRID_STROKE = 'var(--chart-grid)'

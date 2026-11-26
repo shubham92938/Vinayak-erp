@@ -31,6 +31,7 @@ import {
   Select,
   useToast,
 } from '../components/ui'
+import ThemeToggle from '../components/theme/ThemeToggle'
 import './DesignSystemPage.css'
 
 const PALETTE = [
@@ -113,6 +114,7 @@ function DesignSystemPage() {
           <span className="ds-topbar__context">Design system</span>
 
           <div className="ds-topbar__meta">
+            <ThemeToggle />
             <Badge variant="neutral" size="sm">
               Foundation 1.0
             </Badge>

@@ -67,7 +67,7 @@ export default function RevenueExpenseChart({ data, currentLabel = 'period' }) {
           />
           <Tooltip
             content={<ChartTooltip />}
-            cursor={{ fill: 'rgba(241, 245, 249, 0.72)' }}
+            cursor={{ fill: 'var(--chart-hover)' }}
           />
           <Legend
             iconType="circle"
