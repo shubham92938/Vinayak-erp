@@ -15,6 +15,7 @@ import CategoriesPage from './features/categories/pages/CategoriesPage'
 import CategoryDetailsPage from './features/categories/pages/CategoryDetailsPage'
 import CategoryFormPage from './features/categories/pages/CategoryFormPage'
 import ComponentsPreviewPage from './features/components-preview/pages/ComponentsPreviewPage'
+import StabilityDataBanner from './components/dev/StabilityDataBanner'
 import CustomersPage from './features/customers/pages/CustomersPage'
 import CustomerDetailsPage from './features/customers/pages/CustomerDetailsPage'
 import DashboardPage from './features/dashboard/pages/DashboardPage'
@@ -202,6 +203,7 @@ function App() {
     <ThemeProvider>
       <ToastProvider>
         <AppProvider>
+          <StabilityDataBanner />
           <AppRoutes />
         </AppProvider>
       </ToastProvider>

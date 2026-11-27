@@ -5,8 +5,16 @@ import { getProducts, updateProductQuantity } from '../features/products/service
 import { DEFAULT_FIRM_ID } from '../config/firms'
 import { getActiveFirmId } from './firmContextStore'
 import { nextNumber } from './numbers'
+import { isStabilityModeEnabled } from './stabilityMode'
+import { STABILITY_SALES_ORDERS } from './stabilityData'
 
-export const mockSalesOrders = []
+export const mockSalesOrders = isStabilityModeEnabled()
+  ? STABILITY_SALES_ORDERS.map((order) => ({
+    ...order,
+    items: order.items.map((item) => ({ ...item })),
+    fulfilledItems: order.fulfilledItems.map((item) => ({ ...item })),
+  }))
+  : []
 
 function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID
