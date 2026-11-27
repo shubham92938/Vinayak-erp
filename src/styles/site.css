@@ -1562,3 +1562,951 @@ input[type='radio'] {
   background: linear-gradient(135deg, var(--brand-teal-bright), var(--brand-teal));
   border-color: var(--brand-teal-bright);
 }
+
+/* --------------------------------------------------------------------------
+   Stable layout contract
+
+   Several generations of screens live in the application. The rules below
+   are deliberately scoped to the shared shell and reusable table/filter
+   primitives so a feature page can keep its workflow-specific styling
+   without changing the size or position of neighbouring controls.
+   -------------------------------------------------------------------------- */
+
+:is(
+  .app-shell,
+  .app-shell__main,
+  .app-shell__content,
+  .website-content,
+  .balance-page,
+  .categories-page,
+  .customers-page,
+  .dashboard-page,
+  .expenses-page,
+  .firm-profile-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .payment-out-page,
+  .page,
+  .placeholder-page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .search-page,
+  .settings-page,
+  .transactions-page,
+  .users-page
+) {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.app-shell__content,
+.website-content {
+  box-sizing: border-box;
+  overflow-x: clip;
+}
+
+.app-shell__content > *,
+.website-content > * {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.app-topbar__start,
+.app-topbar__end,
+.app-topbar__breadcrumbs,
+.app-topbar__start > .ui-dropdown {
+  min-width: 0;
+}
+
+.app-topbar__start {
+  flex: 1 1 auto;
+}
+
+.app-topbar__end {
+  flex: 0 1 auto;
+}
+
+.app-topbar__breadcrumbs {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Every module header uses the same outer geometry. The existing inner
+   compositions (KPI headers, compact recorded headers and the product
+   catalogue header) retain their own display direction. */
+
+:is(
+  .balance-page,
+  .categories-page,
+  .customers-page,
+  .expenses-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .payment-out-page,
+  .page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .settings-page,
+  .transactions-page,
+  .users-page
+) > [class$='-header'] {
+  min-width: 0;
+  margin-bottom: 0;
+  padding: clamp(16px, 2vw, 24px);
+  border-radius: var(--site-card-radius);
+}
+
+:is(
+  .balance-page,
+  .categories-page,
+  .customers-page,
+  .expenses-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .payment-out-page,
+  .page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .settings-page,
+  .transactions-page,
+  .users-page
+) > [class$='-header'] > [class$='__top'] {
+  min-width: 0;
+}
+
+:is(
+  .balance-page,
+  .categories-page,
+  .customers-page,
+  .expenses-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .payment-out-page,
+  .page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .settings-page,
+  .transactions-page,
+  .users-page
+) > [class$='-header'] h1 {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+:is(
+  .balance-page,
+  .categories-page,
+  .customers-page,
+  .expenses-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .payment-out-page,
+  .page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .settings-page,
+  .transactions-page,
+  .users-page
+) > [class$='-header'] [class$='__text'],
+:is(
+  .balance-page,
+  .categories-page,
+  .customers-page,
+  .expenses-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .payment-out-page,
+  .page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .settings-page,
+  .transactions-page,
+  .users-page
+) > [class$='-header'] [class$='__intro'] {
+  min-width: 0;
+}
+
+:is(
+  .balance-page,
+  .categories-page,
+  .customers-page,
+  .expenses-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .payment-out-page,
+  .page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .settings-page,
+  .transactions-page,
+  .users-page
+) > [class$='-header'] [class$='__actions'] {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.products-reference-header__title,
+.products-reference-header__actions,
+.recorded-page-header__actions {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.products-reference-header h1,
+.recorded-page-header h1 {
+  min-width: 0;
+  max-width: 100%;
+  overflow-wrap: anywhere;
+}
+
+/* Keep page sections separated without relying on whichever feature file
+   happened to define the page first. */
+
+:is(
+  .balance-page,
+  .customers-page,
+  .expenses-page,
+  .fund-transfers-page,
+  .inventory-page,
+  .notifications-page,
+  .payment-in-page,
+  .price-list-page,
+  .products-page,
+  .profit-loss-page,
+  .purchase-orders-page,
+  .purchases-page,
+  .quotations-page,
+  .reports-page,
+  .sales-orders-page,
+  .sales-page,
+  .transactions-page,
+  .users-page
+) > :is(.data-table, .recorded-table) {
+  margin-top: var(--site-section-gap);
+}
+
+/* UI primitives are sized by their wrapper. The broad native-control rule
+   above must not impose a second, conflicting height on their inner input or
+   select element. */
+
+.ui-input__control,
+.ui-select__control {
+  min-height: 0 !important;
+}
+
+.ui-input__control {
+  height: 100%;
+  min-width: 0;
+}
+
+.ui-select__control {
+  height: var(--select-height);
+  min-width: 0;
+}
+
+.ui-textarea {
+  min-height: 88px !important;
+}
+
+.ui-button {
+  min-width: 0;
+}
+
+.ui-button__label {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* Shared filter bars ------------------------------------------------------ */
+
+.filter-bar,
+.filter-bar__fields,
+.date-range-filter,
+.date-range-filter__custom {
+  min-width: 0;
+}
+
+.filter-bar {
+  width: 100%;
+}
+
+.filter-bar__fields {
+  flex: 1 1 auto;
+}
+
+.filter-bar__fields > .ui-field {
+  flex: 1 1 170px;
+  min-width: min(170px, 100%);
+}
+
+.filter-bar__actions {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.filter-bar .ui-input,
+.filter-bar .ui-select__control {
+  --input-height: var(--site-control-height);
+  --select-height: var(--site-control-height);
+}
+
+.date-range-filter__custom > .ui-field {
+  flex: 1 1 140px;
+  min-width: min(140px, 100%);
+}
+
+/* Page-specific toolbars that predate the shared DataTable component. */
+
+.products-card-toolbar,
+.products-card-toolbar__search,
+.products-view-toggle,
+.dash-filters,
+.dash-filters__group,
+.dash-filters__custom {
+  min-width: 0;
+}
+
+.products-card-toolbar {
+  width: 100%;
+  flex-wrap: wrap;
+}
+
+.products-card-toolbar__search {
+  flex: 1 1 280px;
+  width: auto;
+  max-width: 100%;
+}
+
+.products-card-toolbar .ui-input {
+  --input-height: var(--site-control-height);
+}
+
+.products-card-toolbar > select {
+  flex: 0 1 170px;
+  width: min(170px, 100%);
+  height: var(--site-control-height);
+  min-height: var(--site-control-height);
+  max-width: 100%;
+}
+
+.dash-filters__field,
+.dash-filters__actions {
+  min-width: 0;
+}
+
+.dash-filters__field input,
+.dash-filters__field select {
+  max-width: 100%;
+}
+
+/* Reusable data tables ---------------------------------------------------- */
+
+.data-table,
+.data-table__header,
+.data-table__toolbar,
+.data-table__toolbar-main,
+.data-table__toolbar-filters,
+.data-table__pagination,
+.data-table__pagination-controls,
+.data-table__scroll {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.data-table {
+  overflow: hidden;
+}
+
+.data-table__toolbar-main {
+  flex: 1 1 520px;
+}
+
+.data-table__search {
+  flex: 0 1 280px;
+  width: min(280px, 100%);
+  min-width: min(220px, 100%);
+}
+
+.data-table__search .ui-input {
+  --input-height: var(--site-control-height);
+}
+
+.data-table__toolbar-filters {
+  display: flex;
+  flex: 1 1 360px;
+  align-items: flex-end;
+}
+
+.data-table__toolbar-filters > .filter-bar,
+.data-table__toolbar-filters > [class$='-filters'],
+.data-table__toolbar-filters > [class$='__filters'] {
+  width: 100%;
+  min-width: 0;
+}
+
+.data-table__toolbar-filters .ui-field {
+  flex: 1 1 170px;
+  min-width: min(160px, 100%);
+}
+
+.data-table__toolbar-filters .ui-input,
+.data-table__toolbar-filters .ui-select__control {
+  --input-height: var(--site-control-height);
+  --select-height: var(--site-control-height);
+}
+
+.data-table__toolbar-filters select:not(.ui-select__control),
+.data-table__toolbar-filters input:not(.ui-input__control) {
+  min-width: min(150px, 100%);
+  max-width: 100%;
+  height: var(--site-control-height);
+}
+
+.data-table__scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
+}
+
+.data-table__table {
+  max-width: none;
+}
+
+.data-table__cell {
+  overflow-wrap: anywhere;
+}
+
+.data-table__pagination {
+  min-height: 56px;
+}
+
+.data-table__pagination-controls,
+.data-table__pager {
+  min-width: 0;
+}
+
+/* Recorded tables --------------------------------------------------------- */
+
+.recorded-table,
+.recorded-table__toolbar,
+.recorded-table__entries,
+.recorded-table__filters,
+.recorded-table__search,
+.recorded-table__footer,
+.recorded-table__scroll {
+  min-width: 0;
+  max-width: 100%;
+}
+
+.recorded-table {
+  overflow: hidden;
+}
+
+.recorded-table__toolbar {
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr) minmax(220px, 280px);
+  align-items: end;
+  gap: var(--space-3);
+  min-height: 72px;
+  padding: var(--space-3) var(--space-4);
+}
+
+.recorded-table__entries,
+.recorded-table__filters,
+.recorded-table__search {
+  width: 100%;
+}
+
+.recorded-table__entries {
+  grid-column: 1;
+  grid-row: 1;
+  min-width: max-content;
+}
+
+.recorded-table__filters {
+  display: flex;
+  grid-column: 2;
+  grid-row: 1;
+  align-items: flex-end;
+  flex-wrap: wrap;
+  gap: var(--space-2) var(--space-3);
+}
+
+.recorded-table__filters > label {
+  flex: 1 1 170px;
+  min-width: min(170px, 100%);
+  max-width: 100%;
+}
+
+.recorded-table__filters select,
+.recorded-table__filters input {
+  max-width: 100%;
+  height: var(--site-control-height);
+  min-height: var(--site-control-height);
+}
+
+.recorded-table__search {
+  grid-column: 3;
+  grid-row: 1;
+  margin-left: 0;
+}
+
+.recorded-table__search-input {
+  flex: 1 1 auto;
+  width: auto;
+  min-width: 0;
+  max-width: 280px;
+  height: var(--site-control-height) !important;
+  min-height: var(--site-control-height) !important;
+}
+
+.recorded-table__search .recorded-table__search-input input {
+  width: 100%;
+  min-width: 0;
+  max-width: none;
+  height: calc(var(--site-control-height) - 4px);
+  min-height: 0 !important;
+}
+
+.recorded-table__scroll {
+  overflow-x: auto;
+  overflow-y: visible;
+  overscroll-behavior-x: contain;
+}
+
+.recorded-table__table {
+  max-width: none;
+}
+
+.recorded-table__table td {
+  overflow-wrap: anywhere;
+}
+
+.recorded-table__footer {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  min-height: 56px;
+  padding: var(--space-3) var(--space-4);
+}
+
+.recorded-table__footer > p {
+  min-width: 0;
+}
+
+.recorded-table__pagination {
+  min-width: 0;
+  flex-wrap: wrap;
+}
+
+.recorded-table__pagination button {
+  min-width: 32px;
+  height: 32px;
+}
+
+/* Detail tables do not all have a dedicated scroll wrapper. Fixed layout and
+   breakable cell content keep those pages inside the shell at tablet widths. */
+
+:is(
+  .balance-table,
+  .categories-details-table,
+  .customers-history__table,
+  .profit-loss-table,
+  .purchases-detail-table,
+  .quotations-detail-table,
+  .sales-detail-table,
+  .sales-orders-detail-table,
+  .purchase-orders-detail-table,
+  .transactions-table
+) {
+  max-width: 100%;
+  table-layout: fixed;
+}
+
+:is(
+  .balance-table,
+  .categories-details-table,
+  .customers-history__table,
+  .profit-loss-table,
+  .purchases-detail-table,
+  .quotations-detail-table,
+  .sales-detail-table,
+  .sales-orders-detail-table,
+  .purchase-orders-detail-table,
+  .transactions-table
+) td {
+  max-width: 0;
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+/* Grid children must be allowed to shrink instead of pushing the page wider. */
+:is(
+  .dashboard-metrics,
+  .dashboard-panels,
+  .product-card-grid,
+  .products-kpi-grid,
+  .sales-kpi-grid,
+  .sales-orders-kpi-grid,
+  .purchases-kpi-grid,
+  .quotations-kpi-grid,
+  .customers-kpi-grid,
+  .categories-kpi-grid,
+  .inventory-kpi-grid,
+  .payment-in-kpi-grid,
+  .payment-out-kpi-grid,
+  .profit-loss-kpi-grid,
+  .transactions-kpi-grid,
+  .users-kpi-grid,
+  .reports-kpi-grid
+) > * {
+  min-width: 0;
+}
+
+/* Cards and forms share the same shrink rules as tables. */
+
+.ui-card__header,
+.ui-card__header-text,
+.ui-card__actions,
+.ui-card__body,
+.ui-card__footer,
+.form-section__header,
+.form-section__heading,
+.form-section__actions,
+.form-actions,
+.form-grid,
+.form-field {
+  min-width: 0;
+}
+
+.ui-card__actions,
+.form-section__actions,
+.form-actions,
+.ui-card__footer {
+  flex-wrap: wrap;
+}
+
+.form-grid > *,
+.recorded-order-grid > *,
+.recorded-purchase-grid > *,
+.recorded-product-form__grid > * {
+  min-width: 0;
+}
+
+/* Responsive contract ----------------------------------------------------- */
+
+@media (max-width: 960px) {
+  .data-table__toolbar-main {
+    width: 100%;
+  }
+
+  .data-table__toolbar-filters {
+    flex-basis: 100%;
+  }
+
+  .data-table__toolbar-actions {
+    max-width: 100%;
+  }
+
+  .recorded-table__toolbar {
+    grid-template-columns: minmax(0, 1fr) minmax(220px, 280px);
+  }
+
+  .recorded-table__entries {
+    grid-column: 1;
+  }
+
+  .recorded-table__filters {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .recorded-table__search {
+    grid-column: 2;
+    grid-row: 1;
+  }
+}
+
+@media (max-width: 760px) {
+  .ui-card__header,
+  .form-section__header {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .ui-card__actions,
+  .form-section__actions {
+    width: 100%;
+    justify-content: flex-start;
+  }
+
+  :is(
+    .products-kpi-grid,
+    .sales-kpi-grid,
+    .sales-orders-kpi-grid,
+    .purchases-kpi-grid,
+    .quotations-kpi-grid,
+    .customers-kpi-grid,
+    .categories-kpi-grid,
+    .inventory-kpi-grid,
+    .profit-loss-kpi-grid,
+    .transactions-kpi-grid,
+    .users-kpi-grid
+  ) {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .data-table__toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .data-table__toolbar-main {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--space-3);
+  }
+
+  .data-table__search,
+  .data-table__toolbar-filters {
+    flex: 1 1 auto;
+    width: 100%;
+    max-width: none;
+  }
+
+  .data-table__toolbar-filters .ui-field {
+    flex-basis: 180px;
+  }
+
+  .data-table__toolbar-actions {
+    align-self: flex-start;
+    padding-bottom: 0;
+  }
+
+  .products-card-toolbar__search {
+    flex-basis: 100%;
+  }
+
+  .products-card-toolbar > select {
+    flex: 1 1 150px;
+    width: auto;
+    max-width: none;
+  }
+
+  .recorded-table__toolbar {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    align-items: end;
+  }
+
+  .recorded-table__entries {
+    grid-column: 1;
+    grid-row: 1;
+  }
+
+  .recorded-table__search {
+    grid-column: 2;
+    grid-row: 1;
+  }
+
+  .recorded-table__filters {
+    grid-column: 1 / -1;
+    grid-row: 2;
+  }
+
+  .recorded-table__filters > label {
+    display: grid;
+    grid-template-columns: max-content minmax(0, 1fr);
+    align-items: center;
+    flex: 1 1 180px;
+    min-width: 0;
+    white-space: normal;
+  }
+
+  .recorded-table__search-input,
+  .recorded-table__search .recorded-table__search-input input {
+    max-width: none;
+  }
+
+  .recorded-table__filters select,
+  .recorded-table__filters input {
+    min-width: 0 !important;
+    width: 100%;
+  }
+
+  :is(
+    .balance-page,
+    .categories-page,
+    .customers-page,
+    .expenses-page,
+    .fund-transfers-page,
+    .inventory-page,
+    .notifications-page,
+    .payment-in-page,
+    .payment-out-page,
+    .page,
+    .price-list-page,
+    .products-page,
+    .profit-loss-page,
+    .purchase-orders-page,
+    .purchases-page,
+    .quotations-page,
+    .reports-page,
+    .sales-orders-page,
+    .sales-page,
+    .settings-page,
+    .transactions-page,
+    .users-page
+  ) > [class$='-header'] [class$='__actions'],
+  .products-reference-header__actions,
+  .recorded-page-header__actions {
+    width: 100%;
+    justify-content: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .products-reference-header__actions > *,
+  .recorded-page-header__actions > * {
+    flex: 0 1 auto;
+  }
+}
+
+@media (max-width: 480px) {
+  :is(
+    .products-kpi-grid,
+    .sales-kpi-grid,
+    .sales-orders-kpi-grid,
+    .purchases-kpi-grid,
+    .quotations-kpi-grid,
+    .customers-kpi-grid,
+    .categories-kpi-grid,
+    .inventory-kpi-grid,
+    .profit-loss-kpi-grid,
+    .transactions-kpi-grid,
+    .users-kpi-grid
+  ) {
+    grid-template-columns: 1fr;
+  }
+
+  .filter-bar__fields > .ui-field,
+  .data-table__toolbar-filters .ui-field,
+  .recorded-table__filters > label {
+    flex-basis: 100%;
+    min-width: 0;
+  }
+
+  .recorded-table__toolbar {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .recorded-table__entries,
+  .recorded-table__filters,
+  .recorded-table__search {
+    grid-column: 1;
+  }
+
+  .recorded-table__entries {
+    grid-row: 1;
+  }
+
+  .recorded-table__filters {
+    grid-row: 2;
+  }
+
+  .recorded-table__search {
+    grid-row: 3;
+  }
+
+  .recorded-table__footer {
+    grid-template-columns: minmax(0, 1fr);
+    gap: var(--space-3);
+  }
+
+  .recorded-table__pagination {
+    justify-content: flex-start;
+  }
+
+  .data-table__pagination {
+    min-height: 0;
+  }
+
+  .data-table__pagination-controls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .app-shell__main,
+  .app-sidebar,
+  .app-topbar {
+    transition: none;
+  }
+}
