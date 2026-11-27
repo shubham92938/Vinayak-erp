@@ -5,8 +5,16 @@ import { getProducts, updateProductQuantity } from '../features/products/service
 import { DEFAULT_FIRM_ID } from '../config/firms'
 import { getActiveFirmId } from './firmContextStore'
 import { nextNumber } from './numbers'
+import { isStabilityModeEnabled } from './stabilityMode'
+import { STABILITY_SALES_ORDERS } from './stabilityData'
 
-export const mockSalesOrders = []
+export const mockSalesOrders = isStabilityModeEnabled()
+  ? STABILITY_SALES_ORDERS.map((order) => ({
+    ...order,
+    items: order.items.map((item) => ({ ...item })),
+    fulfilledItems: order.fulfilledItems.map((item) => ({ ...item })),
+  }))
+  : []
 
 function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID
@@ -100,27 +108,33 @@ export function fulfillSalesOrder(id, qty) {
   if (!order) return null
 
   const requestedQty = Math.max(0, Number(qty ?? 0))
-  const fulfilledItems = Array.isArray(order.fulfilledItems) ? order.fulfilledItems.map((item) => ({ ...item })) : []
-  let remaining = requestedQty
+  const currentFulfilledItems = Array.isArray(order.fulfilledItems)
+    ? order.fulfilledItems.map((item) => ({ ...item }))
+    : []
+  const totalQty = order.items.reduce((sum, item) => sum + Number(item.qty ?? 0), 0)
+  const targetQty = Math.min(totalQty, requestedQty)
+  let remaining = targetQty
+  const fulfilledItems = []
 
-  // Consume the requested fulfillment across lines and decrement stock only by
-  // the new quantity. Repeated receipt/fulfillment actions are idempotent.
+  // The detail form accepts a target fulfilled quantity, not an increment. By
+  // calculating the delta per line, repeating the same update is idempotent;
+  // lowering the target restores stock for the unfulfilled quantity.
   for (const item of order.items) {
-    const previous = fulfilledItems.find((entry) => entry.productId === item.productId)?.qty ?? 0
-    const delta = Math.min(Math.max(0, Number(item.qty ?? 0) - previous), remaining)
-    if (delta > 0) {
-      const product = getProducts().find((entry) => entry.id === item.productId)
-      if (product) updateProductQuantity(product.id, Math.max(0, (product.quantity ?? 0) - delta))
-      const existing = fulfilledItems.find((entry) => entry.productId === item.productId)
-      if (existing) existing.qty += delta
-      else fulfilledItems.push({ productId: item.productId, qty: delta })
-      remaining -= delta
+    const lineTarget = Math.min(Number(item.qty ?? 0), remaining)
+    const previous = currentFulfilledItems.find((entry) => entry.productId === item.productId)?.qty ?? 0
+    const delta = lineTarget - previous
+    const product = getProducts().find((entry) => entry.id === item.productId)
+
+    if (product && product.stockTracking !== false && delta !== 0) {
+      updateProductQuantity(product.id, (product.quantity ?? 0) - delta)
     }
+
+    if (lineTarget > 0) fulfilledItems.push({ productId: item.productId, qty: lineTarget })
+    remaining -= lineTarget
   }
 
-  const totalQty = order.items.reduce((sum, item) => sum + Number(item.qty ?? 0), 0)
   order.fulfilledItems = fulfilledItems
-  order.fulfilledQty = Math.min(totalQty, fulfilledItems.reduce((sum, item) => sum + Number(item.qty ?? 0), 0))
+  order.fulfilledQty = fulfilledItems.reduce((sum, item) => sum + Number(item.qty ?? 0), 0)
   order.status = order.fulfilledQty >= totalQty ? 'Completed' : 'Partially Fulfilled'
   return { ...order, items: order.items.map((item) => ({ ...item })), fulfilledItems: fulfilledItems.map((item) => ({ ...item })) }
 }

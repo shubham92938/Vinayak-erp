@@ -14,6 +14,7 @@ export default function PurchaseOrderDetailsPage() {
   const canApprove = hasModulePermission(currentUser, 'Purchase Orders', 'approve')
   const canEdit = hasModulePermission(currentUser, 'Purchase Orders', 'edit')
   const [tab, setTab] = useState('Overview')
+  const [, setOrderVersion] = useState(0)
   const order = getPurchaseOrderById(orderId)
 
   if (!order) {
@@ -28,13 +29,13 @@ export default function PurchaseOrderDetailsPage() {
   const totalQty = order.items.reduce((sum, item) => sum + item.qty, 0)
 
   const handleApprove = () => {
-    if (canApprove) confirmPurchaseOrder(order.id)
+    if (canApprove && confirmPurchaseOrder(order.id)) setOrderVersion((version) => version + 1)
   }
   const handleReceive = () => {
-    if (canEdit) orderStock(order.id, order.items)
+    if (canEdit && orderStock(order.id, order.items)) setOrderVersion((version) => version + 1)
   }
   const handleCancel = () => {
-    if (canEdit) cancelPurchaseOrder(order.id)
+    if (canEdit && cancelPurchaseOrder(order.id)) setOrderVersion((version) => version + 1)
   }
 
   return (

@@ -1,4 +1,6 @@
-// No category master PDF was supplied with the imported ERP records.
-// Categories can be created from the Categories screen when authoritative
-// master data becomes available.
-export const CATEGORY_DEMO_DATA = []
+import { isStabilityModeEnabled } from '../../../core/stabilityMode'
+import { STABILITY_CATEGORIES } from '../../../core/stabilityData'
+
+// Stability mode supplies synthetic category rows for testing tables, forms,
+// filters, linked-product warnings, and permission-aware screens.
+export const CATEGORY_DEMO_DATA = isStabilityModeEnabled() ? STABILITY_CATEGORIES : []

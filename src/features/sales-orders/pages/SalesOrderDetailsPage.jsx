@@ -17,6 +17,7 @@ export default function SalesOrderDetailsPage() {
   const canApprove = hasModulePermission(currentUser, 'Sales Orders', 'approve')
   const canEdit = hasModulePermission(currentUser, 'Sales Orders', 'edit')
   const [tab, setTab] = useState('Overview')
+  const [, setOrderVersion] = useState(0)
   const [fulfillQty, setFulfillQty] = useState('')
   const [fulfilledDetails, setFulfilledDetails] = useState(false)
 
@@ -34,8 +35,18 @@ export default function SalesOrderDetailsPage() {
 
   const handleFulfill = () => {
     if (!canEdit) return
-    fulfillSalesOrder(order.id, Number(fulfillQty) || 0)
-    setFulfilledDetails(true)
+    if (fulfillSalesOrder(order.id, Number(fulfillQty) || 0)) {
+      setFulfilledDetails(true)
+      setOrderVersion((version) => version + 1)
+    }
+  }
+
+  const handleConfirm = () => {
+    if (canApprove && confirmSalesOrder(order.id)) setOrderVersion((version) => version + 1)
+  }
+
+  const handleCancel = () => {
+    if (canEdit && cancelSalesOrder(order.id)) setOrderVersion((version) => version + 1)
   }
 
   return (
@@ -51,8 +62,8 @@ export default function SalesOrderDetailsPage() {
           </div>
           <div className="sales-orders-details-actions">
             <Button variant="secondary" onClick={() => navigate('/sales-orders')}>Back to Orders</Button>
-            <Button variant="secondary" onClick={() => canApprove && confirmSalesOrder(order.id)} disabled={order.status === 'Confirmed' || !canApprove}>Confirm Order</Button>
-            <Button variant="secondary" onClick={() => canEdit && cancelSalesOrder(order.id)} disabled={['Completed', 'Cancelled'].includes(order.status) || !canEdit}>Cancel Order</Button>
+            <Button variant="secondary" onClick={handleConfirm} disabled={order.status === 'Confirmed' || !canApprove}>Confirm Order</Button>
+            <Button variant="secondary" onClick={handleCancel} disabled={['Completed', 'Cancelled'].includes(order.status) || !canEdit}>Cancel Order</Button>
           </div>
         </div>
         <div className="sales-orders-tabs">

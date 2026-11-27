@@ -6,8 +6,12 @@ import { getProducts } from '../features/products/services/productService'
 import { DEFAULT_FIRM_ID } from '../config/firms'
 import { getActiveFirmId } from './firmContextStore'
 import { nextNumber } from './numbers'
+import { isStabilityModeEnabled } from './stabilityMode'
+import { STABILITY_PURCHASES } from './stabilityData'
 
-export const mockPurchases = []
+export const mockPurchases = isStabilityModeEnabled()
+  ? STABILITY_PURCHASES.map((purchase) => ({ ...purchase, items: purchase.items.map((item) => ({ ...item })) }))
+  : []
 
 function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID
