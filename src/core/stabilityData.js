@@ -69,7 +69,7 @@ export const STABILITY_EXPENSES = [
 
 export const STABILITY_TRANSACTIONS = [
   { id: 'stability-txn-001', firmId: SVA_FIRM_ID, type: 'payment-in', date: `${DATE}T09:20:00Z`, amount: 25000, balance: 25000, description: 'Payment received from Rajesh Patel', accountId: 'stability-account-bank', customerId: 'stability-customer-001', productId: null },
-  { id: 'stability-txn-002', firmId: SVA_FIRM_ID, type: 'expense', date: '2026-11-22T10:00:00Z', amount: -4250, balance: 20750, description: 'Warehouse electricity bill', accountId: 'stability-account-bank', customerId: null, productId: null },
+  { id: 'stability-txn-002', firmId: SVA_FIRM_ID, type: 'expense', expenseId: 'stability-exp-002', date: '2026-11-22T10:00:00Z', amount: -4250, balance: 20750, description: 'Warehouse electricity bill', accountId: 'stability-account-bank', customerId: null, productId: null },
   { id: 'stability-txn-003', firmId: SVA_FIRM_ID, type: 'sale', date: '2026-11-21T12:15:00Z', amount: 32400, balance: 53150, description: 'Invoice INV-STABILITY-001', accountId: 'stability-account-cash', customerId: 'stability-customer-002', productId: 'stability-prod-001' },
   { id: 'stability-txn-004', firmId: SVA_FIRM_ID, type: 'purchase', date: '2026-11-19T15:00:00Z', amount: -18200, balance: 34950, description: 'Purchase bill PUR-STABILITY-003', accountId: 'stability-account-bank', customerId: null, productId: 'stability-prod-004' },
 ]
@@ -85,9 +85,19 @@ export const STABILITY_PURCHASES = [
   { id: 'stability-purchase-002', firmId: SVA_FIRM_ID, number: 'PUR-STABILITY-002', vendorName: 'Greenline Suppliers', vendorInvoiceNumber: 'GL-1092', vendorContact: '9777777777', purchaseDate: '2026-11-12T10:00:00Z', items: [{ productId: 'stability-prod-002', qty: 50, price: 320, taxPct: 18 }], discount: 500, subtotal: 16000, taxTotal: 2790, total: 18290, advance: 18290, paid: 18290, due: 0, status: 'Paid', paymentMode: 'UPI / Digital Wallet', notes: 'Stability-test purchase' },
 ]
 
+export const STABILITY_PURCHASE_ORDERS = [
+  { id: 'stability-purchase-order-001', firmId: SVA_FIRM_ID, number: 'PO-STABILITY-001', vendorName: 'ABC Irrigation Traders', orderDate: `${DATE}T10:30:00Z`, expectedDelivery: '2026-11-28', items: [{ productId: 'stability-prod-006', qty: 40, price: 145, taxPct: 18 }], discount: 0, subtotal: 5800, taxTotal: 1044, total: 6844, status: 'Partially Received', receivedQty: 12, receivedItems: [{ productId: 'stability-prod-006', qty: 12 }] },
+  { id: 'stability-purchase-order-002', firmId: SVA_FIRM_ID, number: 'PO-STABILITY-002', vendorName: 'Greenline Suppliers', orderDate: '2026-11-16T10:30:00Z', expectedDelivery: '2026-11-23', items: [{ productId: 'stability-prod-009', qty: 100, price: 32, taxPct: 18 }], discount: 0, subtotal: 3200, taxTotal: 576, total: 3776, status: 'Received', receivedQty: 100, receivedItems: [{ productId: 'stability-prod-009', qty: 100 }] },
+]
+
 export const STABILITY_SALES_ORDERS = [
   { id: 'stability-order-001', firmId: SVA_FIRM_ID, number: 'SO-STABILITY-001', customerId: 'stability-customer-001', customerName: 'Rajesh Patel', orderDate: `${DATE}T11:00:00Z`, expectedDelivery: '2026-11-27', items: [{ productId: 'stability-prod-001', qty: 50, price: 1100, taxPct: 18 }], discount: 0, subtotal: 55000, taxTotal: 9900, total: 64900, advance: 20000, paymentMode: 'Online', status: 'Processing', fulfilledQty: 10, fulfilledItems: [{ productId: 'stability-prod-001', qty: 10 }], notes: 'Stability-test order' },
   { id: 'stability-order-002', firmId: SVA_FIRM_ID, number: 'SO-STABILITY-002', customerId: 'stability-customer-002', customerName: 'Kannu Agritech', orderDate: '2026-11-20T11:00:00Z', expectedDelivery: '2026-11-25', items: [{ productId: 'stability-prod-004', qty: 20, price: 280, taxPct: 18 }], discount: 0, subtotal: 5600, taxTotal: 1008, total: 6608, advance: 6608, paymentMode: 'Cash', status: 'Completed', fulfilledQty: 20, fulfilledItems: [{ productId: 'stability-prod-004', qty: 20 }], notes: 'Stability-test order' },
+]
+
+export const STABILITY_QUOTATIONS = [
+  { id: 'stability-quotation-001', firmId: SVA_FIRM_ID, number: 'QUOT-STABILITY-001', customerId: 'stability-customer-003', customerName: 'National Machinery', date: '2026-11-23T10:00:00Z', expiryDate: '2026-12-07T10:00:00Z', items: [{ productId: 'stability-prod-008', qty: 12, price: 650 }], discount: 0, subtotal: 7800, taxTotal: 1404, total: 9204, status: 'Sent' },
+  { id: 'stability-quotation-002', firmId: SVA_FIRM_ID, number: 'QUOT-STABILITY-002', customerId: 'stability-customer-001', customerName: 'Rajesh Patel', date: '2026-11-17T10:00:00Z', expiryDate: '2026-12-01T10:00:00Z', items: [{ productId: 'stability-prod-004', qty: 20, price: 280 }], discount: 0, subtotal: 5600, taxTotal: 1008, total: 6608, status: 'Accepted' },
 ]
 
 export const STABILITY_STOCK_MOVEMENTS = [

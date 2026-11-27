@@ -144,6 +144,7 @@ export default function ExpensesPage() {
       />
 
       <ExpenseModal
+        key={isNewOpen ? 'new-open' : 'new-closed'}
         open={isNewOpen}
         onClose={() => setIsNewOpen(false)}
         expense={null}
@@ -155,6 +156,7 @@ export default function ExpensesPage() {
       />
 
       <ExpenseModal
+        key={expenseToEdit ? `edit-${expenseToEdit.id}` : 'edit-closed'}
         open={Boolean(expenseToEdit)}
         onClose={() => setExpenseToEdit(null)}
         expense={expenseToEdit}
@@ -178,8 +180,8 @@ export default function ExpensesPage() {
   )
 }
 
-function ExpenseModal({ open, onClose, expense, onSave }) {
-  const [form, setForm] = useState(() => ({
+function getExpenseFormValues(expense) {
+  return {
     type: expense?.type ?? 'Misc',
     category: expense?.category ?? 'Operating Expenses',
     description: expense?.description ?? '',
@@ -187,7 +189,11 @@ function ExpenseModal({ open, onClose, expense, onSave }) {
     mode: expense?.mode ?? 'Cash',
     status: expense?.status ?? 'Paid',
     date: expense?.date ?? new Date().toISOString().slice(0, 16),
-  }))
+  }
+}
+
+function ExpenseModal({ open, onClose, expense, onSave }) {
+  const [form, setForm] = useState(() => getExpenseFormValues(expense))
   const [errors, setErrors] = useState({})
 
   const isNew = !expense

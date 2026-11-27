@@ -19,8 +19,10 @@ The query flag persists in browser storage so navigation continues to use the sa
 - Product card/table views, filters, export, detail routes, and delete confirmation
 - Four customers with dealer, regular, inactive, long-name, email, and outstanding-balance cases
 - Purchases with paid and partially-paid states
+- Purchase orders with partially-received and received states
 - Sales orders with processing and completed states
-- Expenses with paid and draft states
+- Quotations with sent and accepted states
+- Expenses with paid and draft states, including posted transaction reconciliation
 - Accounts and transaction rows with positive and negative values
 - Unread/read notifications
 - Stock-in, stock-out, and adjustment history
@@ -32,6 +34,11 @@ The query flag persists in browser storage so navigation continues to use the sa
 3. Open Products, switch between card/table views, filter by category/status/stock, and open details.
 4. Open Inventory, Customers, Purchases, Sales Orders, Expenses, Transactions, Notifications, and Reports.
 5. Test narrow mobile widths, long names, empty search results, inactive rows, disabled actions, dialogs, exports, and back navigation.
-6. Log in as a read-only or firm-scoped user and verify that fixture data remains permission-filtered.
+6. On a sales-order detail page, set the fulfilled quantity twice to the same value and confirm stock changes only once. On a purchase-order detail page, record the same receipt twice and confirm the second action is a no-op.
+7. Create a paid expense, edit its amount/status, and delete it; confirm the matching transaction and account balance are reconciled. Draft expenses should not create a cash transaction until posted.
+8. Accept a quotation and convert it to a sales order, then verify the quotation status and new order.
+9. Log in as a read-only or firm-scoped user and verify that fixture data remains permission-filtered.
+
+Server-render and service interaction checks currently pass for every populated main page, populated detail route, opt-in/off initialization, filters, firm scoping, stock receipt/fulfillment idempotency, expense CRUD reconciliation, purchase payment validation, quotation conversion, and normal mode isolation. Browser automation is not bundled in this repository, so the responsive and permission checklist above remains a manual pass.
 
 All fixture records are marked in code as synthetic stability-test data and are not uploaded to Google Drive or sent to external services.

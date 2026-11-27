@@ -17,6 +17,7 @@ export default function QuotationDetailsPage() {
   const canEditQuotation = hasModulePermission(currentUser, 'Quotations', 'edit')
   const canConvert = hasModulePermission(currentUser, 'Sales Orders', 'create')
   const [tab, setTab] = useState('Overview')
+  const [, setQuotationVersion] = useState(0)
 
   const quote = getQuotationById(quotationId)
   if (!quote) {
@@ -40,6 +41,12 @@ export default function QuotationDetailsPage() {
     window.print()
   }
 
+  const handleMarkAccepted = () => {
+    if (canEditQuotation && markQuotationAccepted(quote.id)) {
+      setQuotationVersion((version) => version + 1)
+    }
+  }
+
   return (
     <div className="quotations-page">
       <header className="quotations-header">
@@ -54,7 +61,7 @@ export default function QuotationDetailsPage() {
           <div className="quotations-details-actions">
             <Button variant="secondary" onClick={() => navigate('/quotations')}>Back to Quotations</Button>
             <Button variant="secondary" onClick={handlePrint}>Print</Button>
-            <Button variant="secondary" onClick={() => canEditQuotation && markQuotationAccepted(quote.id)} disabled={quote.status !== 'Sent' || !canEditQuotation}>Mark Accepted</Button>
+            <Button variant="secondary" onClick={handleMarkAccepted} disabled={quote.status !== 'Sent' || !canEditQuotation}>Mark Accepted</Button>
             <Button onClick={handleConvert} disabled={quote.status !== 'Accepted' || !canConvert}>Convert to Sales Order</Button>
           </div>
         </div>

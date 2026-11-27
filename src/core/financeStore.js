@@ -55,6 +55,8 @@ import {
 import { getProducts } from '../features/products/services/productService'
 import { DEFAULT_FIRM_ID } from '../config/firms'
 import { getActiveFirmId } from './firmContextStore'
+import { isStabilityModeEnabled } from './stabilityMode'
+import { STABILITY_QUOTATIONS } from './stabilityData'
 
 export { formatMoney, formatDate } from './numbers'
 export { mockAccounts, mockExpenses, getAccounts }
@@ -104,7 +106,12 @@ function inActiveFirm(record) {
    Quotations
    -------------------------------------------------------------------------- */
 
-export const mockQuotations = []
+export const mockQuotations = isStabilityModeEnabled()
+  ? STABILITY_QUOTATIONS.map((quote) => ({
+    ...quote,
+    items: quote.items.map((item) => ({ ...item })),
+  }))
+  : []
 
 mockQuotations.forEach((quote) => {
   quote.firmId = inferFirmId(quote)
