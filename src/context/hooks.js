@@ -9,8 +9,8 @@ export function useAppContext() {
 }
 
 export function useAuth() {
-  const { currentUser, isAuthenticated, login, logout } = useAppContext()
-  return { currentUser, isAuthenticated, login, logout }
+  const { currentUser, isAuthenticated, login, register, updateProfile, updatePassword, logout } = useAppContext()
+  return { currentUser, isAuthenticated, login, register, updateProfile, updatePassword, logout }
 }
 
 export function useTheme() {

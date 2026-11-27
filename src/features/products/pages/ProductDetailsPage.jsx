@@ -32,6 +32,13 @@ const PRICE_TYPE_VARIANTS = {
   OLD_PRICE: 'neutral',
 }
 
+function normalizeStockType(type) {
+  if (type === 'stock-in') return 'IN'
+  if (type === 'stock-out') return 'OUT'
+  if (type === 'adjustment') return 'ADJUST'
+  return type
+}
+
 export default function ProductDetailsPage() {
   const { productId } = useParams()
   const navigate = useNavigate()
@@ -42,7 +49,7 @@ export default function ProductDetailsPage() {
     ? `/firms/${currentFirmId}/workspace`
     : ''
   const { getProductById, saveProduct, canEditProduct, deleteProduct, toggleProductStatus } = useProducts()
-  const categories = useMemo(() => getCategoriesWithProductCounts(), [])
+  const categories = getCategoriesWithProductCounts()
   const categoriesById = useMemo(
     () => Object.fromEntries(categories.map((category) => [category.id, category])),
     [categories],
@@ -164,8 +171,8 @@ export default function ProductDetailsPage() {
                     stockHistory.map((entry) => (
                       <div key={entry.id} className="products-stock-history__item">
                         <div className="products-stock-history__type">
-                          <Badge variant={STOCK_TYPE_VARIANTS[entry.type] ?? 'neutral'} size="sm">
-                            {STOCK_TYPE_LABELS[entry.type]}
+                          <Badge variant={STOCK_TYPE_VARIANTS[normalizeStockType(entry.type)] ?? 'neutral'} size="sm">
+                            {STOCK_TYPE_LABELS[normalizeStockType(entry.type)] ?? entry.type}
                           </Badge>
                           <span className="products-stock-history__date">{formatDate(entry.date)}</span>
                         </div>

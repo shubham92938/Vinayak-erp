@@ -1,4 +1,3 @@
-import { useMemo } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useToast } from '../../../components/ui'
 import { useAuth, useFirmContext } from '../../../context/hooks'
@@ -23,7 +22,7 @@ export default function ProductCreatePage() {
     ? `/firms/${currentFirmId}/workspace`
     : ''
   const canCreateProducts = hasModulePermission(currentUser, 'Products', 'create')
-  const categories = useMemo(() => getCategoriesWithProductCounts(), [])
+  const categories = getCategoriesWithProductCounts()
   const { createProduct } = useProducts()
 
   const handleSubmit = (productData) => {

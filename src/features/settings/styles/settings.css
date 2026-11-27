@@ -120,6 +120,45 @@
   color: var(--color-text-secondary);
 }
 
+.settings-profile-summary {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3);
+  background: var(--color-surface-muted);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+}
+
+.settings-profile-avatar {
+  display: grid;
+  flex: 0 0 auto;
+  width: 42px;
+  height: 42px;
+  place-items: center;
+  color: #fff;
+  background: linear-gradient(135deg, var(--brand-teal), var(--color-blue-active));
+  border-radius: 50%;
+  font-size: var(--font-size-base);
+  font-weight: var(--font-weight-bold);
+}
+
+.settings-profile-summary strong,
+.settings-profile-summary span {
+  display: block;
+}
+
+.settings-profile-summary strong {
+  color: var(--color-text-primary);
+  font-size: var(--font-size-sm);
+}
+
+.settings-profile-summary span {
+  margin-top: 3px;
+  color: var(--color-text-tertiary);
+  font-size: var(--font-size-xs);
+}
+
 @media (max-width: 640px) {
   .settings-section-tabs {
     overflow-x: auto;

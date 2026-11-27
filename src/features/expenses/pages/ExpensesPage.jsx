@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Button, Modal, Select, useToast } from '../../../components/ui'
-import { useAuth } from '../../../context/hooks'
+import { useAuth, useFirmContext } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
 import { FormActions, FormField, FormGrid, FormInput, FormSection, FormTextarea } from '../../../components/forms'
 import { DataTable } from '../../../components/data-table'
@@ -29,6 +29,7 @@ const MODES = [
 export default function ExpensesPage() {
   const toast = useToast()
   const { currentUser } = useAuth()
+  const { currentFirmId } = useFirmContext()
   const canCreateExpenses = hasModulePermission(currentUser, 'Expenses', 'create')
   const canEditExpenses = hasModulePermission(currentUser, 'Expenses', 'edit')
   const canDeleteExpenses = hasModulePermission(currentUser, 'Expenses', 'delete')
@@ -39,6 +40,7 @@ export default function ExpensesPage() {
   const [deleting, setDeleting] = useState(null)
 
   const expenses = getExpenses().filter((expense) => {
+    if (currentFirmId && expense.firmId !== currentFirmId) return false
     if (filters.type !== 'all' && expense.type !== filters.type) return false
     if (filters.status !== 'all' && expense.status !== filters.status) return false
     const query = String(filters.search ?? '').trim().toLowerCase()

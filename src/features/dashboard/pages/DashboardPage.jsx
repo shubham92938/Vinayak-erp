@@ -26,6 +26,7 @@ import { getPurchases } from '../../../core/purchaseStore'
 import { getSalesOrders } from '../../../core/salesOrdersStore'
 import { getProducts } from '../../products/services/productService'
 import { getStockStatus } from '../../products/utils/productUtils'
+import { getExpenses } from '../../expenses/services/expenseService'
 import { useAuth, useFirmContext } from '../../../context/hooks'
 import './DashboardPage.css'
 
@@ -174,8 +175,10 @@ export default function DashboardPage() {
     const purchases = getPurchases({})
     const products = getProducts()
     const orders = getSalesOrders({ status: 'all' }).filter((order) => !['Completed', 'Cancelled'].includes(order.status))
+    const expenses = getExpenses().filter((expense) => !currentFirmId || expense.firmId === currentFirmId)
     const salesTotal = sales.reduce((sum, sale) => sum + Number(sale.total ?? 0), 0)
     const purchaseTotal = purchases.reduce((sum, purchase) => sum + Number(purchase.total ?? 0), 0)
+    const expenseTotal = expenses.reduce((sum, expense) => sum + Number(expense.amount ?? 0), 0)
     const paidSales = sales.reduce((sum, sale) => sum + Number(sale.paid ?? sale.advance ?? 0), 0)
     const dueSales = sales.reduce((sum, sale) => sum + Number(sale.due ?? 0), 0)
     const lowStock = products.filter((product) => getStockStatus(product) === 'low-stock').length
@@ -185,8 +188,10 @@ export default function DashboardPage() {
       purchases,
       products,
       orders,
+      expenses,
       salesTotal,
       purchaseTotal,
+      expenseTotal,
       paidSales,
       dueSales,
       lowStock,
@@ -225,7 +230,7 @@ export default function DashboardPage() {
         <MetricCard label="Total Sales" value={formatMoney(data.salesTotal)} note={`${data.sales.length} recorded`} icon={ShoppingCart} tone="green" trend="up" />
         <MetricCard label="Total Purchases" value={formatMoney(data.purchaseTotal)} note={`${data.purchases.length} recorded`} icon={ShoppingCart} tone="blue" />
         <MetricCard label="Revenue" value={formatMoney(data.salesTotal)} note="From recorded sales" icon={TrendingUp} tone="mint" trend="up" />
-        <MetricCard label="Total Expenses" value="₹0" note="No expense records" icon={Wallet} tone="peach" />
+        <MetricCard label="Total Expenses" value={formatMoney(data.expenseTotal)} note={`${data.expenses.length} recorded`} icon={Wallet} tone="peach" />
         <MetricCard label="Outstanding" value={formatMoney(data.dueSales)} note={`${formatMoney(data.paidSales)} collected`} icon={Wallet} tone="lavender" />
         <MetricCard label="Total Products" value={data.products.length.toLocaleString('en-IN')} note={`${data.lowStock + data.outOfStock} stock alerts`} icon={Boxes} tone="aqua" />
       </section>

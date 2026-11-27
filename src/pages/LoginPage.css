@@ -404,3 +404,99 @@
     padding: 25px 20px;
   }
 }
+
+.login-form__links {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 1px;
+}
+
+.login-form__signup {
+  color: #62798b;
+  font-size: 11px;
+  text-align: right;
+}
+
+.login-form__signup a {
+  color: #0f766e;
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.login-form__signup a:hover {
+  text-decoration: underline;
+}
+
+[data-theme='dark'] .login-page {
+  color: var(--color-text-primary);
+  background: var(--color-background);
+}
+
+[data-theme='dark'] .login-card-shell {
+  background:
+    radial-gradient(circle at 82% 10%, color-mix(in srgb, var(--brand-teal) 12%, transparent), transparent 20rem),
+    var(--color-background);
+}
+
+[data-theme='dark'] .login-card {
+  background: color-mix(in srgb, var(--color-surface) 96%, var(--brand-teal) 4%);
+  border-color: var(--color-border);
+  box-shadow: var(--shadow-xl);
+}
+
+[data-theme='dark'] .login-card h2,
+[data-theme='dark'] .login-field,
+[data-theme='dark'] .login-field input,
+[data-theme='dark'] .login-form__signup,
+[data-theme='dark'] .login-forgot {
+  color: var(--color-text-primary);
+}
+
+[data-theme='dark'] .login-card__header p,
+[data-theme='dark'] .login-card__footnote,
+[data-theme='dark'] .login-form__signup {
+  color: var(--color-text-secondary);
+}
+
+[data-theme='dark'] .login-field input {
+  background: var(--color-surface-subtle);
+  border-color: var(--color-border);
+}
+
+[data-theme='dark'] .login-field input:focus {
+  background: var(--color-surface);
+  border-color: var(--brand-teal);
+}
+
+[data-theme='dark'] .login-field input::placeholder {
+  color: var(--color-text-tertiary);
+}
+
+[data-theme='dark'] .login-password__toggle:hover {
+  color: var(--brand-teal-bright);
+  background: var(--brand-teal-soft);
+}
+
+[data-theme='dark'] .login-form__error {
+  color: var(--color-danger-strong);
+  background: var(--color-danger-soft);
+  border-color: var(--color-danger-border);
+}
+
+[data-theme='dark'] .login-card__footnote {
+  border-top-color: var(--color-border);
+}
+
+@media (max-width: 480px) {
+  .login-form__links {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .login-form__signup {
+    align-self: center;
+  }
+}

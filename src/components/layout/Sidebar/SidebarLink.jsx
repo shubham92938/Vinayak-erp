@@ -1,5 +1,5 @@
 import { NavLink, useLocation } from 'react-router-dom'
-import { getWorkspaceRoutePath } from '../../../config/navigation'
+import { getActiveNavigationPath, getWorkspaceRoutePath } from '../../../config/navigation'
 import { useFirmContext } from '../../../context/hooks'
 
 export default function SidebarLink({
@@ -14,9 +14,8 @@ export default function SidebarLink({
   const { pathname } = useLocation()
   const { currentFirm } = useFirmContext()
   const to = getWorkspaceRoutePath(currentFirm?.id, item.to)
-  const workspaceRoot = currentFirm?.id ? `/firms/${currentFirm.id}/workspace` : null
-  const isDashboardRoot = item.to === '/dashboard' && pathname === workspaceRoot
-  const isCurrent = isDashboardRoot || pathname === to || pathname === item.to || pathname.startsWith(`${to}/`) || pathname.startsWith(`${item.to}/`)
+  const activePath = getActiveNavigationPath(pathname, currentFirm?.id)
+  const isCurrent = activePath === to
 
   const showLinkTooltip = (event) => {
     if (collapsed) onShowTooltip?.(item.label, event.currentTarget)

@@ -68,6 +68,26 @@ export function AppProvider({ children }) {
     return user
   }, [])
 
+  const register = useCallback((registration) => {
+    const user = authService.register(registration)
+    setCurrentUser(user)
+    setCurrentFirmId(null)
+    setActiveFirmId(null)
+    return user
+  }, [])
+
+  const updateProfile = useCallback((profile) => {
+    if (!currentUser?.id) throw new Error('You are not signed in')
+    const updated = authService.updateProfile(currentUser.id, profile)
+    setCurrentUser(updated)
+    return updated
+  }, [currentUser])
+
+  const updatePassword = useCallback((currentPassword, nextPassword) => {
+    if (!currentUser?.id) throw new Error('You are not signed in')
+    return authService.updatePassword(currentUser.id, currentPassword, nextPassword)
+  }, [currentUser])
+
   const logout = useCallback(() => {
     authService.logout()
     setCurrentUser(null)
@@ -90,6 +110,9 @@ export function AppProvider({ children }) {
       currentUser,
       isAuthenticated: Boolean(currentUser),
       login,
+      register,
+      updateProfile,
+      updatePassword,
       logout,
       firms,
       accessibleFirms,
@@ -106,6 +129,9 @@ export function AppProvider({ children }) {
       currentFirm,
       currentFirmId,
       login,
+      register,
+      updateProfile,
+      updatePassword,
       logout,
       selectFirm,
       firmVersion,

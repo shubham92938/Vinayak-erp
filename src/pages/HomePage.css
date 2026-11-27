@@ -776,3 +776,70 @@
     padding-inline: 18px;
   }
 }
+
+/* Compact firm cards: preserve the same information with less vertical travel. */
+.firm-card-grid {
+  gap: 16px;
+}
+
+.firm-card {
+  min-height: 242px;
+}
+
+.firm-card__banner {
+  min-height: 82px;
+  padding: 16px 18px 14px;
+}
+
+.firm-card__identity {
+  gap: 10px;
+}
+
+.firm-card__icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 11px;
+  font-size: 13px;
+}
+
+.firm-card__name {
+  margin-bottom: 4px;
+  font-size: 14px;
+}
+
+.firm-card__identity-copy p {
+  font-size: 10px;
+}
+
+.firm-card__status {
+  padding: 5px 8px;
+  font-size: 9px;
+}
+
+.firm-card__details {
+  gap: 9px;
+  padding: 14px 18px 0;
+}
+
+.firm-card__details dt,
+.firm-card__details dd {
+  font-size: 10px;
+}
+
+.firm-card__actions {
+  gap: 8px;
+  padding: 14px 18px 16px;
+}
+
+.firm-card__actions .ui-button {
+  min-height: 34px;
+  font-size: 10px;
+}
+
+@media (max-width: 620px) {
+  .firm-card__banner,
+  .firm-card__details,
+  .firm-card__actions {
+    padding-inline: 15px;
+  }
+}

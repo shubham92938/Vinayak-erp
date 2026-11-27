@@ -477,7 +477,7 @@ export async function fetchDashboardData({
     meta: {
       label: DEMO_DATA_LABEL,
       notice: DEMO_DATA_NOTICE,
-      source: 'imported-records',
+      source: 'synthetic-demo-data',
     },
     scope: {
       startDate,

@@ -1,5 +1,5 @@
 import { FileDown, FileSpreadsheet, Plus, RefreshCw, Eye } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Button } from '../../../components/ui'
 import { useAuth, useFirmContext } from '../../../context/hooks'
@@ -27,7 +27,7 @@ export default function PurchasesPage() {
   const canCreate = hasModulePermission(currentUser, 'Purchase Orders', 'create') || hasModulePermission(currentUser, 'Purchases', 'create')
   const canExport = hasModulePermission(currentUser, 'Purchases', 'export')
   const [filters, setFilters] = useState(EMPTY_FILTERS)
-  const purchases = useMemo(() => getPurchases({ search: filters.search }), [filters.search])
+  const purchases = getPurchases({ search: filters.search })
 
   const exportCsv = () => {
     if (!canExport) return

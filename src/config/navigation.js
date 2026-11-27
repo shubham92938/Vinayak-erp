@@ -9,6 +9,7 @@ import {
   ShieldCheck,
   ShoppingBag,
   ShoppingCart,
+  Settings,
   Tags,
   UserRound,
 } from 'lucide-react'
@@ -143,6 +144,14 @@ export const UTILITY_ROUTES = [
     section: 'Account',
     icon: UserRound,
   },
+  {
+    id: 'account-settings',
+    label: 'Account Settings',
+    title: 'Account Settings',
+    to: '/settings/account',
+    section: 'Account',
+    icon: Settings,
+  },
 ]
 
 export const NAV_ROUTES = NAV_SECTIONS.flatMap((section) =>
@@ -170,16 +179,59 @@ export function getWorkspaceRoutePath(firmId, path) {
   return `/firms/${firmId}/workspace${path}`
 }
 
+function pathMatches(pathname, routePath) {
+  return pathname === routePath || pathname.startsWith(`${routePath}/`)
+}
+
+export function getActiveNavigationPath(pathname, firmId) {
+  const workspaceRoot = firmId ? `/firms/${firmId}/workspace` : null
+  const candidates = NAV_SECTIONS.flatMap((section) =>
+    section.items.flatMap((item) => item.children ?? [item]),
+  )
+    .filter((item) => item.to)
+    .map((item) => ({
+      item,
+      path: getWorkspaceRoutePath(firmId, item.to),
+    }))
+    .filter(({ path, item }) =>
+      pathMatches(pathname, path) ||
+      (item.to === '/dashboard' && pathname === workspaceRoot),
+    )
+    .sort((left, right) => right.path.length - left.path.length)
+
+  return candidates[0]?.path ?? null
+}
+
 function normalizePath(pathname) {
   if (!pathname) return '/'
   const normalized = pathname.replace(/\/+$/, '')
   return normalized || '/'
 }
 
+const SETTINGS_META = {
+  general: { label: 'Settings', title: 'Settings' },
+  firm: { label: 'Firm Settings', title: 'Firm Settings' },
+  financial: { label: 'Financial Settings', title: 'Financial Settings' },
+  inventory: { label: 'Inventory Settings', title: 'Inventory Settings' },
+  document: { label: 'Document Settings', title: 'Document Settings' },
+  profile: { label: 'My Profile', title: 'My Profile' },
+  account: { label: 'Account Settings', title: 'Account Settings' },
+}
+
+function getSettingsMeta(path, to = path) {
+  const match = path.match(/^\/settings(?:\/([^/]+))?$/)
+  if (!match) return null
+  const settings = SETTINGS_META[match[1] ?? 'general'] ?? SETTINGS_META.general
+  return { ...settings, id: `settings-${match[1] ?? 'general'}`, section: 'System', to }
+}
+
 export function getRouteMeta(pathname) {
   const path = normalizePath(pathname)
   const direct = ALL_ROUTES.find((route) => route.to === path)
   if (direct) return direct
+
+  const settingsMeta = getSettingsMeta(path)
+  if (settingsMeta) return settingsMeta
 
   const profileMatch = path.match(/^\/firms\/[^/]+\/profile$/)
   if (profileMatch) {
@@ -190,7 +242,8 @@ export function getRouteMeta(pathname) {
   if (workspaceMatch) {
     const childPath = workspaceMatch[1] ? `/${workspaceMatch[1]}` : '/dashboard'
     const route = ALL_ROUTES.find((entry) => entry.to === childPath)
-    return route ?? { id: 'workspace', label: 'Workspace', title: 'Workspace', section: 'Workspace', to: path }
+    const nestedSettings = getSettingsMeta(childPath, path)
+    return route ?? nestedSettings ?? { id: 'workspace', label: 'Workspace', title: 'Workspace', section: 'Workspace', to: path }
   }
 
   return null

@@ -1,4 +1,5 @@
-import { useState } from 'react'
+import { useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { Button, Card, CardBody, Select, useToast } from '../../../components/ui'
 import { FormActions, FormField, FormGrid, FormInput, FormSection } from '../../../components/forms'
 import { mockFinancialSettings } from '../../../core/store'
@@ -7,16 +8,39 @@ import '../styles/settings.css'
 
 const SETTINGS_TABS = ['General', 'Firm', 'Financial', 'Inventory', 'Document', 'Profile']
 
+const SECTION_PATHS = {
+  General: '/settings/general',
+  Firm: '/settings/firm',
+  Financial: '/settings/financial',
+  Inventory: '/settings/inventory',
+  Document: '/settings/document',
+  Profile: '/profile',
+}
+
+function sectionFromPath(pathname) {
+  if (pathname === '/profile' || pathname === '/settings/account' || pathname === '/settings/profile') return 'Profile'
+  const match = Object.entries(SECTION_PATHS).find(([, path]) => pathname === path || pathname.endsWith(path))
+  return match?.[0] ?? 'General'
+}
+
+function getSectionPath(name, pathname) {
+  const workspacePrefix = pathname.match(/^\/firms\/[^/]+\/workspace/)?.[0]
+  if (workspacePrefix && name !== 'Profile') return `${workspacePrefix}${SECTION_PATHS[name]}`
+  return SECTION_PATHS[name]
+}
+
 export default function SettingsPage() {
-  const [section, setSection] = useState('General')
+  const location = useLocation()
+  const navigate = useNavigate()
+  const section = useMemo(() => sectionFromPath(location.pathname), [location.pathname])
 
   return (
     <div className="settings-page">
       <header className="settings-header">
         <div className="settings-header__text">
           <p className="settings-header__eyebrow"><span aria-hidden="true">#</span> Settings</p>
-          <h1 className="settings-header__title">Settings</h1>
-          <p className="settings-header__description">Configure this ERP — firm, financials, inventory, documents and your profile.</p>
+          <h1 className="settings-header__title">{section === 'Profile' ? (location.pathname === '/settings/account' ? 'Account Settings' : 'My Profile') : 'Settings'}</h1>
+          <p className="settings-header__description">{section === 'Profile' ? 'Manage your personal details and account security.' : 'Configure this ERP — firm, financials, inventory, documents and your profile.'}</p>
         </div>
       </header>
 
@@ -26,7 +50,7 @@ export default function SettingsPage() {
             key={name}
             type="button"
             className={['settings-section-tab', section === name && 'settings-section-tab--active'].filter(Boolean).join(' ')}
-            onClick={() => setSection(name)}
+            onClick={() => navigate(getSectionPath(name, location.pathname))}
           >
             {name}
           </button>
@@ -228,29 +252,98 @@ function DocumentSection() {
 
 function ProfileSection() {
   const toast = useToast()
-  const { currentUser } = useAuth()
+  const location = useLocation()
+  const { currentUser, updateProfile, updatePassword } = useAuth()
+  const isAccountSettings = location.pathname === '/settings/account'
+  const [form, setForm] = useState(() => ({
+    name: currentUser?.name ?? '',
+    email: currentUser?.email ?? '',
+  }))
+  const [passwordForm, setPasswordForm] = useState({ current: '', next: '', confirm: '' })
+
+  const handleSave = () => {
+    const name = form.name.trim()
+    const email = form.email.trim().toLowerCase()
+    if (name.length < 2) {
+      toast.error('Enter your full name.')
+      return
+    }
+    if (!email || !email.includes('@')) {
+      toast.error('Enter a valid email address.')
+      return
+    }
+    try {
+      updateProfile({ name, email })
+      toast.success('Profile saved.')
+    } catch (error) {
+      toast.error(error?.message ?? 'Unable to save your profile.')
+    }
+  }
+
+  const handlePasswordChange = () => {
+    if (passwordForm.next !== passwordForm.confirm) {
+      toast.error('New passwords do not match.')
+      return
+    }
+    try {
+      updatePassword(passwordForm.current, passwordForm.next)
+      setPasswordForm({ current: '', next: '', confirm: '' })
+      toast.success('Password updated.')
+    } catch (error) {
+      toast.error(error?.message ?? 'Unable to update your password.')
+    }
+  }
 
   return (
-    <SettingsCard title="Profile" subtitle="Edit your account details">
-      <form className="settings-form" onSubmit={(event) => { event.preventDefault(); toast.success('Profile saved.') }} noValidate>
-        <FormSection>
-          <FormGrid>
-            <FormField label="Full Name">
-              <FormInput defaultValue={currentUser?.name ?? ''} aria-label="Full name" />
+    <>
+      <SettingsCard title={isAccountSettings ? 'Account Settings' : 'My Profile'} subtitle={isAccountSettings ? 'Manage your sign-in details and account security' : 'Keep your account details up to date'}>
+        <form className="settings-form" onSubmit={(event) => { event.preventDefault(); handleSave() }} noValidate>
+          <FormSection>
+            <div className="settings-profile-summary">
+              <div className="settings-profile-avatar" aria-hidden="true">{(form.name || 'U').slice(0, 1).toUpperCase()}</div>
+              <div>
+                <strong>{form.name || 'Your profile'}</strong>
+                <span>{currentUser?.role ?? 'Workspace user'}</span>
+              </div>
+            </div>
+            <FormGrid>
+              <FormField label="Full Name">
+                <FormInput value={form.name} onChange={(event) => setForm((current) => ({ ...current, name: event.target.value }))} aria-label="Full name" autoComplete="name" />
+              </FormField>
+              <FormField label="Role">
+                <FormInput value={currentUser?.role ?? ''} aria-label="Role" readOnly />
+              </FormField>
+            </FormGrid>
+            <FormField label="Email">
+              <FormInput type="email" value={form.email} onChange={(event) => setForm((current) => ({ ...current, email: event.target.value }))} aria-label="Email" autoComplete="email" />
             </FormField>
-            <FormField label="Role">
-              <FormInput defaultValue={currentUser?.role ?? ''} aria-label="Role" readOnly />
-            </FormField>
-          </FormGrid>
-          <FormField label="Email">
-            <FormInput type="email" defaultValue={currentUser?.email ?? ''} aria-label="Email" />
-          </FormField>
-          <FormActions>
-            <Button type="submit" variant="primary">Save Profile</Button>
-          </FormActions>
-        </FormSection>
-      </form>
-    </SettingsCard>
+            <FormActions>
+              <Button type="submit" variant="primary">Save Profile</Button>
+            </FormActions>
+          </FormSection>
+        </form>
+      </SettingsCard>
+      {isAccountSettings && (
+        <SettingsCard title="Password & Security" subtitle="Use a strong password to protect your workspace account">
+          <form className="settings-form" onSubmit={(event) => { event.preventDefault(); handlePasswordChange() }} noValidate>
+            <FormGrid>
+              <FormField label="Current Password">
+                <FormInput type="password" value={passwordForm.current} onChange={(event) => setPasswordForm((current) => ({ ...current, current: event.target.value }))} autoComplete="current-password" />
+              </FormField>
+              <FormField label="New Password" hint="At least 6 characters">
+                <FormInput type="password" value={passwordForm.next} onChange={(event) => setPasswordForm((current) => ({ ...current, next: event.target.value }))} autoComplete="new-password" />
+              </FormField>
+              <FormField label="Confirm New Password">
+                <FormInput type="password" value={passwordForm.confirm} onChange={(event) => setPasswordForm((current) => ({ ...current, confirm: event.target.value }))} autoComplete="new-password" />
+              </FormField>
+            </FormGrid>
+            <FormActions>
+              <Button type="submit" variant="secondary">Update Password</Button>
+            </FormActions>
+          </form>
+        </SettingsCard>
+      )}
+    </>
   )
 }
 

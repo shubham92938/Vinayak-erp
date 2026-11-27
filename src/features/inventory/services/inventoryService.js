@@ -79,7 +79,10 @@ export function createTransfer({ sourceFirmId, destinationFirmId, productId, qty
   }
 
   const sourceProduct = getAllProducts().find((entry) => entry.id === productId && entry.firmId === sourceFirmId)
-  const destinationProduct = getAllProducts().find((entry) => entry.firmId === destinationFirmId && entry.code === sourceProduct?.code)
+  const destinationProduct = getAllProducts().find((entry) =>
+    entry.firmId === destinationFirmId &&
+    ((sourceProduct?.catalogKey && entry.catalogKey === sourceProduct.catalogKey) || entry.code === sourceProduct?.code),
+  )
   if (!sourceProduct) throw new Error('Source product not found')
   if (!destinationProduct) throw new Error('Destination firm has no product with this code. Create the product first.')
   if (qty <= 0) throw new Error('Quantity must be greater than 0')

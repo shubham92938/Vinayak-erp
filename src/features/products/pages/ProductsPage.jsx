@@ -124,7 +124,7 @@ export default function ProductsPage() {
     : ''
   const canCreateProducts = hasModulePermission(currentUser, 'Products', 'create')
   const canExportProducts = hasModulePermission(currentUser, 'Products', 'export')
-  const categories = useMemo(() => getCategoriesWithProductCounts(), [])
+  const categories = getCategoriesWithProductCounts()
   const categoriesById = useMemo(() => Object.fromEntries(categories.map((category) => [category.id, category])), [categories])
   const {
     products,
