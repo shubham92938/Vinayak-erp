@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { Eye, EyeOff, LockKeyhole, ShieldCheck, Sparkles } from 'lucide-react'
-import { Navigate, useLocation, useNavigate } from 'react-router-dom'
+import { Link, Navigate, useLocation, useNavigate } from 'react-router-dom'
 import BrandLockup from '../components/brand/BrandLockup'
 import ThemeToggle from '../components/theme/ThemeToggle'
 import { useToast } from '../components/ui'
@@ -108,13 +108,16 @@ export default function LoginPage() {
             <button type="submit" className="login-submit" disabled={isSubmitting}>
               {isSubmitting ? 'Signing in…' : 'Sign In'}
             </button>
-            <button
-              type="button"
-              className="login-forgot"
-              onClick={() => toast.info('Password recovery is not connected in this demo.')}
-            >
-              Forgot your password?
-            </button>
+            <div className="login-form__links">
+              <button
+                type="button"
+                className="login-forgot"
+                onClick={() => toast.info('Password recovery is not connected in this demo.')}
+              >
+                Forgot your password?
+              </button>
+              <span className="login-form__signup">New here? <Link to="/signup">Create account</Link></span>
+            </div>
           </form>
           <p className="login-card__footnote"><ShieldCheck size={13} aria-hidden="true" /> Your workspace data stays scoped to your firm.</p>
         </div>

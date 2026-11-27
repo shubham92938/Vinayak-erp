@@ -1,6 +1,6 @@
 import { useMemo, useState } from 'react'
 import { useLocation } from 'react-router-dom'
-import { NAV_SECTIONS, getWorkspaceRoutePath } from '../../../config/navigation'
+import { NAV_SECTIONS, getActiveNavigationPath, getWorkspaceRoutePath } from '../../../config/navigation'
 import { useAuth, useFirmContext } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
 import SidebarGroup from './SidebarGroup'
@@ -14,11 +14,13 @@ function getModuleId(item) {
 }
 
 function getActiveGroupIds(pathname, currentFirmId) {
+  const activePath = getActiveNavigationPath(pathname, currentFirmId)
   return NAV_SECTIONS.flatMap((section) => section.items)
-    .filter((item) => item.children?.some((child) => {
-      const workspacePath = getWorkspaceRoutePath(currentFirmId, child.to)
-      return pathname === workspacePath || pathname === child.to || pathname.startsWith(`${workspacePath}/`) || pathname.startsWith(`${child.to}/`)
-    }))
+    .filter((item) => item.children?.some((child) => (
+      child.to && (
+        getWorkspaceRoutePath(currentFirmId, child.to) === activePath
+      )
+    )))
     .map((item) => item.id)
 }
 

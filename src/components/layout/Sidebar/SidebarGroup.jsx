@@ -1,7 +1,7 @@
 import { ChevronDown } from 'lucide-react'
 import { useLocation } from 'react-router-dom'
 import SidebarLink from './SidebarLink'
-import { getWorkspaceRoutePath } from '../../../config/navigation'
+import { getActiveNavigationPath, getWorkspaceRoutePath } from '../../../config/navigation'
 import { useFirmContext } from '../../../context/hooks'
 
 export default function SidebarGroup({
@@ -16,10 +16,10 @@ export default function SidebarGroup({
   const { pathname } = useLocation()
   const { currentFirm } = useFirmContext()
   const Icon = group.icon
-  const hasActiveChild = group.children.some((child) => {
-    const workspacePath = getWorkspaceRoutePath(currentFirm?.id, child.to)
-    return pathname === workspacePath || pathname === child.to || pathname.startsWith(`${workspacePath}/`) || pathname.startsWith(`${child.to}/`)
-  })
+  const activePath = getActiveNavigationPath(pathname, currentFirm?.id)
+  const hasActiveChild = group.children.some((child) => (
+    getWorkspaceRoutePath(currentFirm?.id, child.to) === activePath
+  ))
   const isExpanded = !collapsed && open
 
   const showGroupTooltip = (event) => {
@@ -35,7 +35,7 @@ export default function SidebarGroup({
         className={[
           'app-sidebar__link',
           'app-sidebar__group-trigger',
-          hasActiveChild && 'is-active',
+          hasActiveChild && 'has-active-child',
         ]
           .filter(Boolean)
           .join(' ')}

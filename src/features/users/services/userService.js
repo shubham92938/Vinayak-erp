@@ -1,23 +1,47 @@
 import { USER_DEMO_DATA } from '../data/userDemoData'
 import { getDefaultAccessPolicy } from '../data/rolePermissions'
 
-let users = USER_DEMO_DATA.map((user) => ({
-  ...user,
-  permissions: Object.fromEntries(
-    Object.entries(user.permissions ?? {}).map(([moduleId, permissions]) => [
-      moduleId,
-      { ...permissions },
-    ]),
-  ),
-  firmPermissions: { ...(user.firmPermissions ?? {}) },
-  dataPermissions: Object.fromEntries(
-    Object.entries(user.dataPermissions ?? {}).map(([moduleId, permissions]) => [
-      moduleId,
-      { ...permissions },
-    ]),
-  ),
-}))
+const USERS_STORAGE_KEY = 'vinayak-erp-users'
 
+function canUseStorage() {
+  return typeof window !== 'undefined' && Boolean(window.localStorage)
+}
+
+function createInitialUsers() {
+  return USER_DEMO_DATA.map((user) => ({
+    ...user,
+    permissions: Object.fromEntries(
+      Object.entries(user.permissions ?? {}).map(([moduleId, permissions]) => [
+        moduleId,
+        { ...permissions },
+      ]),
+    ),
+    firmPermissions: { ...(user.firmPermissions ?? {}) },
+    dataPermissions: Object.fromEntries(
+      Object.entries(user.dataPermissions ?? {}).map(([moduleId, permissions]) => [
+        moduleId,
+        { ...permissions },
+      ]),
+    ),
+  }))
+}
+
+function loadUsers() {
+  if (!canUseStorage()) return createInitialUsers()
+  try {
+    const stored = JSON.parse(window.localStorage.getItem(USERS_STORAGE_KEY) ?? 'null')
+    return Array.isArray(stored) && stored.length > 0 ? stored : createInitialUsers()
+  } catch {
+    return createInitialUsers()
+  }
+}
+
+function persistUsers() {
+  if (!canUseStorage()) return
+  window.localStorage.setItem(USERS_STORAGE_KEY, JSON.stringify(users))
+}
+
+let users = loadUsers()
 let currentUserId = null
 const listeners = new Set()
 
@@ -100,6 +124,7 @@ export function saveUser(userId, userData) {
     password: userData.password ?? previous.password ?? 'demo123',
   }
   users[index] = updated
+  persistUsers()
   notify()
   return cloneUser(updated)
 }
@@ -131,6 +156,7 @@ export function createUser(userData) {
     lastLogin: userData.lastLogin ?? null,
   }
   users = [user, ...users]
+  persistUsers()
   notify()
   return cloneUser(user)
 }
@@ -138,6 +164,7 @@ export function createUser(userData) {
 export function deleteUser(userId) {
   users = users.filter((user) => user.id !== userId)
   if (currentUserId === userId) currentUserId = null
+  persistUsers()
   notify()
   return userId
 }
@@ -150,6 +177,7 @@ export function toggleUserStatus(userId) {
   users = users.map((current) =>
     current.id === userId ? { ...current, status } : current,
   )
+  persistUsers()
   notify()
   return cloneUser({ ...user, status })
 }
@@ -167,14 +195,28 @@ export function saveRolePermissions(userId, modulePermissions, accessPolicy = {}
   users = users.map((current) =>
     current.id === userId ? { ...current, ...next } : current,
   )
+  persistUsers()
   notify()
   return cloneUser({ ...user, ...next })
+}
+
+export function changeUserPassword(userId, currentPassword, nextPassword) {
+  const index = users.findIndex((user) => user.id === userId)
+  if (index === -1) throw new Error('Unable to find your account')
+  if (users[index].password !== currentPassword) throw new Error('Current password is incorrect')
+  if (String(nextPassword ?? '').length < 6) throw new Error('Use a password with at least 6 characters')
+
+  users[index] = { ...users[index], password: nextPassword }
+  persistUsers()
+  notify()
+  return cloneUser(users[index])
 }
 
 export function recordLogin(userId) {
   const index = users.findIndex((user) => user.id === userId)
   if (index === -1) return null
   users[index] = { ...users[index], lastLogin: new Date().toISOString() }
+  persistUsers()
   currentUserId = userId
   notify()
   return cloneUser(users[index])

@@ -56,6 +56,7 @@ import DesignSystemPage from './pages/DesignSystemPage'
 import FirmProfilePage from './pages/FirmProfilePage'
 import HomePage from './pages/HomePage'
 import LoginPage from './pages/LoginPage'
+import SignupPage from './pages/SignupPage'
 import NotFoundPage from './pages/NotFoundPage'
 import PlaceholderPage from './pages/PlaceholderPage'
 import SearchPage from './pages/SearchPage'
@@ -166,8 +167,9 @@ function renderLegacyWorkspacePages() {
       {PLACEHOLDER_ROUTES.map((route) => (
         <Route key={`placeholder-${route.path}`} path={route.path} element={guardedElement({ ...route, element: <PlaceholderPage /> })} />
       ))}
-      <Route path="profile" element={<PlaceholderPage />} />
-      <Route path="settings/account" element={<PlaceholderPage />} />
+      <Route path="profile" element={<SettingsPage />} />
+      <Route path="settings/account" element={<SettingsPage />} />
+      <Route path="settings/profile" element={<SettingsPage />} />
       <Route path="search" element={<SearchPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </>
@@ -178,6 +180,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<LoginPage />} />
+      <Route path="/signup" element={<SignupPage />} />
       <Route element={<ProtectedRoute />}>
         <Route path="/home" element={<HomePage />} />
         <Route path="/firms" element={<Navigate to="/home" replace />} />
