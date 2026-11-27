@@ -1,6 +1,7 @@
 import { isStabilityModeEnabled } from '../../../core/stabilityMode'
 import { STABILITY_PRODUCTS } from '../../../core/stabilityData'
+import { DEMO_PRODUCTS } from '../../../core/demoData'
 
-// Stability mode is opt-in via ?stability=1 or localStorage. The normal app
-// keeps the imported product master empty until authoritative data is loaded.
-export const PRODUCT_DEMO_DATA = isStabilityModeEnabled() ? STABILITY_PRODUCTS : []
+// Stability mode remains available for the focused one-firm edge-case fixture.
+// Normal local workspaces use the interconnected three-firm demo catalogue.
+export const PRODUCT_DEMO_DATA = isStabilityModeEnabled() ? STABILITY_PRODUCTS : DEMO_PRODUCTS

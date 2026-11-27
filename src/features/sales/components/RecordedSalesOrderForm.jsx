@@ -32,11 +32,8 @@ export default function RecordedSalesOrderForm({ mode = 'order', onClose }) {
   const [showCustomerForm, setShowCustomerForm] = useState(false)
   const customers = getCustomers()
   const canCreateCustomer = hasModulePermission(currentUser, 'Customers', 'create')
-  const products = useMemo(() => [...getProducts()].reverse(), [])
-  const categories = useMemo(
-    () => getCategories().sort((first, second) => (first.recordedOrder ?? 999) - (second.recordedOrder ?? 999)),
-    [],
-  )
+  const products = [...getProducts()].reverse()
+  const categories = getCategories().sort((first, second) => (first.recordedOrder ?? 999) - (second.recordedOrder ?? 999))
   const categoriesById = useMemo(() => Object.fromEntries(categories.map((category) => [category.id, category])), [categories])
   const [form, setForm] = useState({
     date: today(),

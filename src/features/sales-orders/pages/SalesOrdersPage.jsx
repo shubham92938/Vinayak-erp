@@ -1,5 +1,5 @@
 import { Plus, RefreshCw } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth, useFirmContext } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
@@ -22,7 +22,7 @@ export default function SalesOrdersPage() {
   const canCreate = hasModulePermission(currentUser, 'Sales Orders', 'create')
   const canExport = hasModulePermission(currentUser, 'Sales Orders', 'export')
   const [filters, setFilters] = useState(EMPTY_FILTERS)
-  const orders = useMemo(() => getSalesOrders({ search: filters.search }), [filters.search])
+  const orders = getSalesOrders({ search: filters.search })
 
   const exportCsv = () => {
     if (!canExport) return

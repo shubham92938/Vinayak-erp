@@ -8,10 +8,10 @@ import { getActiveFirmId } from './firmContextStore'
 import { nextNumber } from './numbers'
 import { isStabilityModeEnabled } from './stabilityMode'
 import { STABILITY_PURCHASES } from './stabilityData'
+import { DEMO_PURCHASES } from './demoData'
 
-export const mockPurchases = isStabilityModeEnabled()
-  ? STABILITY_PURCHASES.map((purchase) => ({ ...purchase, items: purchase.items.map((item) => ({ ...item })) }))
-  : []
+export const mockPurchases = (isStabilityModeEnabled() ? STABILITY_PURCHASES : DEMO_PURCHASES)
+  .map((purchase) => ({ ...purchase, items: purchase.items.map((item) => ({ ...item })) }))
 
 function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID

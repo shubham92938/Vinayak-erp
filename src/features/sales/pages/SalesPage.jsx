@@ -1,5 +1,5 @@
 import { FileDown, FileSpreadsheet, Plus, RefreshCw } from 'lucide-react'
-import { useMemo, useState } from 'react'
+import { useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { useAuth, useFirmContext } from '../../../context/hooks'
 import { hasModulePermission } from '../../../core/accessControl'
@@ -23,7 +23,7 @@ export default function SalesPage() {
   const [filters, setFilters] = useState(EMPTY_FILTERS)
   const [confirmState, setConfirmState] = useState(null)
   const [dataVersion, setDataVersion] = useState(0)
-  const sales = useMemo(() => getSalesFiltered({ search: filters.search, dataVersion }), [dataVersion, filters.search])
+  const sales = getSalesFiltered({ search: filters.search, dataVersion })
   const routePrefix = location.pathname.startsWith('/firms/') && currentFirmId
     ? `/firms/${currentFirmId}/workspace`
     : ''

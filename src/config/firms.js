@@ -1,9 +1,9 @@
 /**
  * Firms represented by the supplied ERP records.
  *
- * The application keeps these records in memory until an API is connected. Do
- * not add placeholder firms here: this list is the source of truth for the
- * imported business data.
+ * The application keeps these records in memory until an API is connected.
+ * These local firms are intentionally synthetic demo workspaces so every
+ * module can be previewed with an isolated set of records.
  */
 export const SVA_FIRM_ID = 'shree-vinayak-agency'
 
@@ -15,7 +15,39 @@ export const SAMPLE_FIRMS = [
     phone: '8989938999',
     address: 'Shop No. 136, Agar Road',
     city: 'Ujjain',
+    state: 'Madhya Pradesh',
     pinCode: '456001',
+    businessType: 'Irrigation & Farm Supplies',
+    gstNumber: '23AABCS1234A1Z5',
+    panNumber: 'AABCS1234A',
+    status: 'active',
+  },
+  {
+    id: 'indore-agro-supplies',
+    firmId: 'indore-agro-supplies',
+    name: 'Indore Agro Supplies',
+    phone: '9826012456',
+    address: 'Plot 18, Krishi Mandi Road',
+    city: 'Indore',
+    state: 'Madhya Pradesh',
+    pinCode: '452001',
+    businessType: 'Agricultural Trading',
+    gstNumber: '23AABCI5678B1Z2',
+    panNumber: 'AABCI5678B',
+    status: 'active',
+  },
+  {
+    id: 'malwa-irrigation-traders',
+    firmId: 'malwa-irrigation-traders',
+    name: 'Malwa Irrigation Traders',
+    phone: '9755523456',
+    address: '48 Industrial Estate, AB Road',
+    city: 'Dewas',
+    state: 'Madhya Pradesh',
+    pinCode: '455001',
+    businessType: 'Irrigation Equipment',
+    gstNumber: '23AABCM9012C1Z9',
+    panNumber: 'AABCM9012C',
     status: 'active',
   },
 ]

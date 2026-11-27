@@ -11,8 +11,8 @@ export default function SaleForm({ mode, sale, onClose, onSubmit }) {
   const toast = useToast()
   const isChallan = mode === 'challan'
 
-  const customers = useMemo(() => getCustomers(), [])
-  const productOptions = useMemo(() => getProductsForSale().map((product) => ({ value: product.id, label: `${product.name} — ${product.unit}` })), [])
+  const customers = getCustomers()
+  const productOptions = getProductsForSale().map((product) => ({ value: product.id, label: `${product.name} — ${product.unit}` }))
 
   const [form, setForm] = useState(() => ({
     customerId: sale?.customerId ?? customers[0]?.id ?? '',

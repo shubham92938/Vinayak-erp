@@ -26,8 +26,8 @@ function seedUser(overrides) {
   }
 }
 
-// No user master PDF was supplied. Keep only the administrator needed to open
-// the local workspace; business records come from the supplied ERP PDFs.
+// Synthetic users make the firm-scoped access model easy to preview. The
+// administrator can see all demo firms; each firm admin is scoped to one.
 export const USER_DEMO_DATA = [
   seedUser({
     id: 'user-01',
@@ -37,6 +37,24 @@ export const USER_DEMO_DATA = [
     profileImage: null,
     firmId: null,
     role: 'super_admin',
+  }),
+  seedUser({
+    id: 'user-02',
+    name: 'Aditi Mehta',
+    email: 'aditi@indoreagro.demo',
+    phone: '9826012456',
+    profileImage: null,
+    firmId: 'indore-agro-supplies',
+    role: 'firm_admin',
+  }),
+  seedUser({
+    id: 'user-03',
+    name: 'Rohan Verma',
+    email: 'rohan@malwairrigation.demo',
+    phone: '9755523456',
+    profileImage: null,
+    firmId: 'malwa-irrigation-traders',
+    role: 'manager',
   }),
 ]
 

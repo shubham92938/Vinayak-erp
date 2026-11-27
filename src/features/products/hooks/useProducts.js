@@ -28,7 +28,9 @@ export function useProducts({ categoriesById = {}, firmsById = {} } = {}) {
   const [filters, setFilters] = useState(initialFilters)
 
   const canViewAllProducts = getDataPermission(currentUser, 'Products', 'view', 'all')
-  const productFirmScope = currentUser?.role === 'super_admin' || canViewAllProducts ? null : currentFirmId
+  // A selected workspace always wins, including for Super Admin. Leaving the
+  // scope null is reserved for the home/legacy state before a firm is opened.
+  const productFirmScope = currentFirmId ?? (currentUser?.role === 'super_admin' || canViewAllProducts ? null : currentFirmId)
   const scopedProducts = useMemo(
     () => filterRecordsForUser(allProducts, currentUser, 'Products', 'view', productFirmScope),
     [allProducts, currentUser, productFirmScope],

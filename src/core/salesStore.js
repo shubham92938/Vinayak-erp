@@ -14,18 +14,24 @@ import {
   nextId,
 } from './store'
 import { SVA_SALES_DATA } from '../features/sales/data/svaSalesData'
+import { isStabilityModeEnabled } from './stabilityMode'
+import { DEMO_CHALLANS, DEMO_PAYMENTS, DEMO_SALES } from './demoData'
 
-// Sales imported from Sale_25Nov26_01_58_SVA.pdf. Other screens start empty
-// until records are created through the application; no placeholder sales are
-// mixed into the supplied report.
-export const mockSales = SVA_SALES_DATA.map((sale) => ({
+const STABILITY_MODE = isStabilityModeEnabled()
+
+// Stability mode keeps the imported single-firm sales fixture. Normal local
+// workspaces use synthetic invoice, challan and payment records for all firms.
+export const mockSales = (STABILITY_MODE ? SVA_SALES_DATA : DEMO_SALES).map((sale) => ({
   ...sale,
   items: sale.items.map((item) => ({ ...item })),
 }))
 
-export const mockChallans = []
+export const mockChallans = (STABILITY_MODE ? [] : DEMO_CHALLANS).map((challan) => ({
+  ...challan,
+  items: challan.items.map((item) => ({ ...item })),
+}))
 
-export const mockPayments = []
+export const mockPayments = (STABILITY_MODE ? [] : DEMO_PAYMENTS).map((payment) => ({ ...payment }))
 
 function inferFirmId(record) {
   return record.firmId ?? getProducts().find((product) => product.id === record.items?.[0]?.productId)?.firmId ?? DEFAULT_FIRM_ID

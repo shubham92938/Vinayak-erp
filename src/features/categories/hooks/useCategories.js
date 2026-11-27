@@ -17,7 +17,9 @@ export function useCategories() {
   const [filters, setFilters] = useState(initialFilters)
 
   const canViewAllCategories = getDataPermission(currentUser, 'Categories', 'view', 'all')
-  const categoryFirmScope = currentUser?.role === 'super_admin' || canViewAllCategories ? null : currentFirmId
+  // Keep the active workspace isolated even when the user can administer all
+  // firms. A null scope is only used before a workspace is selected.
+  const categoryFirmScope = currentFirmId ?? (currentUser?.role === 'super_admin' || canViewAllCategories ? null : currentFirmId)
   const scopedCategories = useMemo(
     () => filterRecordsForUser(allCategories, currentUser, 'Categories', 'view', categoryFirmScope),
     [allCategories, currentUser, categoryFirmScope],

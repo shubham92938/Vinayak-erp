@@ -30,7 +30,15 @@ function loadUsers() {
   if (!canUseStorage()) return createInitialUsers()
   try {
     const stored = JSON.parse(window.localStorage.getItem(USERS_STORAGE_KEY) ?? 'null')
-    return Array.isArray(stored) && stored.length > 0 ? stored : createInitialUsers()
+    if (!Array.isArray(stored) || stored.length === 0) return createInitialUsers()
+
+    const initial = createInitialUsers()
+    const storedById = new Map(stored.map((user) => [user.id, user]))
+    const seededIds = new Set(initial.map((user) => user.id))
+    return [
+      ...initial.map((user) => storedById.get(user.id) ?? user),
+      ...stored.filter((user) => !seededIds.has(user.id)),
+    ]
   } catch {
     return createInitialUsers()
   }
