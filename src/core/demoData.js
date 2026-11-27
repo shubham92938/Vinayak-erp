@@ -77,6 +77,7 @@ export const DEMO_PRODUCTS = FIRMS.flatMap((firm, firmIndex) =>
     firmId: firm.id,
     name: `${firm.brand} ${template.name}`,
     code: `${firm.code}-${template.code}`,
+    catalogKey: template.key,
     categoryId: categoryId(firm.key, template.category),
     quantity: template.quantity + firmIndex * 7 - (productIndex === 5 ? firmIndex * 2 : 0),
     minStock: template.minStock,
